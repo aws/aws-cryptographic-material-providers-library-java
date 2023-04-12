@@ -22,7 +22,7 @@ module {:options "-functionSyntax:4"} TestVectors {
   import CreateRawAesKeyrings
   import CreateRawRsaKeyrings
 
-  
+
 
   datatype EncryptTest = EncryptTest(
       input: Types.GetEncryptionMaterialsInput,
@@ -115,7 +115,7 @@ module {:options "-functionSyntax:4"} TestVectors {
           maxPlaintextLength := maxPlaintextLength,
           requiredEncryptionContextKeys := requiredEncryptionContextKeys
         );
-    
+
     var mpl :- expect WrappedMaterialProviders.WrappedMaterialProviders();
 
     var keyring :- ToKeyring(vector.keyringInfo);
@@ -179,6 +179,91 @@ module {:options "-functionSyntax:4"} TestVectors {
         var keyring := CreateInvalidKeyrings.CreateInvalidMaterialKeyring(encrypt, decrypt);
         return Success(keyring);
       }
+
+      case (KMSInfo(key), Some(KMS(_, _, _, keyIdentifier))) => {
+        var input := Types.CreateAwsKmsMultiKeyringInput(
+          generator := Some(keyIdentifier),
+          kmsKeyIds := None,
+          clientSupplier := None,
+          grantTokens := None
+        );
+        var keyring := mpl.CreateAwsKmsMultiKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsMultiKeyring");
+      }
+      case (KmsMrkAware(key), Some(KMS(_, _, _, keyIdentifier))) => {
+        var input := Types.CreateAwsKmsMrkMultiKeyringInput(
+          generator := Some(keyIdentifier),
+          kmsKeyIds := None,
+          clientSupplier := None,
+          grantTokens := None
+        );
+        var keyring := mpl.CreateAwsKmsMrkMultiKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsMrkMultiKeyring");
+      }
+      case (
+        KmsMrkAwareDiscovery(defaultMrkRegion, awsKmsDiscoveryFilter),
+        Some(KMS(_, _, decrypt, keyIdentifier))
+      ) => {
+        :- Need(decrypt, "Discovery only supports decrypt.");
+        var input := Types.CreateAwsKmsDiscoveryMultiKeyringInput(
+          regions := [defaultMrkRegion],
+          discoveryFilter := awsKmsDiscoveryFilter,
+          clientSupplier := None,
+          grantTokens := None
+        );
+        var keyring := mpl.CreateAwsKmsDiscoveryMultiKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+      }
+      case (
+        RawAES(key, providerId),
+        Some(Symetric(_, _, _, algorithm, bits, encoding, wrappingKey, keyIdentifier))
+      ) => {
+        var wrappingAlg :- match bits
+          case 128 => Success(Types.ALG_AES128_GCM_IV12_TAG16)
+          case 192 => Success(Types.ALG_AES192_GCM_IV12_TAG16)
+          case 256 => Success(Types.ALG_AES192_GCM_IV12_TAG16)
+          case _ => Failure("Not a supported bit length");
+
+        var input := Types.CreateRawAesKeyringInput(
+          keyNamespace := providerId,
+          keyName := keyIdentifier,
+          wrappingKey := wrappingKey,
+          wrappingAlg := wrappingAlg
+        );
+        var keyring := mpl.CreateRawAesKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+      }
+      case (
+        RawRSA(key, providerId, padding),
+        Some(PrivateRSA(_, _, decrypt, algorithm, bits, encoding, material, keyIdentifier))
+      ) => {
+        :- Need(decrypt, "Private RSA keys only supports decrypt.");
+        var input := Types.CreateRawRsaKeyringInput(
+          keyNamespace := providerId,
+          keyName := keyIdentifier,
+          paddingScheme := padding,
+          publicKey := None,
+          privateKey := None
+        );
+        var keyring := mpl.CreateRawRsaKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+      }
+      case (
+        RawRSA(key, providerId, padding),
+        Some(PublicRSA(_, encrypt, _, algorithm, bits, encoding, material, keyIdentifier))
+      ) => {
+        :- Need(encrypt, "Public RSA keys only supports encrypt.");
+        var input := Types.CreateRawRsaKeyringInput(
+          keyNamespace := providerId,
+          keyName := keyIdentifier,
+          paddingScheme := padding,
+          publicKey := None,
+          privateKey := None
+        );
+        var keyring := mpl.CreateRawRsaKeyring(input);
+        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+      }
+
       case _ => {
         return Failure("Unsuported Material combination");
       }
@@ -238,7 +323,7 @@ module {:options "-functionSyntax:4"} TestVectors {
     )
     // | PositiveDecryptCMMTest
     // | NegativeDecryptCMMTest
-  
+
 
 
 
@@ -260,7 +345,7 @@ module {:options "-functionSyntax:4"} TestVectors {
       algorithm: string,
       bits: nat,
       encoding: string,
-      material: string,
+      wrappingKey: Types.Secret,
       keyIdentifier: string
     )
     | PrivateRSA(

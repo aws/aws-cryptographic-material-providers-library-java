@@ -102,6 +102,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
 
             match typ
               case "symmetric" =>
+                var materialBytes :- Base64.Decode(material);
                 Success(Symetric(
                   name := name,
                   encrypt := encrypt,
@@ -110,7 +111,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
                   algorithm := algorithm,
                   bits := bits,
                   encoding := encoding,
-                  material := material
+                  wrappingKey := materialBytes
                 ))
               case "private" =>
                 Success(PrivateRSA(
