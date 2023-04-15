@@ -1,0 +1,73 @@
+{
+  "manifest": {
+    "type": "mpl-encrypt",
+    "version": 2
+  },
+  "keys": {
+    "manifest": {
+      "type": "keys",
+      "version": 2
+    },
+    "keys": {
+      "no-plaintext-data-key": {
+        "type": "invalid",
+        "algorithmSuiteId": "0014",
+        "encryptionContext": {},
+        "encryptedDataKeys": [{
+          "keyProviderId": "invalid-keyring",
+          "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
+          "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
+        }],
+        "requiredEncryptionContextKeys": []
+      },
+      "static-plaintext-data-key": {
+        "type": "invalid",
+        "algorithmSuiteId": "0014",
+        "encryptionContext": {},
+        "encryptedDataKeys": [{
+          "keyProviderId": "invalid-keyring",
+          "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
+          "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
+        }],
+        "requiredEncryptionContextKeys": [],
+        "plaintextDataKey": "AQEBAQEBAQEBAQEBAQEBAQ=="
+      }
+    }
+  },
+  "tests": {
+    "0c9c3222-b8f6-4b5f-97bc-c2a97f5255b1": {
+      "type": "positive-keyring",
+      "description": "Verify static-plaintext-data-key works",
+      "algorithmSuiteId": "0014",
+      "encryptionContext": {},
+      "requiredEncryptionContextKeys": [],
+      "keyDescription": {
+        "type": "invalid",
+        "key": "static-plaintext-data-key"
+      }
+    },
+    "f69c51ad-50a9-44a7-bc76-a8a4d2ce9f6d": {
+      "type": "negative-keyring",
+      "algorithmSuiteId": "0014",
+      "encryptionContext": {},
+      "requiredEncryptionContextKeys": [],
+      "errorDescription": "Could not retrieve materials required for encryption",
+      "keyDescription": {
+        "type": "invalid",
+        "key": "no-plaintext-data-key"
+      }
+    },
+    "9e56494b-15c6-42ff-bc90-58e8c9c43f42": {
+      "type": "negative-keyring",
+      "description": "Invalid Transition, the ",
+      "algorithmSuiteId": "0078",
+      "encryptionContext": {},
+      "requiredEncryptionContextKeys": [],
+      "errorDescription": "Keyring returned an invalid response",
+      "keyDescription": {
+        "type": "invalid",
+        "key": "static-plaintext-data-key"
+      }
+    }
+  }
+}

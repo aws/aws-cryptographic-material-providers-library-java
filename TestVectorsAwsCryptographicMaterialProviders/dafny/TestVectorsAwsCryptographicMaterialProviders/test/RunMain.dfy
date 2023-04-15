@@ -9,8 +9,16 @@ include "../src/Index.dfy"
 
 module TestWrappedMaterialProvidersMain {
   import WrappedMaterialProvidersMain
+  import TestManifests
 
-  method {:test} TestCheckKeyrings() {
-    WrappedMaterialProvidersMain.CheckKeyrings();
+  // method {:test} TestCheckKeyrings() {
+  //   WrappedMaterialProvidersMain.CheckKeyrings();
+  // }
+
+  method {:test} TestVectors() {
+    WrappedMaterialProvidersMain.EncryptTestVectors();
+
+    TestManifests.StartEncrypt("test/test.json");
+
   }
 }
