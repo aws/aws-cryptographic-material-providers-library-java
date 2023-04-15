@@ -34,6 +34,24 @@ module {:options "-functionSyntax:4"} JSONHelpers {
     Success(obj.str)
   }
 
+  function GetBool(key: string, obj: seq<(string, JSON)>)
+    : Result<bool, string>
+  {
+    var obj :- Get(key, obj);
+    :- Need(obj.Bool?, "Not a bool");
+    Success(obj.b)
+  }
+
+  function GetNat(key: string, obj: seq<(string, JSON)>)
+    : Result<nat, string>
+  {
+    var obj :- Get(key, obj);
+    :- Need(obj.Number?, "Not a number");
+    :- Need(0 < obj.num.n, "Not a nat");
+    // This may not be adequate 
+    Success(obj.num.n)
+  }
+
   function GetOptionalString(key: string, obj: seq<(string, JSON)>)
     : Result<Option<string>, string>
   {

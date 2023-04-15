@@ -14,16 +14,21 @@ module {:options "-functionSyntax:4"} TestManifests {
   import opened JSONHelpers
   import ParseJsonManifests
 
-  method  {:options "-functionSyntax:4"} StartEncrypt(encryptManifestPath: string) 
+  method  {:options "-functionSyntax:4"} StartEncrypt(
+    encryptManifestPath: string,
+    keysManifiestPath: string
+  )
   {
     var encryptManifestBv :- expect FileIO.ReadBytesFromFile(encryptManifestPath);
     var encryptManifestBytes := BvToBytes(encryptManifestBv);
     var encryptManifestJSON :- expect API.Deserialize(encryptManifestBytes);
     expect encryptManifestJSON.Object?;
 
-    var keysManifest :- expect Get("keys", encryptManifestJSON.obj);
-    expect keysManifest.Object?;
-    var keysObject :- expect Get("keys", keysManifest.obj);
+    var keysManifestBv :- expect FileIO.ReadBytesFromFile(keysManifiestPath);
+    var keysManifestBytes := BvToBytes(keysManifestBv);
+    var keysManifestJSON :- expect API.Deserialize(keysManifestBytes);
+    expect keysManifestJSON.Object?;
+    var keysObject :- expect Get("keys", keysManifestJSON.obj);
     expect keysObject.Object?;
     var keys :- expect ParseJsonManifests.BuildKeyMaterials(keysObject.obj);
 

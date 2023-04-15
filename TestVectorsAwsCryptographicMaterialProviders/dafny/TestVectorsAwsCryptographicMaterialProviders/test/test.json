@@ -3,37 +3,7 @@
     "type": "mpl-encrypt",
     "version": 2
   },
-  "keys": {
-    "manifest": {
-      "type": "keys",
-      "version": 2
-    },
-    "keys": {
-      "no-plaintext-data-key": {
-        "type": "invalid",
-        "algorithmSuiteId": "0014",
-        "encryptionContext": {},
-        "encryptedDataKeys": [{
-          "keyProviderId": "invalid-keyring",
-          "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
-          "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
-        }],
-        "requiredEncryptionContextKeys": []
-      },
-      "static-plaintext-data-key": {
-        "type": "invalid",
-        "algorithmSuiteId": "0014",
-        "encryptionContext": {},
-        "encryptedDataKeys": [{
-          "keyProviderId": "invalid-keyring",
-          "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
-          "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
-        }],
-        "requiredEncryptionContextKeys": [],
-        "plaintextDataKey": "AQEBAQEBAQEBAQEBAQEBAQ=="
-      }
-    }
-  },
+  "keys": "file:///keys.json",
   "tests": {
     "0c9c3222-b8f6-4b5f-97bc-c2a97f5255b1": {
       "type": "positive-keyring",

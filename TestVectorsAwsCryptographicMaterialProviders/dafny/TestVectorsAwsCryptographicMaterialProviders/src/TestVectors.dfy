@@ -261,7 +261,7 @@ module {:options "-functionSyntax:4"} TestVectors {
       bits: nat,
       encoding: string,
       material: string,
-      key: string
+      keyIdentifier: string
     )
     | PrivateRSA(
       name: string,
@@ -270,15 +270,16 @@ module {:options "-functionSyntax:4"} TestVectors {
       bits: nat,
       encoding: string,
       material: string,
-      key: string
+      keyIdentifier: string
     )
     | PublicRSA(
       name: string,
       encrypt: bool, decrypt: bool,
       bits: nat,
+      algorithm: string,
       encoding: string,
       material: string,
-      key: string
+      keyIdentifier: string
     )
     | KMS(
       name: string,

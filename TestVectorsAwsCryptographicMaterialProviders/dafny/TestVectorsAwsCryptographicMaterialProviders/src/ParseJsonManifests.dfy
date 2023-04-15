@@ -81,8 +81,60 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
           verificationKey := None,
           symmetricSigningKeys := None
         ))
+      case _ => 
+        var encrypt :- GetBool("encrypt", obj);
+        var decrypt :- GetBool("decrypt", obj);
+        var keyIdentifier :- GetString("key-id", obj);
+        
+        match typ
+          case "aws-kms" =>
+            Success(KeyMaterial.KMS(
+              name := name,
+              encrypt := encrypt,
+              decrypt := decrypt,
+              keyIdentifier := keyIdentifier
+            ))
+          case _ =>
+            var algorithm :- GetString("algorithm", obj);
+            var bits :- GetNat("bits", obj);
+            var encoding :- GetString("encoding", obj);
+            var material :- GetString("material", obj);
 
-      case _ => Failure("Unsupported KeyMaterial type:" + typ)
+            match typ
+              case "symmetric" =>
+                Success(Symetric(
+                  name := name,
+                  encrypt := encrypt,
+                  decrypt := decrypt,
+                  keyIdentifier := keyIdentifier,
+                  algorithm := algorithm,
+                  bits := bits,
+                  encoding := encoding,
+                  material := material
+                ))
+              case "private" =>
+                Success(PrivateRSA(
+                  name := name,
+                  encrypt := encrypt,
+                  decrypt := decrypt,
+                  keyIdentifier := keyIdentifier,
+                  algorithm := algorithm,
+                  bits := bits,
+                  encoding := encoding,
+                  material := material
+                ))
+              case "public" =>
+                Success(PublicRSA(
+                  name := name,
+                  encrypt := encrypt,
+                  decrypt := decrypt,
+                  keyIdentifier := keyIdentifier,
+                  algorithm := algorithm,
+                  bits := bits,
+                  encoding := encoding,
+                  material := material
+                ))
+              case _ => Failure("Unsupported KeyMaterial type:" + typ)
   }
 
   function BuildEncryptTestVector(keys: map<string, KeyMaterial>, obj: seq<(string, JSON)>)

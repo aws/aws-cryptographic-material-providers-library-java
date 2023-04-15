@@ -18,7 +18,7 @@ module TestWrappedMaterialProvidersMain {
   method {:test} TestVectors() {
     WrappedMaterialProvidersMain.EncryptTestVectors();
 
-    TestManifests.StartEncrypt("test/test.json");
+    TestManifests.StartEncrypt("test/test.json", "test/keys.json");
 
   }
 }
