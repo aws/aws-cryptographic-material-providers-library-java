@@ -42,6 +42,8 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
     var typString := "type";
     var typ :- GetString(typString, obj);
 
+    :- Need(TestVectors.KeyMaterialString?(typ), "Unsupported KeyMaterial type:" + typ);
+
     match typ
       case "invalid" =>
         var algorithmSuiteHex :- GetString("algorithmSuiteId", obj);
@@ -81,7 +83,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
           verificationKey := None,
           symmetricSigningKeys := None
         ))
-      case _ => 
+      case _ =>
         var encrypt :- GetBool("encrypt", obj);
         var decrypt :- GetBool("decrypt", obj);
         var keyIdentifier :- GetString("key-id", obj);
@@ -135,7 +137,6 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
                   encoding := encoding,
                   material := material
                 ))
-              case _ => Failure("Unsupported KeyMaterial type:" + typ)
   }
 
   function BuildEncryptTestVector(keys: map<string, KeyMaterial>, obj: seq<(string, JSON)>)
@@ -163,6 +164,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
     var encryptionContextStrings :- SmallObjectToStringStringMap("encryptionContext", obj);
     var encryptionContext :- utf8EncodeMap(encryptionContextStrings);
 
+    // TODO change this to use AlgorithmSuiteInfoByHexString
     var algorithmSuiteHex :- GetString("algorithmSuiteId", obj);
     :- Need(HexStrings.IsLooseHexString(algorithmSuiteHex), "Not hex encoded binnary");
     var binaryId := HexStrings.FromHexString(algorithmSuiteHex);
@@ -227,6 +229,8 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
     var obj := obj.obj;
     var typString := "type";
     var typ :- GetString(typString, obj);
+
+    :- Need(TestVectors.KeyDescriptionString?(typ), "Unsupported KeyDescription type:" + typ);
     var key :- GetString("key", obj);
 
     match typ
@@ -247,22 +251,21 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
       case "raw" =>
         var algorithm :- GetString("encryption-algorithm", obj);
         var providerId :- GetString("provider-id", obj);
+        :- Need(TestVectors.RawAlgorithmString?(typ), "Unsupported algorithm:" + algorithm);
         (match algorithm
           case "aes" =>
             Success(RawAES(key, providerId))
           case "rsa" =>
             var paddingAlgorithm :- GetString("padding-algorithm", obj);
             var paddingHash :- GetString("padding-hash", obj);
+            :- Need(TestVectors.PaddingAlgorithmString?(paddingAlgorithm), "Unsupported padding:" + paddingAlgorithm);
+            :- Need(TestVectors.PaddingHashString?(paddingHash), "Unsupported padding:" + paddingHash);
             (match (paddingAlgorithm, paddingHash)
-              // PKCS1 MAY be None hash...
               case ("pkcs1", "sha1") => Success(RawRSA(key, providerId, Types.PKCS1))
               case ("oaep-mgf1", "sha1") => Success(RawRSA(key, providerId, Types.OAEP_SHA1_MGF1))
               case ("oaep-mgf1", "sha256") => Success(RawRSA(key, providerId, Types.OAEP_SHA256_MGF1))
               case ("oaep-mgf1", "sha384") => Success(RawRSA(key, providerId, Types.OAEP_SHA384_MGF1))
-              case ("oaep-mgf1", "sha512") => Success(RawRSA(key, providerId, Types.OAEP_SHA512_MGF1))
-              case _ => Failure("Unsupported padding:" + paddingAlgorithm + " : " + paddingHash))
-          case _ => Failure("Unsupported algorithm:" + algorithm))
-      case _ => Failure("Unsupported KeyDescription type:" + typ)
+              case ("oaep-mgf1", "sha512") => Success(RawRSA(key, providerId, Types.OAEP_SHA512_MGF1))))
   }
 
   function ToKeyringInfo(keys: map<string, KeyMaterial>,  description: KeyDescription)

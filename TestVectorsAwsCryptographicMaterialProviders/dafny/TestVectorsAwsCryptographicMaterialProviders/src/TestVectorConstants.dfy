@@ -69,19 +69,19 @@ module TestVectorConstants {
     Types.AlgorithmSuiteId.ESDK(Types.ALG_AES_192_GCM_IV12_TAG16_HKDF_SHA384_ECDSA_P384),
     Types.AlgorithmSuiteId.ESDK(Types.ALG_AES_256_GCM_IV12_TAG16_HKDF_SHA384_ECDSA_P384),
     Types.AlgorithmSuiteId.ESDK(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY),
-    Types.AlgorithmSuiteId.ESDK(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_ECDSA_P384)
-    // Types.AlgorithmSuiteId.DBE(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_SYMSIG_HMAC_SHA384),
-    // Types.AlgorithmSuiteId.DBE(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_ECDSA_P384_SYMSIG_HMAC_SHA384)
+    Types.AlgorithmSuiteId.ESDK(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_ECDSA_P384),
+    Types.AlgorithmSuiteId.DBE(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_SYMSIG_HMAC_SHA384),
+    Types.AlgorithmSuiteId.DBE(Types.ALG_AES_256_GCM_HKDF_SHA512_COMMIT_KEY_ECDSA_P384_SYMSIG_HMAC_SHA384)
   ]
 
-  // lemma AllAlgorithmSuiteIdsIsComplete(i: Types.AlgorithmSuiteId)
-  //   ensures AllSeqIsComplete(i, AllAlgorithmSuiteIds)
-  // {
-  //   match i {
-  //     case ESDK(e) => AllESDKAlgorithmSuiteIdsIsComplete(e);
-  //     case DBE(e) => AllDBEAlgorithmSuiteIdsIsComplete(e);
-  //   }
-  // }
+  lemma AllAlgorithmSuiteIdsIsComplete(i: Types.AlgorithmSuiteId)
+    ensures AllSeqIsComplete(i, AllAlgorithmSuiteIds)
+  {
+    match i {
+      case ESDK(e) => AllESDKAlgorithmSuiteIdsIsComplete(e);
+      case DBE(e) => AllDBEAlgorithmSuiteIdsIsComplete(e);
+    }
+  }
 
   // Helper to prove that a seq is a complete
   // representation of all the possible types

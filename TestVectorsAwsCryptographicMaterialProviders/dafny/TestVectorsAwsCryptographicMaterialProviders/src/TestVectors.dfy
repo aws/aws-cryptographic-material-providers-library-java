@@ -446,4 +446,51 @@ module {:options "-functionSyntax:4"} TestVectors {
     material: Option<KeyMaterial>
   )
 
+  type KeyMaterialString = s: string | KeyMaterialString?(s) witness *
+  predicate KeyMaterialString?(s: string)
+  {
+    || s == "invalid"
+    || s == "aws-kms"
+    || s == "symmetric"
+    || s == "private"
+    || s == "public"
+  }
+
+  type KeyDescriptionString = s: string | KeyDescriptionString?(s) witness *
+  predicate KeyDescriptionString?(s: string)
+  {
+    || s == "invalid"
+    || s == "aws-kms"
+    || s == "aws-kms-mrk-aware"
+    || s == "aws-kms-mrk-aware-discovery"
+    || s == "raw"
+  }
+
+  type RawAlgorithmString = s: string | RawAlgorithmString?(s) witness *
+  predicate RawAlgorithmString?(s: string)
+  {
+    || s == "aes"
+    || s == "rsa"
+  }
+
+  type PaddingAlgorithmString = s: string | PaddingAlgorithmString?(s) witness *
+  predicate PaddingAlgorithmString?(s: string)
+  {
+    || s == "pkcs1"
+    || s == "oaep-mgf1"
+  }
+
+  type PaddingHashString = s: string | PaddingHashString?(s) witness *
+  predicate PaddingHashString?(s: string)
+  {
+    || s == "sha1"
+    || s == "sha1"
+    || s == "sha256"
+    || s == "sha384"
+    || s == "sha512"
+  }
+
+
+
+
 }
