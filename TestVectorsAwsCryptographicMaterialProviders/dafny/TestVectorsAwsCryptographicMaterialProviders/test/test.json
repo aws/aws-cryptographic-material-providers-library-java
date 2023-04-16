@@ -11,13 +11,18 @@
       "algorithmSuiteId": "0014",
       "encryptionContext": {},
       "requiredEncryptionContextKeys": [],
-      "keyDescription": {
+      "encryptKeyDescription": {
+        "type": "invalid",
+        "key": "static-plaintext-data-key"
+      },
+      "decryptKeyDescription": {
         "type": "invalid",
         "key": "static-plaintext-data-key"
       }
     },
     "f69c51ad-50a9-44a7-bc76-a8a4d2ce9f6d": {
       "type": "negative-keyring",
+      "description": "Making sure DefaultCMM calls EncryptionMaterialsHasPlaintextDataKey",
       "algorithmSuiteId": "0014",
       "encryptionContext": {},
       "requiredEncryptionContextKeys": [],
@@ -29,7 +34,7 @@
     },
     "9e56494b-15c6-42ff-bc90-58e8c9c43f42": {
       "type": "negative-keyring",
-      "description": "Invalid Transition, the ",
+      "description": "Making sure DefaultCMM calls ValidEncryptionMaterialsTransition",
       "algorithmSuiteId": "0078",
       "encryptionContext": {},
       "requiredEncryptionContextKeys": [],

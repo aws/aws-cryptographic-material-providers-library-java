@@ -18,7 +18,7 @@ module TestWrappedMaterialProvidersMain {
   method {:test} TestVectors() {
     WrappedMaterialProvidersMain.EncryptTestVectors();
 
-    TestManifests.StartEncrypt("test/test.json", "test/keys.json");
+    TestManifests.StartEncrypt("dafny/TestVectorsAwsCryptographicMaterialProviders/test/test.json", "dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json");
 
   }
 }

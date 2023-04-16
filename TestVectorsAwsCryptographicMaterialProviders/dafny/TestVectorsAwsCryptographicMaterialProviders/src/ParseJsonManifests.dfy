@@ -176,16 +176,21 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
         if result.Success? then Success(Some(result.value)) else Failure(result.error)
       else Success(None);
 
-    var keyDescriptionObject :- Get("keyDescription", obj);
-    var keyDescription :- ToKeyDescription(keyDescriptionObject);
-    var keyringInfo :- ToKeyringInfo(keys, keyDescription);
-
     // TODO fix me
     var commitmentPolicy := Types.CommitmentPolicy.ESDK(Types.ESDKCommitmentPolicy.FORBID_ENCRYPT_ALLOW_DECRYPT);
     var maxPlaintextLength := None; // GetString("maxPlaintextLength", obj);
     
     match typ
       case "positive-keyring" =>
+        var encryptKeyDescriptionObject :- Get("encryptKeyDescription", obj);
+        var decryptKeyDescriptionObject :- Get("decryptKeyDescription", obj);
+
+        var encryptKeyDescription :- ToKeyDescription(encryptKeyDescriptionObject);
+        var decryptKeyDescription :- ToKeyDescription(decryptKeyDescriptionObject);
+
+        var encryptInfo :- ToKeyringInfo(keys, encryptKeyDescription);
+        var decryptInfo :- ToKeyringInfo(keys, decryptKeyDescription);
+
         Success(PositiveEncryptKeyringVector(
           name := name,
           description := description,
@@ -194,9 +199,13 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
           algorithmSuite := algorithmSuite,
           maxPlaintextLength := maxPlaintextLength,
           requiredEncryptionContextKeys := requiredEncryptionContextKeys,
-          keyringInfo := keyringInfo
+          keyringInfos := PositiveKeyringInfo(encryptInfo, decryptInfo)
         ))
       case "negative-keyring" =>
+        var keyDescriptionObject :- Get("keyDescription", obj);
+        var keyDescription :- ToKeyDescription(keyDescriptionObject);
+        var keyringInfo :- ToKeyringInfo(keys, keyDescription);
+
         var errorDescription :- GetString("errorDescription", obj);
         Success(NegativeEncryptKeyringVector(
           name := name,
