@@ -79,9 +79,10 @@ module {:options "-functionSyntax:4"} TestVectors {
 
     output := match test.vector
       case PositiveDecryptKeyringTest(_,_,_,_,_,_,_,_)
+        // TODO need to verify the ouput. E.g. is the PTDK correct?
         => result.Success?
       case NegativeDecryptKeyringTest(_,_,_,_,_,_,_,_,_)
-        => result.Success?;
+        => !result.Success?;
 
     if !output {
       print "FAILED! <-----------\n";
