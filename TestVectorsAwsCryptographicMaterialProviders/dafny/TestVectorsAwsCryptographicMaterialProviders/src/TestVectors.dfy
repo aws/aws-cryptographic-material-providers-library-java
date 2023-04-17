@@ -11,6 +11,7 @@ module {:options "-functionSyntax:4"} TestVectors {
 
   import opened Wrappers
   import opened StandardLibrary.UInt
+  import UTF8
 
   // Import all the keyring factorys
   import CreateInvalidKeyrings
@@ -59,7 +60,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         None;
 
     if !testResult {
-      print "FAILED!\n";
+      print "FAILED! <-----------\n";
     }
   }
 
@@ -70,9 +71,9 @@ module {:options "-functionSyntax:4"} TestVectors {
     ensures test.cmm.ValidState()
   {
     print "\nTEST===> ",
-      test.vector.name, "\n",
-      if test.vector.description.Some? then test.vector.description.value else "",
-      if test.vector.NegativeDecryptKeyringTest? then test.vector.errorDescription + "\n" else "";
+      test.vector.name,
+      if test.vector.description.Some? then "\n" + test.vector.description.value else "",
+      if test.vector.NegativeDecryptKeyringTest? then "\n" + test.vector.errorDescription else "\n";
 
     var result := test.cmm.DecryptMaterials(test.input);
 
@@ -83,7 +84,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         => result.Success?;
 
     if !output {
-      print "FAILED!\n";
+      print "FAILED! <-----------\n";
     }
   }
 
@@ -159,14 +160,14 @@ module {:options "-functionSyntax:4"} TestVectors {
     );
 
     var vector := PositiveDecryptKeyringTest(
-      name := "decryption-" + test.vector.name,
+      name := "test.vector.name" + "->Decryption",
       algorithmSuite := materials.algorithmSuite,
       commitmentPolicy := test.vector.commitmentPolicy,
       encryptedDataKeys := materials.encryptedDataKeys,
       encryptionContext := materials.encryptionContext,
       keyrings := test.vector.keyringInfos.decryptInfo,
       description := if test.vector.description.Some? then
-        Some("decryption- " + test.vector.description.value)
+        Some("Decryption for " + test.vector.description.value)
       else None,
       reproducedEncryptionContext := reproducedEncryptionContext
     );
@@ -292,15 +293,15 @@ module {:options "-functionSyntax:4"} TestVectors {
         Some(PrivateRSA(_, _, decrypt, algorithm, bits, encoding, material, keyIdentifier))
       ) => {
         :- Need(decrypt, "Private RSA keys only supports decrypt.");
+        var privateKeyPemBytes :- UTF8.Encode(material);
         var input := Types.CreateRawRsaKeyringInput(
           keyNamespace := providerId,
           keyName := keyIdentifier,
           paddingScheme := padding,
           publicKey := None,
-          privateKey := None
+          privateKey := Some(privateKeyPemBytes)
         );
         var keyring := mpl.CreateRawRsaKeyring(input);
-        print keyring;
         return keyring.MapFailure(e => "Unable to CreateRawRsaKeyring");
       }
       case (
@@ -308,11 +309,12 @@ module {:options "-functionSyntax:4"} TestVectors {
         Some(PublicRSA(_, encrypt, _, algorithm, bits, encoding, material, keyIdentifier))
       ) => {
         :- Need(encrypt, "Public RSA keys only supports encrypt.");
+        var publicKeyPemBytes :- UTF8.Encode(material);
         var input := Types.CreateRawRsaKeyringInput(
           keyNamespace := providerId,
           keyName := keyIdentifier,
           paddingScheme := padding,
-          publicKey := None,
+          publicKey := Some(publicKeyPemBytes),
           privateKey := None
         );
         var keyring := mpl.CreateRawRsaKeyring(input);

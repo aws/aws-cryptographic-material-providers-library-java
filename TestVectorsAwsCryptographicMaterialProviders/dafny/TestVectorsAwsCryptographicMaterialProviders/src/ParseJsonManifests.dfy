@@ -20,6 +20,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
   import opened TestVectors
   import HexStrings
   import Base64
+  import CompleteVectors
   // This is a HACK!
   // This is *ONLY* because this is wrapping the MPL
   import AlgorithmSuites
@@ -179,7 +180,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
       else Success(None);
 
     // TODO fix me
-    var commitmentPolicy := Types.CommitmentPolicy.ESDK(Types.ESDKCommitmentPolicy.FORBID_ENCRYPT_ALLOW_DECRYPT);
+    var commitmentPolicy := CompleteVectors.GetCompatableCommitmentPolicy(algorithmSuite);
     var maxPlaintextLength := None; // GetString("maxPlaintextLength", obj);
     
     match typ
