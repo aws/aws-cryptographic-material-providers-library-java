@@ -279,7 +279,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
     var material :- match description
       case KmsMrkAwareDiscovery(_, _) => Success(None)
       case _ => 
-      :- Need(description.key in keys, "Key does not exist");
+      :- Need(description.key in keys, "Key does not exist:" + description.key);
       Success(Some(keys[description.key]));
     Success(KeyringInfo(description, material))
   }

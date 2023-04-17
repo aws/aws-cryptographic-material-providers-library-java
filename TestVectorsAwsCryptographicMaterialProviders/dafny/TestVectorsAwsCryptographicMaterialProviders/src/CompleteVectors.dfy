@@ -61,62 +61,36 @@ module {:options "-functionSyntax:4"} CompleteVectors {
     decryptDescription: TestVectors.KeyDescription
   )
 
-  // Given these keys,
-  // these are all the PositiveKeyDescription for the RawAESKeyring
-  const aesPersistentKeyNames := [ "aes-128", "aes-192", "aes-256"]
-  const AllRawAES := set
-    key <- aesPersistentKeyNames
-    ::
-      PositiveKeyDescription(
-        encryptDescription := TestVectors.RawAES(
-          key := key,
-          providerId := "aws-raw-vectors-persistent-" + key
-        ),
-        decryptDescription := TestVectors.RawAES(
-          key := key,
-          providerId := "aws-raw-vectors-persistent-" + key
-        )
-      );
-
-  // Given these keys,
-  // these are all the PositiveKeyDescription for the RawRSAKeyring
-  const rsaPersistentKeyNamesWithoutPublicPrivate := [ "rsa-4096" ]
-  const AllRawRSA := set
-    key <- rsaPersistentKeyNamesWithoutPublicPrivate,
-    padding: Types.PaddingScheme
-    ::
-      PositiveKeyDescription(
-        encryptDescription := TestVectors.RawRSA(
-          key := key + "-public",
-          providerId := "aws-raw-vectors-persistent-" + key,
-          padding := padding
-        ),
-        decryptDescription := TestVectors.RawRSA(
-          key := key + "-private",
-          providerId := "aws-raw-vectors-persistent-" + key,
-          padding := padding
-        )
-      );
-
   datatype PositiveKeyDescriptionJSON = PositiveKeyDescriptionJSON(
     description: string,
     encrypt: JSON,
     decrypt: JSON
   )
 
-  const AllRawRSA2 := set
+  // These are all the PositiveKeyDescription for the RawAESKeyring
+  const aesPersistentKeyNames := [ "aes-128", "aes-192", "aes-256"]
+  const AllRawAES := set
+    key <- aesPersistentKeyNames
+    ::
+      var keyDescription := Object([
+        ("type", String("raw")),
+        ("encryption-algorithm", String("aes")),
+        ("provider-id", String("aws-raw-vectors-persistent-" + key)),
+        ("key", String(key))
+      ]);
+      PositiveKeyDescriptionJSON(
+        description := "Generated RawAES " + key,
+        encrypt := keyDescription,
+        decrypt := keyDescription
+      );
+
+  // These are all the PositiveKeyDescription for the RawRSAKeyring
+  const rsaPersistentKeyNamesWithoutPublicPrivate := [ "rsa-4096" ]
+  const AllRawRSA := set
     key <- rsaPersistentKeyNamesWithoutPublicPrivate,
     padding: Types.PaddingScheme
     ::
-      PositiveKeyDescriptionJSON(
-        description := "Generated RawRSA " + key + " " + match padding
-          case PKCS1() => "pkcs1-sha1"
-          case OAEP_SHA1_MGF1() => "oaep-mgf1-sha1"
-          case OAEP_SHA256_MGF1() => "oaep-mgf1-sha256"
-          case OAEP_SHA384_MGF1() => "oaep-mgf1-sha384"
-          case OAEP_SHA512_MGF1() => "oaep-mgf1-sha512"
-        ,
-        encrypt := Object([
+      var sharedOptions := [
           ("type", String("raw")),
           ("key", String(key + "-public")),
           ("encryption-algorithm", String("rsa")),
@@ -132,37 +106,37 @@ module {:options "-functionSyntax:4"} CompleteVectors {
             case OAEP_SHA384_MGF1() => "sha384"
             case OAEP_SHA512_MGF1() => "sha512"
           ))
-        ]),
-        decrypt := Object([
-          ("type", String("raw")),
-          ("key", String(key + "-private")),
-          ("encryption-algorithm", String("rsa")),
-          ("provider-id", String("aws-raw-vectors-persistent-" + key)),
-          ("padding-algorithm", String(match padding
-              case PKCS1() => "pkcs1"
-              case _ => "oaep-mgf1"
-            )),
-          ("padding-hash", String(match padding
-            case PKCS1() => "sha1"
-            case OAEP_SHA1_MGF1() => "sha1"
-            case OAEP_SHA256_MGF1() => "sha256"
-            case OAEP_SHA384_MGF1() => "sha384"
-            case OAEP_SHA512_MGF1() => "sha512"
-          ))
-        ])
+        ];
+      PositiveKeyDescriptionJSON(
+        description := "Generated RawRSA " + key + " " + match padding
+          case PKCS1() => "pkcs1-sha1"
+          case OAEP_SHA1_MGF1() => "oaep-mgf1-sha1"
+          case OAEP_SHA256_MGF1() => "oaep-mgf1-sha256"
+          case OAEP_SHA384_MGF1() => "oaep-mgf1-sha384"
+          case OAEP_SHA512_MGF1() => "oaep-mgf1-sha512"
+        ,
+        encrypt := Object(
+          sharedOptions + 
+          [("key", String(key + "-public"))]
+        ),
+        decrypt := Object(
+          sharedOptions + 
+          [("key", String(key + "-private"))]
+        )
       );
 
   const AllAwsKMSKeys := [ "us-west-2-decryptable", "us-west-2-mrk" ]
   const AllKMSInfo := set
     key <- AllAwsKMSKeys
     ::
-      PositiveKeyDescription(
-        encryptDescription := TestVectors.KMSInfo(
-          key := key
-        ),
-        decryptDescription := TestVectors.KMSInfo(
-          key := key
-        )
+      var keyDescription := Object([
+        ("type", String("aws-kms")),
+        ("key", String(key))
+      ]);
+      PositiveKeyDescriptionJSON(
+        description := "Generated KMS " + key,
+        encrypt := keyDescription,
+        decrypt := keyDescription
       );
 
   const AllAwsKMSMrkKeys := [ "us-west-2-mrk", "us-east-1-mrk" ]
@@ -170,13 +144,16 @@ module {:options "-functionSyntax:4"} CompleteVectors {
     encryptKey <- AllAwsKMSKeys,
     decryptKey <- AllAwsKMSKeys
     ::
-      PositiveKeyDescription(
-        encryptDescription := TestVectors.KmsMrkAware(
-          key := encryptKey
-        ),
-        decryptDescription := TestVectors.KmsMrkAware(
-          key := decryptKey
-        )
+      PositiveKeyDescriptionJSON(
+        description := "Generated KMS MRK " + encryptKey + "->" + decryptKey,
+        encrypt := Object([
+          ("type", String("aws-kms-mrk-aware")),
+          ("key", String(encryptKey))
+        ]),
+          decrypt := Object([
+          ("type", String("aws-kms-mrk-aware")),
+          ("key", String(decryptKey))
+        ])
       );
 
   // These values MUST corospond to the KMS keys above
@@ -210,13 +187,14 @@ module {:options "-functionSyntax:4"} CompleteVectors {
       );
 
   const AllPositiveKeyringTests := set
-    postiveKeyDescription <- AllRawRSA2,
+    postiveKeyDescription <-   AllKMSInfo + AllKmsMrkAware,    // AllRawAES,
     algorithmSuite <- AllAlgorithmSuites
     ::
+      var id := HexStrings.ToHexString(algorithmSuite.binaryId);
       Object([
         ("type", String("positive-keyring")),
-        ("description", String(postiveKeyDescription.description)),
-        ("algorithmSuiteId", String(HexStrings.ToHexString(algorithmSuite.binaryId))),
+        ("description", String(postiveKeyDescription.description + " " + id)),
+        ("algorithmSuiteId", String(id)),
         ("encryptionContext", Object([])),
         ("requiredEncryptionContextKeys", Array([])),
         ("encryptKeyDescription", postiveKeyDescription.encrypt),

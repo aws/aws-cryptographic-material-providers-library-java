@@ -277,7 +277,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         var wrappingAlg :- match bits
           case 128 => Success(Types.ALG_AES128_GCM_IV12_TAG16)
           case 192 => Success(Types.ALG_AES192_GCM_IV12_TAG16)
-          case 256 => Success(Types.ALG_AES192_GCM_IV12_TAG16)
+          case 256 => Success(Types.ALG_AES256_GCM_IV12_TAG16)
           case _ => Failure("Not a supported bit length");
 
         var input := Types.CreateRawAesKeyringInput(

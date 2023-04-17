@@ -92,6 +92,18 @@
       "decrypt": false,
       "type": "aws-kms",
       "key-id": "arn:aws:kms:us-west-2:658956600833:key/590fd781-ddde-4036-abec-3e1ab5a5d2ad"
+    },
+    "us-west-2-mrk": {
+      "encrypt": true,
+      "decrypt": true,
+      "type": "aws-kms",
+      "key-id": "arn:aws:kms:us-west-2:658956600833:key/mrk-80bd8ecdcd4342aebd84b7dc9da498a7"
+    },
+    "us-east-1-mrk": {
+      "encrypt": true,
+      "decrypt": true,
+      "type": "aws-kms",
+      "key-id": "arn:aws:kms:us-east-1:658956600833:key/mrk-80bd8ecdcd4342aebd84b7dc9da498a7"
     }
   }
 }
