@@ -285,7 +285,7 @@ module {:options "-functionSyntax:4"} TestVectors {
           wrappingAlg := wrappingAlg
         );
         var keyring := mpl.CreateRawAesKeyring(input);
-        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+        return keyring.MapFailure(e => "Unable to CreateRawAesKeyring");
       }
       case (
         RawRSA(key, providerId, padding),
@@ -300,7 +300,8 @@ module {:options "-functionSyntax:4"} TestVectors {
           privateKey := None
         );
         var keyring := mpl.CreateRawRsaKeyring(input);
-        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+        print keyring;
+        return keyring.MapFailure(e => "Unable to CreateRawRsaKeyring");
       }
       case (
         RawRSA(key, providerId, padding),
@@ -315,7 +316,7 @@ module {:options "-functionSyntax:4"} TestVectors {
           privateKey := None
         );
         var keyring := mpl.CreateRawRsaKeyring(input);
-        return keyring.MapFailure(e => "Unable to CreateAwsKmsDiscoveryMultiKeyring");
+        return keyring.MapFailure(e => "Unable to CreateRawRsaKeyring");
       }
 
       case _ => {

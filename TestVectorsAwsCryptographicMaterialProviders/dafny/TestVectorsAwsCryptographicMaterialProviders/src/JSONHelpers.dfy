@@ -15,6 +15,11 @@ module {:options "-functionSyntax:4"} JSONHelpers {
     seq(|bits|, i requires 0 <= i < |bits| => bits[i] as BoundedInts.byte)
   }
 
+  function BytesBv(bits: seq<BoundedInts.uint8>): seq<bv8>
+  {
+    seq(|bits|, i requires 0 <= i < |bits| => bits[i] as bv8)
+  }
+
   function Get(key: string, obj: seq<(string, JSON)>)
     : Result<AST.JSON, string>
   {

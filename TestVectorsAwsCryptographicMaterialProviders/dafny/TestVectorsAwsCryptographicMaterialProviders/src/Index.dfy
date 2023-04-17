@@ -5,6 +5,7 @@ include "LibraryIndex.dfy"
 include "KeyringExpectations.dfy"
 include "CreateKeyrings.dfy"
 include "TestManifests.dfy"
+include "CompleteVectors.dfy"
 
 module WrappedMaterialProvidersMain {
   import WrappedMaterialProviders

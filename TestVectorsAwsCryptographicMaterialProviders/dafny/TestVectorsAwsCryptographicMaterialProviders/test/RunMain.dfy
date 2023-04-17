@@ -10,6 +10,7 @@ include "../src/Index.dfy"
 module TestWrappedMaterialProvidersMain {
   import WrappedMaterialProvidersMain
   import TestManifests
+  import CompleteVectors
 
   // method {:test} TestCheckKeyrings() {
   //   WrappedMaterialProvidersMain.CheckKeyrings();
@@ -19,6 +20,9 @@ module TestWrappedMaterialProvidersMain {
     WrappedMaterialProvidersMain.EncryptTestVectors();
 
     TestManifests.StartEncrypt("dafny/TestVectorsAwsCryptographicMaterialProviders/test/test.json", "dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json");
+  }
 
+  method {:test} ASDF() {
+    CompleteVectors.WriteStuff();
   }
 }

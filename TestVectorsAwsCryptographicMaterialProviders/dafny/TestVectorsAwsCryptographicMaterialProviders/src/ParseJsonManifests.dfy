@@ -251,21 +251,25 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
       case "raw" =>
         var algorithm :- GetString("encryption-algorithm", obj);
         var providerId :- GetString("provider-id", obj);
-        :- Need(TestVectors.RawAlgorithmString?(typ), "Unsupported algorithm:" + algorithm);
-        (match algorithm
+        :- Need(TestVectors.RawAlgorithmString?(algorithm), "Unsupported algorithm:" + algorithm);
+        match algorithm
           case "aes" =>
             Success(RawAES(key, providerId))
           case "rsa" =>
             var paddingAlgorithm :- GetString("padding-algorithm", obj);
             var paddingHash :- GetString("padding-hash", obj);
-            :- Need(TestVectors.PaddingAlgorithmString?(paddingAlgorithm), "Unsupported padding:" + paddingAlgorithm);
-            :- Need(TestVectors.PaddingHashString?(paddingHash), "Unsupported padding:" + paddingHash);
-            (match (paddingAlgorithm, paddingHash)
-              case ("pkcs1", "sha1") => Success(RawRSA(key, providerId, Types.PKCS1))
-              case ("oaep-mgf1", "sha1") => Success(RawRSA(key, providerId, Types.OAEP_SHA1_MGF1))
-              case ("oaep-mgf1", "sha256") => Success(RawRSA(key, providerId, Types.OAEP_SHA256_MGF1))
-              case ("oaep-mgf1", "sha384") => Success(RawRSA(key, providerId, Types.OAEP_SHA384_MGF1))
-              case ("oaep-mgf1", "sha512") => Success(RawRSA(key, providerId, Types.OAEP_SHA512_MGF1))))
+            :- Need(TestVectors.PaddingAlgorithmString?(paddingAlgorithm), "Unsupported paddingAlgorithm:" + paddingAlgorithm);
+            :- Need(TestVectors.PaddingHashString?(paddingHash), "Unsupported paddingHash:" + paddingHash);
+
+            match paddingAlgorithm
+              case "pkcs1" => 
+                :- Need(paddingHash == "sha1", "Unsupported padding with pkcs1:" + paddingHash);
+                Success(RawRSA(key, providerId, Types.PKCS1))
+              case "oaep-mgf1" => match paddingHash
+                case "sha1" => Success(RawRSA(key, providerId, Types.OAEP_SHA1_MGF1))
+                case "sha256" => Success(RawRSA(key, providerId, Types.OAEP_SHA256_MGF1))
+                case "sha384" => Success(RawRSA(key, providerId, Types.OAEP_SHA384_MGF1))
+                case "sha512" => Success(RawRSA(key, providerId, Types.OAEP_SHA512_MGF1))
   }
 
   function ToKeyringInfo(keys: map<string, KeyMaterial>,  description: KeyDescription)
