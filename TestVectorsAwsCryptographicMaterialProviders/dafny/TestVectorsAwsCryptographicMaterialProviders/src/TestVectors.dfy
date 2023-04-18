@@ -161,7 +161,7 @@ module {:options "-functionSyntax:4"} TestVectors {
     );
 
     var vector := PositiveDecryptKeyringTest(
-      name := "test.vector.name" + "->Decryption",
+      name := test.vector.name + "->Decryption",
       algorithmSuite := materials.algorithmSuite,
       commitmentPolicy := test.vector.commitmentPolicy,
       encryptedDataKeys := materials.encryptedDataKeys,
