@@ -4,6 +4,7 @@
 include "../Model/AwsCryptographyMaterialProvidersTypesWrapped.dfy"
 include "JSONHelpers.dfy"
 include "TestVectors.dfy"
+include "CompleteVectors.dfy"
 
 module {:options "-functionSyntax:4"} ParseJsonManifests {
 

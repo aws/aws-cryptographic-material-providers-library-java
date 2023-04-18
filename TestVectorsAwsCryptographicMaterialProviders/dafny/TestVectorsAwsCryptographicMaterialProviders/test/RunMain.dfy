@@ -16,13 +16,18 @@ module TestWrappedMaterialProvidersMain {
   //   WrappedMaterialProvidersMain.CheckKeyrings();
   // }
 
-  method {:test} TestVectors() {
-    WrappedMaterialProvidersMain.EncryptTestVectors();
-
-    TestManifests.StartEncrypt("dafny/TestVectorsAwsCryptographicMaterialProviders/test/test.json", "dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json");
-  }
-
+  // This MUST go before the test vectors
   method {:test} ASDF() {
     CompleteVectors.WriteStuff();
   }
+
+  method {:test} TestVectors() {
+    WrappedMaterialProvidersMain.EncryptTestVectors();
+
+    TestManifests.StartEncrypt(
+      "dafny/TestVectorsAwsCryptographicMaterialProviders/test/test.json",
+      "dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json"
+    );
+  }
+
 }

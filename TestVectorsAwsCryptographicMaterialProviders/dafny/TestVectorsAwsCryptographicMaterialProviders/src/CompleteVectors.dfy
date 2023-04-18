@@ -227,7 +227,10 @@ module {:options "-functionSyntax:4"} CompleteVectors {
     var mplEncryptManifiesBytes :- expect API.Serialize(mplEncryptManifies);
     var mplEncryptManifiesBv := JSONHelpers.BytesBv(mplEncryptManifiesBytes);
 
-    var _ :- expect FileIO.WriteBytesToFile("asdf", mplEncryptManifiesBv);
+    var _ :- expect FileIO.WriteBytesToFile(
+      "dafny/TestVectorsAwsCryptographicMaterialProviders/test/test.json",
+      mplEncryptManifiesBv
+    );
   }
 
 }
