@@ -99,9 +99,9 @@ module {:options "-functionSyntax:4"} TestManifests {
         hasFailure := true;
       }
     }
-    expect !hasFailure;
-
     print "\n=================== Completed Decrypt Tests =================== \n\n";
+
+    expect !hasFailure;
 
     manifest := ToJSONDecryptManifiest(tests);
   }
