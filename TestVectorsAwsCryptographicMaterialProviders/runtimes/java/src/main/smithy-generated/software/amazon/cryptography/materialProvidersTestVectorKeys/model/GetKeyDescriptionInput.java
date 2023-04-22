@@ -1,15 +1,15 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProviders.wrapped.keys.model;
+package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
-public class SerializeKeyDescriptionOutput {
+public class GetKeyDescriptionInput {
   private final ByteBuffer json;
 
-  protected SerializeKeyDescriptionOutput(BuilderImpl builder) {
+  protected GetKeyDescriptionInput(BuilderImpl builder) {
     this.json = builder.json();
   }
 
@@ -30,7 +30,7 @@ public class SerializeKeyDescriptionOutput {
 
     ByteBuffer json();
 
-    SerializeKeyDescriptionOutput build();
+    GetKeyDescriptionInput build();
   }
 
   static class BuilderImpl implements Builder {
@@ -39,7 +39,7 @@ public class SerializeKeyDescriptionOutput {
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(SerializeKeyDescriptionOutput model) {
+    protected BuilderImpl(GetKeyDescriptionInput model) {
       this.json = model.json();
     }
 
@@ -52,11 +52,11 @@ public class SerializeKeyDescriptionOutput {
       return this.json;
     }
 
-    public SerializeKeyDescriptionOutput build() {
+    public GetKeyDescriptionInput build() {
       if (Objects.isNull(this.json()))  {
         throw new IllegalArgumentException("Missing value for required field `json`");
       }
-      return new SerializeKeyDescriptionOutput(this);
+      return new GetKeyDescriptionInput(this);
     }
   }
 }

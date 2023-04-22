@@ -1,14 +1,16 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProviders.wrapped.keys.model;
+package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
 
-public class OpaqueError extends RuntimeException {
-  private final Object obj;
+import java.util.List;
 
-  protected OpaqueError(BuilderImpl builder) {
+public class CollectionOfErrors extends RuntimeException {
+  private final List<RuntimeException> list;
+
+  protected CollectionOfErrors(BuilderImpl builder) {
     super(messageFromBuilder(builder), builder.cause());
-    this.obj = builder.obj();
+    this.list = builder.list();
   }
 
   private static String messageFromBuilder(Builder builder) {
@@ -29,8 +31,8 @@ public class OpaqueError extends RuntimeException {
     return this.getCause();
   }
 
-  public Object obj() {
-    return this.obj;
+  public List<RuntimeException> list() {
+    return this.list;
   }
 
   public Builder toBuilder() {
@@ -50,11 +52,11 @@ public class OpaqueError extends RuntimeException {
 
     Throwable cause();
 
-    Builder obj(Object obj);
+    Builder list(List<RuntimeException> list);
 
-    Object obj();
+    List<RuntimeException> list();
 
-    OpaqueError build();
+    CollectionOfErrors build();
   }
 
   static class BuilderImpl implements Builder {
@@ -62,15 +64,15 @@ public class OpaqueError extends RuntimeException {
 
     protected Throwable cause;
 
-    protected Object obj;
+    protected List<RuntimeException> list;
 
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(OpaqueError model) {
+    protected BuilderImpl(CollectionOfErrors model) {
       this.cause = model.getCause();
       this.message = model.getMessage();
-      this.obj = model.obj();
+      this.list = model.list();
     }
 
     public Builder message(String message) {
@@ -91,22 +93,17 @@ public class OpaqueError extends RuntimeException {
       return this.cause;
     }
 
-    public Builder obj(Object obj) {
-      this.obj = obj;
+    public Builder list(List<RuntimeException> list) {
+      this.list = list;
       return this;
     }
 
-    public Object obj() {
-      return this.obj;
+    public List<RuntimeException> list() {
+      return this.list;
     }
 
-    public OpaqueError build() {
-      if (this.obj != null && this.cause == null && this.obj instanceof Throwable) {
-        this.cause = (Throwable) this.obj;
-      } else if (this.obj == null && this.cause != null) {
-        this.obj = this.cause;
-      }
-      return new OpaqueError(this);
+    public CollectionOfErrors build() {
+      return new CollectionOfErrors(this);
     }
   }
 }

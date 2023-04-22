@@ -1,30 +1,30 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProviders.wrapped.keys;
+package software.amazon.cryptography.materialProvidersTestVectorKeys;
 
-import Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.KeyVectorsClient;
-import Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.Error;
-import Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.IKeyVectorsClient;
-import Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.__default;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.KeyVectorsClient;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.Error;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.__default;
 import Wrappers_Compile.Result;
 import java.lang.IllegalArgumentException;
 import java.util.Objects;
 import software.amazon.cryptography.materialProviders.IKeyring;
 import software.amazon.cryptography.materialProviders.Keyring;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.GetKeyDescriptionInput;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.GetKeyDescriptionOutput;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.KeyVectorsConfig;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.SerializeKeyDescriptionInput;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.SerializeKeyDescriptionOutput;
-import software.amazon.cryptography.materialProviders.wrapped.keys.model.TestVectorKeyringInput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionInput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionOutput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyVectorsConfig;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionInput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionOutput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.TestVectorKeyringInput;
 
 public class KeyVectors {
   private final IKeyVectorsClient _impl;
 
   protected KeyVectors(BuilderImpl builder) {
     KeyVectorsConfig nativeValue = builder.KeyVectorsConfig();
-    Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.KeyVectorsConfig dafnyValue = ToDafny.KeyVectorsConfig(nativeValue);
+    Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyVectorsConfig dafnyValue = ToDafny.KeyVectorsConfig(nativeValue);
     Result<KeyVectorsClient, Error> result = __default.KeyVectors(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -32,12 +32,16 @@ public class KeyVectors {
     this._impl = result.dtor_value();
   }
 
+  KeyVectors(IKeyVectorsClient impl) {
+    this._impl = impl;
+  }
+
   public static Builder builder() {
     return new BuilderImpl();
   }
 
   public IKeyring CreateTestVectorKeyring(TestVectorKeyringInput nativeValue) {
-    Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.TestVectorKeyringInput dafnyValue = ToDafny.TestVectorKeyringInput(nativeValue);
+    Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.TestVectorKeyringInput dafnyValue = ToDafny.TestVectorKeyringInput(nativeValue);
     Result<Dafny.Aws.Cryptography.MaterialProviders.Types.IKeyring, Error> result = this._impl.CreateTestVectorKeyring(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -46,7 +50,7 @@ public class KeyVectors {
   }
 
   public IKeyring CreateWappedTestVectorKeyring(TestVectorKeyringInput nativeValue) {
-    Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.TestVectorKeyringInput dafnyValue = ToDafny.TestVectorKeyringInput(nativeValue);
+    Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.TestVectorKeyringInput dafnyValue = ToDafny.TestVectorKeyringInput(nativeValue);
     Result<Dafny.Aws.Cryptography.MaterialProviders.Types.IKeyring, Error> result = this._impl.CreateWappedTestVectorKeyring(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -55,8 +59,8 @@ public class KeyVectors {
   }
 
   public GetKeyDescriptionOutput GetKeyDescription(GetKeyDescriptionInput nativeValue) {
-    Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.GetKeyDescriptionInput dafnyValue = ToDafny.GetKeyDescriptionInput(nativeValue);
-    Result<Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.GetKeyDescriptionOutput, Error> result = this._impl.GetKeyDescription(dafnyValue);
+    Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionInput dafnyValue = ToDafny.GetKeyDescriptionInput(nativeValue);
+    Result<Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionOutput, Error> result = this._impl.GetKeyDescription(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
     }
@@ -65,8 +69,8 @@ public class KeyVectors {
 
   public SerializeKeyDescriptionOutput SerializeKeyDescription(
       SerializeKeyDescriptionInput nativeValue) {
-    Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.SerializeKeyDescriptionInput dafnyValue = ToDafny.SerializeKeyDescriptionInput(nativeValue);
-    Result<Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types.SerializeKeyDescriptionOutput, Error> result = this._impl.SerializeKeyDescription(dafnyValue);
+    Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionInput dafnyValue = ToDafny.SerializeKeyDescriptionInput(nativeValue);
+    Result<Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionOutput, Error> result = this._impl.SerializeKeyDescription(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
     }

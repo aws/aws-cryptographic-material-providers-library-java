@@ -1,13 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProviders.wrapped.keys.model;
+package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
 
-import java.util.Objects;
+public class OpaqueError extends RuntimeException {
+  private final Object obj;
 
-public class KeyVectorException extends RuntimeException {
-  protected KeyVectorException(BuilderImpl builder) {
+  protected OpaqueError(BuilderImpl builder) {
     super(messageFromBuilder(builder), builder.cause());
+    this.obj = builder.obj();
   }
 
   private static String messageFromBuilder(Builder builder) {
@@ -28,6 +29,10 @@ public class KeyVectorException extends RuntimeException {
     return this.getCause();
   }
 
+  public Object obj() {
+    return this.obj;
+  }
+
   public Builder toBuilder() {
     return new BuilderImpl(this);
   }
@@ -45,7 +50,11 @@ public class KeyVectorException extends RuntimeException {
 
     Throwable cause();
 
-    KeyVectorException build();
+    Builder obj(Object obj);
+
+    Object obj();
+
+    OpaqueError build();
   }
 
   static class BuilderImpl implements Builder {
@@ -53,12 +62,15 @@ public class KeyVectorException extends RuntimeException {
 
     protected Throwable cause;
 
+    protected Object obj;
+
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(KeyVectorException model) {
-      this.message = model.message();
-      this.cause = model.cause();
+    protected BuilderImpl(OpaqueError model) {
+      this.cause = model.getCause();
+      this.message = model.getMessage();
+      this.obj = model.obj();
     }
 
     public Builder message(String message) {
@@ -79,11 +91,22 @@ public class KeyVectorException extends RuntimeException {
       return this.cause;
     }
 
-    public KeyVectorException build() {
-      if (Objects.isNull(this.message()))  {
-        throw new IllegalArgumentException("Missing value for required field `message`");
+    public Builder obj(Object obj) {
+      this.obj = obj;
+      return this;
+    }
+
+    public Object obj() {
+      return this.obj;
+    }
+
+    public OpaqueError build() {
+      if (this.obj != null && this.cause == null && this.obj instanceof Throwable) {
+        this.cause = (Throwable) this.obj;
+      } else if (this.obj == null && this.cause != null) {
+        this.obj = this.cause;
       }
-      return new KeyVectorException(this);
+      return new OpaqueError(this);
     }
   }
 }
