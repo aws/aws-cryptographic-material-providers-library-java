@@ -13,7 +13,7 @@ SMITHY_MODEL_ROOT := $(PROJECT_ROOT)/AwsCryptographicMaterialProviders/dafny/Aws
 OUTPUT_LOCAL_SERVICE_TestVectorsAwsCryptographicMaterialProviders := --local-service-test
 
 SERVICE_NAMESPACE_TestVectorsAwsCryptographicMaterialProviders=aws.cryptography.materialProviders
-SERVICE_NAMESPACE_KeyVectors=aws.cryptography.materialProviders.wrapped.keys
+SERVICE_NAMESPACE_KeyVectors=aws.cryptography.materialProvidersTestVectorKeys
 
 MAX_RESOURCE_COUNT=10000000
 # Order is important

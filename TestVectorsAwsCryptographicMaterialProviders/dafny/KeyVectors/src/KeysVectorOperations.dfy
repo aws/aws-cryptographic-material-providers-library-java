@@ -1,7 +1,7 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
+include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes, this is reaching across.
   // idealy all these functions would exist in the STD Library.
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/LibraryIndex.dfy"
@@ -10,7 +10,7 @@ include "KeyDescription.dfy"
 include "KeyMaterial.dfy"
 include "KeyringFromKeyDescription.dfy"
 
-module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCryptographyMaterialProvidersWrappedKeysOperations {
+module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCryptographyMaterialProvidersTestVectorKeysOperations {
   import JSON.API
   import JSON.Errors
   import KeyDescription

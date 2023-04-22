@@ -5,7 +5,6 @@ include "../Model/AwsCryptographyMaterialProvidersTypesWrapped.dfy"
 
 module {:options "-functionSyntax:4"} JSONHelpers {
   import JSON.API
-  import JSON.Utils.Unicode
   import BoundedInts
   import opened JSON.AST
   import opened Wrappers

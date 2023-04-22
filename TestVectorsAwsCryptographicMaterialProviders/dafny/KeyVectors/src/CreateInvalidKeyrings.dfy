@@ -1,7 +1,7 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
+include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
 
 // This file creates intentinaly bad keyrings
 // The goal here is to create keyrings

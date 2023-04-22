@@ -1,14 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
+include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes this is including from somewhere else.
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/LibraryIndex.dfy"
 include "KeyMaterial.dfy"
 include "CreateInvalidKeyrings.dfy"
 
 module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
-  import opened Types = AwsCryptographyMaterialProvidersWrappedKeysTypes
+  import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import MPL = AwsCryptographyMaterialProvidersTypes
     // import WrappedMaterialProviders
   import opened Wrappers

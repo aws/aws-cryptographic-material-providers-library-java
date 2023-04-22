@@ -3,7 +3,7 @@
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
 include "../../../../StandardLibrary/src/Index.dfy"
  include "../../../../AwsCryptographicMaterialProviders/dafny/AwsCryptographicMaterialProviders/src/Index.dfy"
- module {:extern "Dafny.Aws.Cryptography.MaterialProviders.Wrapped.Keys.Types" } AwsCryptographyMaterialProvidersWrappedKeysTypes
+ module {:extern "Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types" } AwsCryptographyMaterialProvidersTestVectorKeysTypes
  {
  import opened Wrappers
  import opened StandardLibrary.UInt
@@ -189,13 +189,13 @@ include "../../../../StandardLibrary/src/Index.dfy"
  | Opaque(obj: object)
  type OpaqueError = e: Error | e.Opaque? witness *
 }
- abstract module AbstractAwsCryptographyMaterialProvidersWrappedKeysService
+ abstract module AbstractAwsCryptographyMaterialProvidersTestVectorKeysService
  {
  import opened Wrappers
  import opened StandardLibrary.UInt
  import opened UTF8
- import opened Types = AwsCryptographyMaterialProvidersWrappedKeysTypes
- import Operations : AbstractAwsCryptographyMaterialProvidersWrappedKeysOperations
+ import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
+ import Operations : AbstractAwsCryptographyMaterialProvidersTestVectorKeysOperations
  function method DefaultKeyVectorsConfig(): KeyVectorsConfig
  method KeyVectors(config: KeyVectorsConfig := DefaultKeyVectorsConfig())
  returns (res: Result<KeyVectorsClient, Error>)
@@ -289,11 +289,11 @@ include "../../../../StandardLibrary/src/Index.dfy"
  
 }
 }
- abstract module AbstractAwsCryptographyMaterialProvidersWrappedKeysOperations {
+ abstract module AbstractAwsCryptographyMaterialProvidersTestVectorKeysOperations {
  import opened Wrappers
  import opened StandardLibrary.UInt
  import opened UTF8
- import opened Types = AwsCryptographyMaterialProvidersWrappedKeysTypes
+ import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
  type InternalConfig
  predicate ValidInternalConfig?(config: InternalConfig)
  function ModifiesInternalConfig(config: InternalConfig): set<object>

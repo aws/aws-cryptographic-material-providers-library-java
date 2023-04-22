@@ -18,7 +18,7 @@ module {:options "-functionSyntax:4"} TestManifests {
   import opened JSONHelpers
   import ParseJsonManifests
   import KeyVectors
-  import KeyVectorsTypes = AwsCryptographyMaterialProvidersWrappedKeysTypes
+  import KeyVectorsTypes = AwsCryptographyMaterialProvidersTestVectorKeysTypes
 
   method  {:options "-functionSyntax:4"} StartEncrypt(
     encryptManifestPath: string,

@@ -11,7 +11,6 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
   import Types = AwsCryptographyMaterialProvidersTypes
 
   import JSON.API
-  import JSON.Utils.Unicode
   import opened JSON.AST
   import opened Wrappers
   import UTF8
@@ -24,7 +23,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
   import Base64
   import CompleteVectors
   import KeyVectors
-  import KeyVectorsTypes = AwsCryptographyMaterialProvidersWrappedKeysTypes
+  import KeyVectorsTypes = AwsCryptographyMaterialProvidersTestVectorKeysTypes
     // This is a HACK!
     // This is *ONLY* because this is wrapping the MPL
   import AlgorithmSuites

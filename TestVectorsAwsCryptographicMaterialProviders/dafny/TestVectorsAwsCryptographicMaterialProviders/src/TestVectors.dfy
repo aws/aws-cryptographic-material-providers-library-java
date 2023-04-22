@@ -14,7 +14,7 @@ module {:options "-functionSyntax:4"} TestVectors {
   import UTF8
 
   import KeyVectors
-  import KeyVectorsTypes = AwsCryptographyMaterialProvidersWrappedKeysTypes
+  import KeyVectorsTypes = AwsCryptographyMaterialProvidersTestVectorKeysTypes
 
   datatype EncryptTest = EncryptTest(
     input: Types.GetEncryptionMaterialsInput,

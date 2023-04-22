@@ -1,4 +1,4 @@
-namespace aws.cryptography.materialProviders.wrapped.keys
+namespace aws.cryptography.materialProvidersTestVectorKeys
 
 /////////////
 // KeyVectors Creation

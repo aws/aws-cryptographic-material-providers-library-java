@@ -4,7 +4,7 @@
 // include "JSONHelpers.dfy"
 // include "TestVectors.dfy"
 // include "CompleteVectors.dfy"
-include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
+include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes, this is reaching across.
   // idealy all these functions would exist in the STD Library.
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/JSONHelpers.dfy"

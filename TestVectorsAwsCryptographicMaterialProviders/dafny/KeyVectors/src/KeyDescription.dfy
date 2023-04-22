@@ -1,7 +1,7 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
+include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes, this is reaching across.
   // idealy all these functions would exist in the STD Library.
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/JSONHelpers.dfy"
@@ -10,7 +10,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
   import opened Wrappers
   import opened JSON.AST
   import AwsCryptographyMaterialProvidersTypes
-  import opened Types = AwsCryptographyMaterialProvidersWrappedKeysTypes
+  import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import opened JSONHelpers
 
   function ToKeyDescription(obj: JSON): Result<KeyDescription, string>
