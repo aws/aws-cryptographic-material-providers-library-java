@@ -3,6 +3,8 @@
 
 include "TestVectors.dfy"
 include "ParseJsonManifests.dfy"
+  // TODO it would be nice to have this included somehow...
+include "../../KeyVectors/src/Index.dfy"
 
 module {:options "-functionSyntax:4"} TestManifests {
   import Types = AwsCryptographyMaterialProvidersTypes
@@ -15,6 +17,8 @@ module {:options "-functionSyntax:4"} TestManifests {
   import BoundedInts
   import opened JSONHelpers
   import ParseJsonManifests
+  import KeyVectors
+  import KeyVectorsTypes = AwsCryptographyMaterialProvidersWrappedKeysTypes
 
   method  {:options "-functionSyntax:4"} StartEncrypt(
     encryptManifestPath: string,
@@ -26,31 +30,30 @@ module {:options "-functionSyntax:4"} TestManifests {
     var encryptManifestJSON :- expect API.Deserialize(encryptManifestBytes);
     expect encryptManifestJSON.Object?;
 
-    var keysManifestBv :- expect FileIO.ReadBytesFromFile(keysManifiestPath);
-    var keysManifestBytes := BvToBytes(keysManifestBv);
-    var keysManifestJSON :- expect API.Deserialize(keysManifestBytes);
-    expect keysManifestJSON.Object?;
-    var keysObject :- expect Get("keys", keysManifestJSON.obj);
-    expect keysObject.Object?;
-    var keys :- expect ParseJsonManifests.BuildKeyMaterials(keysObject.obj);
+    var keys :- expect KeyVectors.KeyVectors(KeyVectorsTypes.KeyVectorsConfig(
+                                               keyManifiestPath := keysManifiestPath
+                                             ));
 
     var jsonTests :- expect GetObject("tests", encryptManifestJSON.obj);
     var encryptVectors :- expect ParseJsonManifests.BuildEncryptTestVector(keys, jsonTests);
 
-    var encryptTests :- expect ToEncryptTests(encryptVectors);
+    var encryptTests :- expect ToEncryptTests(keys, encryptVectors);
 
-    var decryptTests := TestEncrypts(encryptTests);
+    var decryptTests := TestEncrypts(encryptTests, keys);
     var _ := TestDecrypts(decryptTests);
   }
 
-  method TestEncrypts(tests: seq<TestVectors.EncryptTest>)
+  method TestEncrypts(tests: seq<TestVectors.EncryptTest>, keys: KeyVectors.KeyVectorsClient)
     returns (output: seq<TestVectors.DecryptTest>)
+    requires keys.ValidState()
+    modifies keys.Modifies
+    ensures keys.ValidState()
     requires forall t <- tests :: t.cmm.ValidState()
     modifies set t <- tests, o | o in t.cmm.Modifies :: o
     ensures forall t <- tests :: t.cmm.ValidState()
     ensures forall t <- output ::
-      && t.cmm.ValidState()
-      && fresh(t.cmm.Modifies)
+              && t.cmm.ValidState()
+              && fresh(t.cmm.Modifies)
   {
     var hasFailure := false;
 
@@ -74,7 +77,7 @@ module {:options "-functionSyntax:4"} TestManifests {
     print "\n=================== Completed Encrypt Tests =================== \n\n";
 
     expect !hasFailure;
-    output :- expect ToDecryptTests(decryptableTests);
+    output :- expect ToDecryptTests(keys, decryptableTests);
   }
 
   method TestDecrypts(tests: seq<TestVectors.DecryptTest>)
@@ -103,32 +106,38 @@ module {:options "-functionSyntax:4"} TestManifests {
     manifest := ToJSONDecryptManifiest(tests);
   }
 
-  method ToEncryptTests(encryptVectors: seq<TestVectors.EncryptTestVector>)
+  method ToEncryptTests(keys: KeyVectors.KeyVectorsClient, encryptVectors: seq<TestVectors.EncryptTestVector>)
     returns (output: Result<seq<TestVectors.EncryptTest>, string>)
+    requires keys.ValidState()
+    modifies keys.Modifies
+    ensures keys.ValidState()
     ensures output.Success? ==>
-      && forall t <- output.value ::
-        && t.cmm.ValidState()
-        && fresh(t.cmm.Modifies)
+              && forall t <- output.value ::
+                && t.cmm.ValidState()
+                && fresh(t.cmm.Modifies)
   {
     var encryptTests: seq<TestVectors.EncryptTest> := [];
     for i := 0 to |encryptVectors|
       invariant forall t <- encryptTests ::
-        && t.cmm.ValidState()
-        && fresh(t.cmm.Modifies)
+          && t.cmm.ValidState()
+          && fresh(t.cmm.Modifies)
     {
-      var test :- TestVectors.ToEncryptTest(encryptVectors[i]);
+      var test :- TestVectors.ToEncryptTest(keys, encryptVectors[i]);
       encryptTests := encryptTests + [test];
     }
 
     return Success(encryptTests);
   }
 
-  method ToDecryptTests(tests: seq<(TestVectors.EncryptTest, Types.EncryptionMaterials)>)
+  method ToDecryptTests(keys: KeyVectors.KeyVectorsClient, tests: seq<(TestVectors.EncryptTest, Types.EncryptionMaterials)>)
     returns (output: Result<seq<TestVectors.DecryptTest>, string>)
+    requires keys.ValidState()
+    modifies keys.Modifies
+    ensures keys.ValidState()
     ensures output.Success? ==>
-      && forall t <- output.value ::
-        && t.cmm.ValidState()
-        && fresh(t.cmm.Modifies)
+              && forall t <- output.value ::
+                && t.cmm.ValidState()
+                && fresh(t.cmm.Modifies)
   {
 
     var positiveEncryptTests := Seq.Filter(
@@ -140,10 +149,10 @@ module {:options "-functionSyntax:4"} TestManifests {
     var decryptTests: seq<TestVectors.DecryptTest> := [];
     for i := 0 to |positiveEncryptTests|
       invariant forall t <- decryptTests ::
-        && t.cmm.ValidState()
-        && fresh(t.cmm.Modifies)
+          && t.cmm.ValidState()
+          && fresh(t.cmm.Modifies)
     {
-      var test :- TestVectors.ToDecryptTest(positiveEncryptTests[i].0, positiveEncryptTests[i].1);
+      var test :- TestVectors.ToDecryptTest(keys, positiveEncryptTests[i].0, positiveEncryptTests[i].1);
       decryptTests := decryptTests + [test];
     }
 

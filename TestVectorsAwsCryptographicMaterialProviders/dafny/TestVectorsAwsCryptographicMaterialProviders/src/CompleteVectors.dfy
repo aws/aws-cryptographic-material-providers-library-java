@@ -20,6 +20,26 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   import SortedSets
   import FileIO
 
+
+  // TODO Make AES pass
+  // TODO Add a path to write manifies to
+  // TODO Add discovery keyrings for decrypt
+  // TODO Add KMS RSA
+  // TODO Add hierarkey keyring
+  // TODO Add negative encrypt tests
+  // TODO Add negative decrypt tests
+  // TODO move keys/ToKeyring into seperate service
+  // TODO Add additional manifest data to decrypt manifiest
+  // TODO Add resutl to decrypt manifiests
+  // TODO open other PR for fixes to pirmatives and KMS and shared makefile
+  // TODO support required encrytion context
+  // TODO serialize commitment policy
+  // TODO serialize maxPlaintextLength
+
+
+
+
+
   // This is a HACK!
   // This is *ONLY* because this is wrapping the MPL
   import AlgorithmSuites
@@ -53,10 +73,10 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   //                                                              ( HexStrings.ToHexStringIsInjective(); HexStrings.ToHexString(s.binaryId) ) := s;
 
 
-  datatype PositiveKeyDescription = PositiveKeyDescription(
-    encryptDescription: TestVectors.KeyDescription,
-    decryptDescription: TestVectors.KeyDescription
-  )
+  // datatype PositiveKeyDescription = PositiveKeyDescription(
+  //   encryptDescription: TestVectors.KeyDescription,
+  //   decryptDescription: TestVectors.KeyDescription
+  // )
 
   datatype PositiveKeyDescriptionJSON = PositiveKeyDescriptionJSON(
     description: string,
@@ -94,15 +114,15 @@ module {:options "-functionSyntax:4"} CompleteVectors {
                                ("encryption-algorithm", String("rsa")),
                                ("provider-id", String("aws-raw-vectors-persistent-" + key)),
                                ("padding-algorithm", String(match padding
-                                                            case PKCS1() => "pkcs1"
-                                                            case _ => "oaep-mgf1"
+                                case PKCS1() => "pkcs1"
+                                case _ => "oaep-mgf1"
                                 )),
                                ("padding-hash", String(match padding
-                                                       case PKCS1() => "sha1"
-                                                       case OAEP_SHA1_MGF1() => "sha1"
-                                                       case OAEP_SHA256_MGF1() => "sha256"
-                                                       case OAEP_SHA384_MGF1() => "sha384"
-                                                       case OAEP_SHA512_MGF1() => "sha512"
+                                case PKCS1() => "sha1"
+                                case OAEP_SHA1_MGF1() => "sha1"
+                                case OAEP_SHA256_MGF1() => "sha256"
+                                case OAEP_SHA384_MGF1() => "sha384"
+                                case OAEP_SHA512_MGF1() => "sha512"
                                 ))
                              ];
         PositiveKeyDescriptionJSON(
@@ -173,20 +193,20 @@ module {:options "-functionSyntax:4"} CompleteVectors {
     None
   };
 
-  const AllKmsMrkAwareDiscovery :=
-    set
-      keyId <- AllAwsKMSKeys,
-      filter <- AllDiscoveryFilters
-      ::
-        PositiveKeyDescription(
-          encryptDescription := TestVectors.KmsMrkAware(
-            key := keyId
-          ),
-          decryptDescription := TestVectors.KmsMrkAwareDiscovery(
-            defaultMrkRegion := "us-west-2",
-            awsKmsDiscoveryFilter := filter
-          )
-        );
+  // const AllKmsMrkAwareDiscovery :=
+  //   set
+  //     keyId <- AllAwsKMSKeys,
+  //     filter <- AllDiscoveryFilters
+  //     ::
+  //       PositiveKeyDescription(
+  //         encryptDescription := TestVectors.KmsMrkAware(
+  //           key := keyId
+  //         ),
+  //         decryptDescription := TestVectors.KmsMrkAwareDiscovery(
+  //           defaultMrkRegion := "us-west-2",
+  //           awsKmsDiscoveryFilter := filter
+  //         )
+  //       );
 
   const AllPositiveKeyringTests :=
     set

@@ -9,6 +9,8 @@ module {:options "-functionSyntax:4"} JSONHelpers {
   import BoundedInts
   import opened JSON.AST
   import opened Wrappers
+  import UTF8
+  import Types = AwsCryptographyMaterialProvidersTypes
 
   function BvToBytes(bits: seq<bv8>): seq<BoundedInts.uint8>
   {
@@ -53,7 +55,7 @@ module {:options "-functionSyntax:4"} JSONHelpers {
     var obj :- Get(key, obj);
     :- Need(obj.Number?, "Not a number");
     :- Need(0 < obj.num.n, "Not a nat");
-    // This may not be adequate 
+    // This may not be adequate
     Success(obj.num.n)
   }
 
@@ -111,7 +113,39 @@ module {:options "-functionSyntax:4"} JSONHelpers {
     :- Need(forall t <- obj :: t.1.String?, "Not a string string object");
     // This is an expensive check for large objects.
     :- Need(forall i,j | 0 <= i < j < |obj| :: obj[i].0 != obj[j].0,
-      "JSON serialization Error");
+            "JSON serialization Error");
     Success(map t <- obj :: t.0 := t.1.str)
+  }
+
+
+  function utf8EncodePair(key: string, value: string):
+    (res: Result<(UTF8.ValidUTF8Bytes, UTF8.ValidUTF8Bytes), string>)
+  {
+    var utf8Key :- UTF8.Encode(key);
+    var utf8Value :- UTF8.Encode(value);
+
+    Success((utf8Key, utf8Value))
+  }
+
+  // TODO: These EncryptionContext methods can be removed once we move to UTF8 strings
+  function utf8EncodeMap(mapStringString: map<string, string>):
+    (res: Result<Types.EncryptionContext, string>)
+  {
+    if |mapStringString| == 0 then
+      Success(map[])
+    else
+
+      var encodedResults := map key <- mapStringString :: key := utf8EncodePair(key, mapStringString[key]);
+      :- Need(forall r <- encodedResults.Values :: r.Success?, "String can not be UTF8 Encoded?");
+
+      Success(map r <- encodedResults.Values :: r.value.0 := r.value.1)
+  }
+
+  function utf8EncodeSeq(seqOfStrings: seq<string>)
+    :(res: Result<seq<Types.Utf8Bytes>, string>)
+  {
+    var encodedResults := seq(|seqOfStrings|, i requires 0 <= i < |seqOfStrings| => UTF8.Encode(seqOfStrings[i]));
+    :- Need(forall r <- encodedResults :: r.Success?, "String can not be UTF8 Encoded?");
+    Success(seq(|encodedResults|, i requires 0 <= i < |encodedResults| => encodedResults[i].value))
   }
 }

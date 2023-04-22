@@ -1,9 +1,7 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-include "../LibraryIndex.dfy"
-// include "../TestVectorsUtils.dfy"
-// include "../TestVectorConstants.dfy"
+include "../Model/AwsCryptographyMaterialProvidersWrappedKeysTypes.dfy"
 
 // This file creates intentinaly bad keyrings
 // The goal here is to create keyrings
@@ -15,7 +13,6 @@ include "../LibraryIndex.dfy"
 module CreateInvalidKeyrings {
   import opened Wrappers
   import Types = AwsCryptographyMaterialProvidersTypes
-  import WrappedMaterialProviders
 
   method CreateInvalidMaterialKeyring(
     encryptMaterial: Types.EncryptionMaterials,
@@ -40,7 +37,7 @@ module CreateInvalidKeyrings {
   {
 
     predicate ValidState()
-    ensures ValidState() ==> History in Modifies
+      ensures ValidState() ==> History in Modifies
     {
       && History in Modifies
     }
@@ -72,8 +69,8 @@ module CreateInvalidKeyrings {
       ensures unchanged(History)
     {
       return Success(Types.OnEncryptOutput(
-        materials := encryptMaterial
-      ));
+                       materials := encryptMaterial
+                     ));
     }
 
     predicate OnDecryptEnsuresPublicly ( input: Types.OnDecryptInput , output: Result<Types.OnDecryptOutput, Types.Error> ) {true}
@@ -90,8 +87,8 @@ module CreateInvalidKeyrings {
       ensures unchanged(History)
     {
       return Success(Types.OnDecryptOutput(
-        materials := decryptMaterial
-      ));
+                       materials := decryptMaterial
+                     ));
     }
   }
 
