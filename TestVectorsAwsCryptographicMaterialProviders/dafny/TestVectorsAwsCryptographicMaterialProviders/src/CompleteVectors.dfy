@@ -20,23 +20,16 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   import SortedSets
   import FileIO
 
-
-  // TODO Make AES pass
   // TODO Add a path to write manifies to
-  // TODO Add discovery keyrings for decrypt
   // TODO Add KMS RSA
   // TODO Add hierarkey keyring
   // TODO Add negative encrypt tests
   // TODO Add negative decrypt tests
-  // TODO move keys/ToKeyring into seperate service
   // TODO Add additional manifest data to decrypt manifiest
-  // TODO Add resutl to decrypt manifiests
-  // TODO open other PR for fixes to pirmatives and KMS and shared makefile
   // TODO support required encrytion context
   // TODO serialize commitment policy
   // TODO serialize maxPlaintextLength
-
-
+  // TODO change `InvalidKeyring` to `FixedMaterials` or something...
 
 
 
@@ -58,7 +51,6 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   }
 
   const ESDKAlgorithmSuites := set id: Types.ESDKAlgorithmSuiteId :: AlgorithmSuites.GetESDKSuite(id);
-
   const DBEAlgorithmSuites := set id: Types.DBEAlgorithmSuiteId :: AlgorithmSuites.GetDBESuite(id);
 
   const AllAlgorithmSuites := ESDKAlgorithmSuites + DBEAlgorithmSuites;
@@ -66,17 +58,6 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   lemma AllAlgorithmSuitesIsComplete(id: Types.AlgorithmSuiteId)
     ensures AlgorithmSuites.GetSuite(id) in AllAlgorithmSuites
   {}
-
-  // const asdfasdf: map<string, Types.AlgorithmSuiteInfo> := map
-  //                                                            s <- AllAlgorithmSuites
-  //                                                            ::
-  //                                                              ( HexStrings.ToHexStringIsInjective(); HexStrings.ToHexString(s.binaryId) ) := s;
-
-
-  // datatype PositiveKeyDescription = PositiveKeyDescription(
-  //   encryptDescription: TestVectors.KeyDescription,
-  //   decryptDescription: TestVectors.KeyDescription
-  // )
 
   datatype PositiveKeyDescriptionJSON = PositiveKeyDescriptionJSON(
     description: string,
@@ -114,15 +95,15 @@ module {:options "-functionSyntax:4"} CompleteVectors {
                                ("encryption-algorithm", String("rsa")),
                                ("provider-id", String("aws-raw-vectors-persistent-" + key)),
                                ("padding-algorithm", String(match padding
-                                case PKCS1() => "pkcs1"
-                                case _ => "oaep-mgf1"
+                                                            case PKCS1() => "pkcs1"
+                                                            case _ => "oaep-mgf1"
                                 )),
                                ("padding-hash", String(match padding
-                                case PKCS1() => "sha1"
-                                case OAEP_SHA1_MGF1() => "sha1"
-                                case OAEP_SHA256_MGF1() => "sha256"
-                                case OAEP_SHA384_MGF1() => "sha384"
-                                case OAEP_SHA512_MGF1() => "sha512"
+                                                       case PKCS1() => "sha1"
+                                                       case OAEP_SHA1_MGF1() => "sha1"
+                                                       case OAEP_SHA256_MGF1() => "sha256"
+                                                       case OAEP_SHA384_MGF1() => "sha384"
+                                                       case OAEP_SHA512_MGF1() => "sha512"
                                 ))
                              ];
         PositiveKeyDescriptionJSON(
@@ -181,38 +162,54 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   // At this time, this list is simplisitic
   const AwsPartitions := [ "aws" ];
   const AWSAccounts := [ "658956600833" ];
-  const AllDiscoveryFilters := {
+  const AllDiscoveryFilters: set<Option<Types.DiscoveryFilter>> := {
     Some(Types.DiscoveryFilter(
            partition := "aws",
            accountIds := [ "658956600833" ]
          )),
-    Some(Types.DiscoveryFilter(
-           partition := "aws",
-           accountIds := [ ]
-         )),
     None
   };
 
-  // const AllKmsMrkAwareDiscovery :=
-  //   set
-  //     keyId <- AllAwsKMSKeys,
-  //     filter <- AllDiscoveryFilters
-  //     ::
-  //       PositiveKeyDescription(
-  //         encryptDescription := TestVectors.KmsMrkAware(
-  //           key := keyId
-  //         ),
-  //         decryptDescription := TestVectors.KmsMrkAwareDiscovery(
-  //           defaultMrkRegion := "us-west-2",
-  //           awsKmsDiscoveryFilter := filter
-  //         )
-  //       );
+  const AllKmsMrkAwareDiscovery :=
+    set
+      keyId <- AllAwsKMSMrkKeys,
+      filter <- AllDiscoveryFilters
+      ::
+        PositiveKeyDescriptionJSON(
+          description := "Discovery KMS MRK " + keyId +
+            "->" + if filter.Some? then
+              "Filter " + filter.value.partition + " " + Seq.Flatten(filter.value.accountIds)
+            else
+              "No Filter"
+            ,
+          encrypt := Object([
+                              ("type", String("aws-kms-mrk-aware")),
+                              ("key", String(keyId))
+                            ]),
+          decrypt := if filter.Some? then
+            Object([
+                     ("type", String("aws-kms-mrk-aware-discovery")),
+                     ("default-mrk-region", String("us-west-2")),
+                     ("aws-kms-discovery-filter", Object(
+                        [
+                          ("partition", String(filter.value.partition)),
+                          ("account-ids", Array(
+                             Seq.Map(s => String(s), filter.value.accountIds)))
+                        ]))
+                   ])
+          else
+            Object([
+                     ("type", String("aws-kms-mrk-aware-discovery")),
+                     ("default-mrk-region", String("us-west-2"))])
+        );
 
   const AllPositiveKeyringTests :=
     set
-      postiveKeyDescription <- AllKMSInfo +
+      postiveKeyDescription <-
+      AllKMSInfo +
       AllKmsMrkAware +
-      // AllRawAES + // TODO need to fix one
+      AllKmsMrkAwareDiscovery +
+      AllRawAES +
       AllRawRSA,
       algorithmSuite <- AllAlgorithmSuites
       ::

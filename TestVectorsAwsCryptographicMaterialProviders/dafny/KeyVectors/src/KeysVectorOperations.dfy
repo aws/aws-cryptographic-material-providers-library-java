@@ -13,6 +13,7 @@ include "KeyringFromKeyDescription.dfy"
 module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCryptographyMaterialProvidersTestVectorKeysOperations {
   import JSON.API
   import JSON.Errors
+  import JSON.AST
   import KeyDescription
   import MPL = AwsCryptographyMaterialProvidersTypes
   import KeyMaterial
@@ -44,7 +45,6 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
 
     var keyDescription := input.keyDescription;
     var keyId := GetKeyId(keyDescription);
-    :- Need(keyId in config.keys, KeyVectorException( message := "OMFG"));
 
     var info := KeyringFromKeyDescription.KeyringInfo(
       keyDescription,
@@ -68,7 +68,6 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
   {
     var keyDescription := input.keyDescription;
     var keyId := GetKeyId(keyDescription);
-    :- Need(keyId in config.keys, KeyVectorException( message := "OMFG"));
 
     var info := KeyringFromKeyDescription.KeyringInfo(
       keyDescription,
@@ -97,7 +96,6 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
                                           AwsCryptographyMaterialProvidersTypes.AwsCryptographicMaterialProvidersException(
                                             message := e
                                           )));
-
     Success(GetKeyDescriptionOutput(
               keyDescription := keyDescription
             ))

@@ -29,11 +29,11 @@ module {:options "-functionSyntax:4"} TestVectors {
   )
 
   method TestGetEncryptionMaterials(test: EncryptTest)
-    returns (testResult: bool, edks: Option<Types.EncryptionMaterials>)
+    returns (testResult: bool, materials: Option<Types.EncryptionMaterials>)
     requires test.cmm.ValidState()
     modifies test.cmm.Modifies
     ensures test.cmm.ValidState()
-    ensures testResult && test.vector.PositiveEncryptKeyringVector? ==> edks.Some?
+    ensures testResult && test.vector.PositiveEncryptKeyringVector? ==> materials.Some?
   {
     print "\nTEST===> ",
           test.vector.name,
@@ -48,13 +48,16 @@ module {:options "-functionSyntax:4"} TestVectors {
       case NegativeEncryptKeyringVector(_,_,_,_,_,_,_,_,_)
         => !result.Success?;
 
-    edks := if test.vector.PositiveEncryptKeyringVector? && result.Success? then
+    materials := if test.vector.PositiveEncryptKeyringVector? && result.Success? then
       Some(result.value.encryptionMaterials)
     else
       None;
 
     if !testResult {
-      print "FAILED! <-----------\n";
+      if test.vector.PositiveEncryptKeyringVector? {
+        print result.error;
+      }
+      print "\nFAILED! <-----------\n";
     }
   }
 
@@ -72,14 +75,21 @@ module {:options "-functionSyntax:4"} TestVectors {
     var result := test.cmm.DecryptMaterials(test.input);
 
     output := match test.vector
-      case PositiveDecryptKeyringTest(_,_,_,_,_,_,_,_)
+      case PositiveDecryptKeyringTest(_,_,_,_,_,_,_,_,_)
         // TODO need to verify the ouput. E.g. is the PTDK correct?
-        => result.Success?
+        =>
+        && result.Success?
+        && result.value.decryptionMaterials.plaintextDataKey == test.vector.expectedResult.plaintextDataKey
+        && result.value.decryptionMaterials.symmetricSigningKey == test.vector.expectedResult.symmetricSigningKey
+        && result.value.decryptionMaterials.requiredEncryptionContextKeys == test.vector.expectedResult.requiredEncryptionContextKeys
       case NegativeDecryptKeyringTest(_,_,_,_,_,_,_,_,_)
         => !result.Success?;
 
     if !output {
-      print "FAILED! <-----------\n";
+      if test.vector.PositiveDecryptKeyringTest? && result.Failure? {
+        print result.error;
+      }
+      print "\nFAILED! <-----------\n";
     }
   }
 
@@ -127,7 +137,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         else
           vector.keyDescription
       ));
-    var keyring :- maybeKeyring.MapFailure(e => "Keyring failure");
+    var keyring :- maybeKeyring.MapFailure((e: KeyVectorsTypes.Error) => var _ := printErr(e); "Keyring failure");
 
     var maybeCmm := mpl
     .CreateDefaultCryptographicMaterialsManager(
@@ -170,6 +180,13 @@ module {:options "-functionSyntax:4"} TestVectors {
       encryptedDataKeys := materials.encryptedDataKeys,
       encryptionContext := materials.encryptionContext,
       keyDescription := test.vector.decryptDescription,
+      expectedResult := DecryptResult(
+        plaintextDataKey := materials.plaintextDataKey,
+        // PositiveDecryptKeyringTest only supports automatic creation from a single Encrypt vector
+        symmetricSigningKey := if materials.symmetricSigningKeys.Some? && 0 < |materials.symmetricSigningKeys.value| then
+          Some(materials.symmetricSigningKeys.value[0]) else None,
+        requiredEncryptionContextKeys := materials.requiredEncryptionContextKeys
+      ),
       description := if test.vector.description.Some? then
         Some("Decryption for " + test.vector.description.value)
       else None,
@@ -183,7 +200,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         keyDescription := vector.keyDescription
       )
     );
-    var keyring :- maybeKeyring.MapFailure(e => "Keyring failure");
+    var keyring :- maybeKeyring.MapFailure((e: KeyVectorsTypes.Error) => var _ := printErr(e); "Keyring failure");
 
     var maybeCmm := mpl
     .CreateDefaultCryptographicMaterialsManager(
@@ -198,6 +215,9 @@ module {:options "-functionSyntax:4"} TestVectors {
                    ));
   }
 
+
+  // Helper method because debugging can be hard
+  function printErr(e: KeyVectorsTypes.Error) : (){()} by method {print e, "\n", "\n";}
   datatype EncryptTestVector =
     | PositiveEncryptKeyringVector(
         name: string,
@@ -236,6 +256,7 @@ module {:options "-functionSyntax:4"} TestVectors {
         encryptedDataKeys: Types.EncryptedDataKeyList,
         encryptionContext: Types.EncryptionContext,
         keyDescription: KeyVectorsTypes.KeyDescription,
+        expectedResult: DecryptResult,
         description: Option<string> := None,
         reproducedEncryptionContext: Option<Types.EncryptionContext> := None
       )
@@ -252,5 +273,14 @@ module {:options "-functionSyntax:4"} TestVectors {
       )
       // | PositiveDecryptCMMTest
       // | NegativeDecryptCMMTest
+
+
+  datatype DecryptResult = DecryptResult(
+    plaintextDataKey: Option<Types.Secret>,
+    symmetricSigningKey: Option<Types.Secret>,
+    requiredEncryptionContextKeys: Types.EncryptionContextKeys
+    // TODO Add support for the signature key
+    // verificationKey: Option<Types.Secret>,
+  )
 
 }

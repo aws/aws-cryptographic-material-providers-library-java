@@ -12,6 +12,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
 
   import JSON.API
   import opened JSON.AST
+  import JSON.Errors
   import opened Wrappers
   import UTF8
   import Seq
@@ -77,19 +78,20 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
       var decryptKeyDescriptionObject :- Get("decryptKeyDescription", obj);
 
       // Be nice if `document` mapped to `JSON.AST.JSON`
-      var encryptStr :- API.Serialize(encryptKeyDescriptionObject).MapFailure(e => "Whoops");
-      var decryptStr :- API.Serialize(decryptKeyDescriptionObject).MapFailure(e => "Whoops");
+      var encryptStr :- API.Serialize(encryptKeyDescriptionObject).MapFailure((e: Errors.SerializationError) => e.ToString());
+      var decryptStr :- API.Serialize(decryptKeyDescriptionObject).MapFailure((e: Errors.SerializationError) => e.ToString());
+
       var encryptKeyDescription :- keys
                                    .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                         json := encryptStr
                                                       ))
-                                   .MapFailure(e => "Whoops");
+                                   .MapFailure((e) => "Whoops");
+
       var decryptKeyDescription :- keys
                                    .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                         json := decryptStr
                                                       ))
-                                   .MapFailure(e => "Whoops");
-
+                                   .MapFailure((e) => "Whoops");
       Success(PositiveEncryptKeyringVector(
                 name := name,
                 description := description,
@@ -103,12 +105,12 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
               ))
     case "negative-keyring" =>
       var keyDescriptionObject :- Get("keyDescription", obj);
-      var keyStr :- API.Serialize(keyDescriptionObject).MapFailure(e => "Whoops");
+      var keyStr :- API.Serialize(keyDescriptionObject).MapFailure((e: Errors.SerializationError) => e.ToString());
       var keyDescription :- keys
                             .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                  json := keyStr
                                                ))
-                            .MapFailure(e => "Whoops");
+                            .MapFailure((e) => "Whoops");
 
       var errorDescription :- GetString("errorDescription", obj);
       Success(NegativeEncryptKeyringVector(

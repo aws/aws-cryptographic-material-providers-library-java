@@ -8,6 +8,12 @@ using System;
  using Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types; namespace AWS.Cryptography.MaterialProvidersTestVectorKeys {
  public class KeyVectors {
  private readonly Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient _impl;
+ public KeyVectors(Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient impl) {
+    this._impl = impl;
+}
+ public Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient impl() {
+    return this._impl;
+}
  public KeyVectors(AWS.Cryptography.MaterialProvidersTestVectorKeys.KeyVectorsConfig input)
  {
  Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKeyVectorsConfig internalInput = TypeConversion.ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_KeyVectorsConfig(input);
