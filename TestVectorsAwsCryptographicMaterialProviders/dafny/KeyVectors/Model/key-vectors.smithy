@@ -74,7 +74,7 @@ union KeyDescription {
   KmsMrkDiscovery: KmsMrkAwareDiscovery,
   RSA: RawRSA,
   AES: RawAES,
-  Invalid: InvalidKeyring,
+  Static: StaticKeyring,
 }
 
 structure KMSInfo {
@@ -106,7 +106,7 @@ structure RawAES {
   @required
   providerId: String,
 }
-structure InvalidKeyring {
+structure StaticKeyring {
   @required
   keyId: String,
 }

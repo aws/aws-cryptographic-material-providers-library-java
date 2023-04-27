@@ -12,7 +12,6 @@ import java.lang.RuntimeException;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.CollectionOfErrors;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionInput;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionOutput;
-import software.amazon.cryptography.materialProvidersTestVectorKeys.model.InvalidKeyring;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.KMSInfo;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyDescription;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyVectorException;
@@ -24,6 +23,7 @@ import software.amazon.cryptography.materialProvidersTestVectorKeys.model.RawAES
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.RawRSA;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionInput;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionOutput;
+import software.amazon.cryptography.materialProvidersTestVectorKeys.model.StaticKeyring;
 import software.amazon.cryptography.materialProvidersTestVectorKeys.model.TestVectorKeyringInput;
 
 public class ToNative {
@@ -60,6 +60,13 @@ public class ToNative {
     }
     OpaqueError.Builder nativeBuilder = OpaqueError.builder();
     nativeBuilder.obj(dafnyValue);
+    return nativeBuilder.build();
+  }
+
+  public static StaticKeyring StaticKeyring(
+      Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring dafnyValue) {
+    StaticKeyring.Builder nativeBuilder = StaticKeyring.builder();
+    nativeBuilder.keyId(software.amazon.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_keyId()));
     return nativeBuilder.build();
   }
 
@@ -140,13 +147,6 @@ public class ToNative {
     return nativeBuilder.build();
   }
 
-  public static InvalidKeyring InvalidKeyring(
-      Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.InvalidKeyring dafnyValue) {
-    InvalidKeyring.Builder nativeBuilder = InvalidKeyring.builder();
-    nativeBuilder.keyId(software.amazon.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_keyId()));
-    return nativeBuilder.build();
-  }
-
   public static KeyVectorsConfig KeyVectorsConfig(
       Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyVectorsConfig dafnyValue) {
     KeyVectorsConfig.Builder nativeBuilder = KeyVectorsConfig.builder();
@@ -172,8 +172,8 @@ public class ToNative {
     if (dafnyValue.is_AES()) {
       nativeBuilder.AES(ToNative.RawAES(dafnyValue.dtor_AES()));
     }
-    if (dafnyValue.is_Invalid()) {
-      nativeBuilder.Invalid(ToNative.InvalidKeyring(dafnyValue.dtor_Invalid()));
+    if (dafnyValue.is_Static()) {
+      nativeBuilder.Static(ToNative.StaticKeyring(dafnyValue.dtor_Static()));
     }
     return nativeBuilder.build();
   }

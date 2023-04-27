@@ -107,7 +107,6 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
     Failure(KeyVectorException( message := "Not Supported"))
   }
 
-
   function GetKeyId(input: Types.KeyDescription)
     : string
   {
@@ -117,7 +116,7 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
     case KmsMrkDiscovery(i) => i.keyId
     case RSA(i) => i.keyId
     case AES(i) => i.keyId
-    case Invalid(i) => i.keyId
+    case Static(i) => i.keyId
   }
 
 }

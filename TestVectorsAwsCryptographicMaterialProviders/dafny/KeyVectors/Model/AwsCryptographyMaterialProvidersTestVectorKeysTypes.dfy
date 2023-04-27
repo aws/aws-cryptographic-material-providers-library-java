@@ -20,16 +20,13 @@ include "../../../../StandardLibrary/src/Index.dfy"
  datatype GetKeyDescriptionOutput = | GetKeyDescriptionOutput (
  nameonly keyDescription: KeyDescription
  )
- datatype InvalidKeyring = | InvalidKeyring (
- nameonly keyId: string
- )
  datatype KeyDescription =
  | Kms(Kms: KMSInfo)
  | KmsMrk(KmsMrk: KmsMrkAware)
  | KmsMrkDiscovery(KmsMrkDiscovery: KmsMrkAwareDiscovery)
  | RSA(RSA: RawRSA)
  | AES(AES: RawAES)
- | Invalid(Invalid: InvalidKeyring)
+ | Static(Static: StaticKeyring)
  class IKeyVectorsClientCallHistory {
  ghost constructor() {
  CreateTestVectorKeyring := [];
@@ -150,6 +147,9 @@ include "../../../../StandardLibrary/src/Index.dfy"
  )
  datatype SerializeKeyDescriptionOutput = | SerializeKeyDescriptionOutput (
  nameonly json: seq<uint8>
+ )
+ datatype StaticKeyring = | StaticKeyring (
+ nameonly keyId: string
  )
  datatype TestVectorKeyringInput = | TestVectorKeyringInput (
  nameonly keyDescription: KeyDescription

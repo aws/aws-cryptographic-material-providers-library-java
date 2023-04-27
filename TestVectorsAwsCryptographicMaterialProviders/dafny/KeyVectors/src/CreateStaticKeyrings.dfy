@@ -10,11 +10,11 @@ include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
 // EncryptionMaterialsHasPlaintextDataKey
 // ValidEncryptionMaterialsTransition
 // DecryptionMaterialsTransitionIsValid
-module CreateInvalidKeyrings {
+module CreateStaticKeyrings {
   import opened Wrappers
   import Types = AwsCryptographyMaterialProvidersTypes
 
-  method CreateInvalidMaterialKeyring(
+  method CreateStaticMaterialsKeyring(
     encryptMaterial: Types.EncryptionMaterials,
     decryptMaterial: Types.DecryptionMaterials
   )
@@ -24,7 +24,7 @@ module CreateInvalidKeyrings {
       && fresh(keyring)
       && fresh(keyring.Modifies)
   {
-    return new InvalidMaterialsKeyring(encryptMaterial, decryptMaterial);
+    return new StaticMaterialsKeyring(encryptMaterial, decryptMaterial);
   }
 
   // The goal of this class is to return *invalid* materials.
@@ -32,7 +32,7 @@ module CreateInvalidKeyrings {
   // So this keyring can be configured to return materials
   // that MUST fail this check.
   // This is *NOT* at example of a properly desgined keyring!
-  class InvalidMaterialsKeyring
+  class StaticMaterialsKeyring
     extends Types.IKeyring
   {
 

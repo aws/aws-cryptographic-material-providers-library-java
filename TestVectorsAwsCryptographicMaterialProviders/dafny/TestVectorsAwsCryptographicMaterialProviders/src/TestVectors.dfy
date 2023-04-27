@@ -217,7 +217,7 @@ module {:options "-functionSyntax:4"} TestVectors {
 
 
   // Helper method because debugging can be hard
-  function printErr(e: KeyVectorsTypes.Error) : (){()} by method {print e, "\n", "\n";}
+  function printErr(e: KeyVectorsTypes.Error) : (){()} by method {print e, "\n", "\n"; return ();}
   datatype EncryptTestVector =
     | PositiveEncryptKeyringVector(
         name: string,

@@ -5,7 +5,7 @@ include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes this is including from somewhere else.
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/LibraryIndex.dfy"
 include "KeyMaterial.dfy"
-include "CreateInvalidKeyrings.dfy"
+include "CreateStaticKeyrings.dfy"
 
 module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
@@ -13,7 +13,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
     // import WrappedMaterialProviders
   import opened Wrappers
   import KeyMaterial
-  import CreateInvalidKeyrings
+  import CreateStaticKeyrings
 
   datatype KeyringInfo = KeyringInfo(
     description: KeyDescription,
@@ -32,7 +32,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
     var KeyringInfo(description, material) := info;
 
     match description
-    case Invalid(InvalidKeyring(key)) => {
+    case Static(StaticKeyring(key)) => {
 
       :- Need(material.Some? && material.value.InvalidMaterial?, KeyVectorException( message := "Not type: InvalidMaterial"));
       var encrypt := MPL.EncryptionMaterials(
@@ -53,7 +53,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
         symmetricSigningKey := None // need to pass one vs many :(
       );
 
-      var keyring := CreateInvalidKeyrings.CreateInvalidMaterialKeyring(encrypt, decrypt);
+      var keyring := CreateStaticKeyrings.CreateStaticMaterialsKeyring(encrypt, decrypt);
       return Success(keyring);
     }
     case Kms(KMSInfo(key)) => {

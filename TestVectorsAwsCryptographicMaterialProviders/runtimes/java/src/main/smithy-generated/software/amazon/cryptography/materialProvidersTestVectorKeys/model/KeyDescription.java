@@ -16,7 +16,7 @@ public class KeyDescription {
 
   private final RawAES AES;
 
-  private final InvalidKeyring Invalid;
+  private final StaticKeyring Static;
 
   protected KeyDescription(BuilderImpl builder) {
     this.Kms = builder.Kms();
@@ -24,7 +24,7 @@ public class KeyDescription {
     this.KmsMrkDiscovery = builder.KmsMrkDiscovery();
     this.RSA = builder.RSA();
     this.AES = builder.AES();
-    this.Invalid = builder.Invalid();
+    this.Static = builder.Static();
   }
 
   public KMSInfo Kms() {
@@ -47,8 +47,8 @@ public class KeyDescription {
     return this.AES;
   }
 
-  public InvalidKeyring Invalid() {
-    return this.Invalid;
+  public StaticKeyring Static() {
+    return this.Static;
   }
 
   public Builder toBuilder() {
@@ -80,9 +80,9 @@ public class KeyDescription {
 
     RawAES AES();
 
-    Builder Invalid(InvalidKeyring Invalid);
+    Builder Static(StaticKeyring Static);
 
-    InvalidKeyring Invalid();
+    StaticKeyring Static();
 
     KeyDescription build();
   }
@@ -98,7 +98,7 @@ public class KeyDescription {
 
     protected RawAES AES;
 
-    protected InvalidKeyring Invalid;
+    protected StaticKeyring Static;
 
     protected BuilderImpl() {
     }
@@ -109,7 +109,7 @@ public class KeyDescription {
       this.KmsMrkDiscovery = model.KmsMrkDiscovery();
       this.RSA = model.RSA();
       this.AES = model.AES();
-      this.Invalid = model.Invalid();
+      this.Static = model.Static();
     }
 
     public Builder Kms(KMSInfo Kms) {
@@ -157,13 +157,13 @@ public class KeyDescription {
       return this.AES;
     }
 
-    public Builder Invalid(InvalidKeyring Invalid) {
-      this.Invalid = Invalid;
+    public Builder Static(StaticKeyring Static) {
+      this.Static = Static;
       return this;
     }
 
-    public InvalidKeyring Invalid() {
-      return this.Invalid;
+    public StaticKeyring Static() {
+      return this.Static;
     }
 
     public KeyDescription build() {
@@ -174,7 +174,7 @@ public class KeyDescription {
     }
 
     private boolean onlyOneNonNull() {
-      Object[] allValues = {this.Kms, this.KmsMrk, this.KmsMrkDiscovery, this.RSA, this.AES, this.Invalid};
+      Object[] allValues = {this.Kms, this.KmsMrk, this.KmsMrkDiscovery, this.RSA, this.AES, this.Static};
       boolean haveOneNonNull = false;
       for (Object o : allValues) {
         if (Objects.nonNull(o)) {

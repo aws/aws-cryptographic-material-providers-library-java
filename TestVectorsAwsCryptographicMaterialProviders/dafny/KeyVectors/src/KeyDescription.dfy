@@ -34,7 +34,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
       var key :- GetString("key", obj);
       match typ
       case "invalid" =>
-        Success(Invalid(InvalidKeyring( keyId := key )))
+        Success(Static(StaticKeyring( keyId := key )))
       case "aws-kms" =>
         Success(Kms(KMSInfo( keyId := key )))
       case "aws-kms-mrk-aware" =>

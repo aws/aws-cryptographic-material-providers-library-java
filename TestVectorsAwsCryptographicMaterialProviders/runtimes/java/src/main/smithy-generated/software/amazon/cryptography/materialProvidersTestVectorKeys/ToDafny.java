@@ -10,7 +10,6 @@ import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.Error_KeyVec
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionInput;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionOutput;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient;
-import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.InvalidKeyring;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KMSInfo;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyVectorsConfig;
@@ -20,6 +19,7 @@ import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.RawAES;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.RawRSA;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionInput;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionOutput;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.TestVectorKeyringInput;
 import Wrappers_Compile.Option;
 import dafny.DafnySequence;
@@ -56,6 +56,13 @@ public class ToDafny {
         ToDafny::Error, 
         Error._typeDescriptor());
     return Error.create_CollectionOfErrors(list);
+  }
+
+  public static StaticKeyring StaticKeyring(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.StaticKeyring nativeValue) {
+    DafnySequence<? extends Character> keyId;
+    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
+    return new StaticKeyring(keyId);
   }
 
   public static RawRSA RawRSA(
@@ -140,13 +147,6 @@ public class ToDafny {
     return new GetKeyDescriptionInput(json);
   }
 
-  public static InvalidKeyring InvalidKeyring(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.InvalidKeyring nativeValue) {
-    DafnySequence<? extends Character> keyId;
-    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
-    return new InvalidKeyring(keyId);
-  }
-
   public static KeyVectorsConfig KeyVectorsConfig(
       software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyVectorsConfig nativeValue) {
     DafnySequence<? extends Character> keyManifiestPath;
@@ -177,8 +177,8 @@ public class ToDafny {
     if (Objects.nonNull(nativeValue.AES())) {
       return KeyDescription.create_AES(ToDafny.RawAES(nativeValue.AES()));
     }
-    if (Objects.nonNull(nativeValue.Invalid())) {
-      return KeyDescription.create_Invalid(ToDafny.InvalidKeyring(nativeValue.Invalid()));
+    if (Objects.nonNull(nativeValue.Static())) {
+      return KeyDescription.create_Static(ToDafny.StaticKeyring(nativeValue.Static()));
     }
     throw new IllegalArgumentException("Cannot convert " + nativeValue + " to Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.");
   }
