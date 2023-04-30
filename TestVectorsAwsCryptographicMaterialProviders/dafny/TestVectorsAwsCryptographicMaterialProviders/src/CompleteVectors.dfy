@@ -29,7 +29,6 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   // TODO support required encrytion context
   // TODO serialize commitment policy
   // TODO serialize maxPlaintextLength
-  // TODO change `InvalidKeyring` to `FixedMaterials` or something...
 
   // This is a HACK!
   // This is *ONLY* because this is wrapping the MPL
