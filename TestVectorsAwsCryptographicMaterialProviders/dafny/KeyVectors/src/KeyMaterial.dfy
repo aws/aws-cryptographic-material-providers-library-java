@@ -48,7 +48,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
     :- Need(KeyMaterialString?(typ), "Unsupported KeyMaterial type:" + typ);
 
     match typ
-    case "invalid" =>
+    case "static-material" =>
       var algorithmSuiteHex :- GetString("algorithmSuiteId", obj);
       :- Need(HexStrings.IsLooseHexString(algorithmSuiteHex), "Not hex encoded binnary");
       var binaryId := HexStrings.FromHexString(algorithmSuiteHex);
@@ -84,6 +84,22 @@ module {:options "-functionSyntax:4"} KeyMaterial {
                 signingKey := None,
                 verificationKey := None,
                 symmetricSigningKeys := None
+              ))
+    case "aws-kms-hierarchy" =>
+      var keyIdentifier :- GetString("key-id", obj);
+
+      var branchKeyVersionEncoded :- GetString("branchKeyVersion", obj);
+      var branchKeyVersion :- UTF8.Encode(branchKeyVersionEncoded);
+      var branchKeyEncoded :- GetString("branchKey", obj);
+      var branchKey :- Base64.Decode(branchKeyEncoded);
+      var beaconKeyEncoded :- GetString("beaconKey", obj);
+      var beaconKey :- Base64.Decode(beaconKeyEncoded);
+
+      Success(StaticKeyStoreInformation(
+                keyIdentifier := keyIdentifier,
+                branchKeyVersion := branchKeyVersion,
+                branchKey := branchKey,
+                beaconKey := beaconKey
               ))
     case _ =>
       var encrypt :- GetBool("encrypt", obj);
@@ -139,6 +155,17 @@ module {:options "-functionSyntax:4"} KeyMaterial {
                     encoding := encoding,
                     material := material
                   ))
+        case "aws-kms-rsa" =>
+          Success(KMSAsymetric(
+                    name := name,
+                    encrypt := encrypt,
+                    decrypt := decrypt,
+                    keyIdentifier := keyIdentifier,
+                    algorithm := algorithm,
+                    bits := bits,
+                    encoding := encoding,
+                    publicKey := material
+                  ))
   }
 
   function ToEncryptedDataKey(obj: seq<(string, JSON)>)
@@ -162,11 +189,13 @@ module {:options "-functionSyntax:4"} KeyMaterial {
   type KeyMaterialString = s: string | KeyMaterialString?(s) witness *
   predicate KeyMaterialString?(s: string)
   {
-    || s == "invalid"
+    || s == "static-material"
     || s == "aws-kms"
     || s == "symmetric"
     || s == "private"
     || s == "public"
+    || s == "aws-kms-hierarchy"
+    || s == "aws-kms-rsa"
   }
 
   datatype KeyMaterial =
@@ -202,6 +231,15 @@ module {:options "-functionSyntax:4"} KeyMaterial {
         encrypt: bool, decrypt: bool,
         keyIdentifier: string
       )
+    | KMSAsymetric(
+        name: string,
+        encrypt: bool, decrypt: bool,
+        keyIdentifier: string,
+        bits: nat,
+        algorithm: string,
+        encoding: string,
+        publicKey: string
+      )
     | StaticMaterial(
         name: string,
         algorithmSuite: MPL.AlgorithmSuiteInfo,
@@ -212,6 +250,12 @@ module {:options "-functionSyntax:4"} KeyMaterial {
         signingKey: Option<MPL.Secret> := None,
         verificationKey: Option<MPL.Secret> := None,
         symmetricSigningKeys: Option<MPL.SymmetricSigningKeyList> := None
+      )
+    | StaticKeyStoreInformation(
+        keyIdentifier: string,
+        branchKeyVersion: MPL.Utf8Bytes,
+        branchKey: MPL.Secret,
+        beaconKey: MPL.Secret
       )
 
 }

@@ -27,7 +27,7 @@ module CreateStaticKeyrings {
     return new StaticMaterialsKeyring(encryptMaterial, decryptMaterial);
   }
 
-  // The goal of this class is to return *invalid* materials.
+  // The goal of this class is to return *static* materials.
   // The CMM MUST check that the materials it gets are valid
   // So this keyring can be configured to return materials
   // that MUST fail this check.
@@ -91,68 +91,4 @@ module CreateStaticKeyrings {
                      ));
     }
   }
-
-  // class InvalidTransitionKeyring
-  //   extends Types.IKeyring
-  // {
-
-  // predicate ValidState()
-  //   ensures ValidState() ==> History in Modifies
-  //   {
-  //     && History in Modifies
-  //   }
-
-  //   constructor ()
-  //     ensures ValidState() && fresh(this) && fresh(History) && fresh(Modifies)
-  //   {
-  //     History := new Types.IKeyringCallHistory();
-  //     Modifies := {History};
-  //   }
-
-  //   predicate OnEncryptEnsuresPublicly ( input: Types.OnEncryptInput , output: Result<Types.OnEncryptOutput, Types.Error> ) {true}
-
-  //   method OnEncrypt'(input: Types.OnEncryptInput)
-  //     returns (res: Result<Types.OnEncryptOutput, Types.Error>)
-  //     requires ValidState()
-  //     modifies Modifies - {History}
-  //     decreases Modifies - {History}
-  //     ensures ValidState()
-  //     ensures OnEncryptEnsuresPublicly(input, res)
-  //     ensures unchanged(History)
-  //   {
-  //     return Success(Types.OnEncryptOutput(
-  //       // The idea is that this is an invlid transition.
-  //       // The expectation is that the suite is ESDK_ALG_AES_256_GCM_IV12_TAG16_NO_KDF
-  //       materials := input.materials.(
-  //         plaintextDataKey := Some([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-  //         algorithmSuite := AlgorithmSuites.ESDK_ALG_AES_128_GCM_IV12_TAG16_NO_KDF
-  //       )
-  //     ));
-  //   }
-
-  //   predicate OnDecryptEnsuresPublicly ( input: Types.OnDecryptInput , output: Result<Types.OnDecryptOutput, Types.Error> ) {true}
-
-  //   method OnDecrypt'(
-  //     input: Types.OnDecryptInput
-  //   )
-  //     returns (res: Result<Types.OnDecryptOutput, Types.Error>)
-  //     requires ValidState()
-  //     modifies Modifies - {History}
-  //     decreases Modifies - {History}
-  //     ensures ValidState()
-  //     ensures OnDecryptEnsuresPublicly(input, res)
-  //     ensures unchanged(History)
-  //   {
-  //     return Success(Types.OnDecryptOutput(
-  //       // The idea is that this is an invlid transition.
-  //       // The expectation is that the suite is ESDK_ALG_AES_256_GCM_IV12_TAG16_NO_KDF
-  //       materials := input.materials.(
-  //         plaintextDataKey := Some([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
-  //         algorithmSuite := AlgorithmSuites.ESDK_ALG_AES_128_GCM_IV12_TAG16_NO_KDF
-  //       )
-  //     ));
-  //   }
-  // }
-
-
 }

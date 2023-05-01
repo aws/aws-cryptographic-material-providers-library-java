@@ -10,7 +10,6 @@ include "CreateStaticKeyrings.dfy"
 module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import MPL = AwsCryptographyMaterialProvidersTypes
-    // import WrappedMaterialProviders
   import opened Wrappers
   import KeyMaterial
   import CreateStaticKeyrings

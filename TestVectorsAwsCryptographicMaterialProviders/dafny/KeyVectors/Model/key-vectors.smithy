@@ -111,6 +111,15 @@ structure StaticKeyring {
   keyId: String,
 }
 
+structure KmsRsa {
+  @required
+  keyId: String,
+}
+structure Hierarchy {
+  @required
+  branchKeyId: String,
+}
+
 
 @error("client")
 structure KeyVectorException {
