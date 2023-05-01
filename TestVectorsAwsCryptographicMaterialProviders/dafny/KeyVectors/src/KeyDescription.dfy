@@ -33,7 +33,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
     case _ =>
       var key :- GetString("key", obj);
       match typ
-      case "invalid" =>
+      case "static-material" =>
         Success(Static(StaticKeyring( keyId := key )))
       case "aws-kms" =>
         Success(Kms(KMSInfo( keyId := key )))
@@ -81,7 +81,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
   type KeyDescriptionString = s: string | KeyDescriptionString?(s) witness *
   predicate KeyDescriptionString?(s: string)
   {
-    || s == "invalid"
+    || s == "static-material"
     || s == "aws-kms"
     || s == "aws-kms-mrk-aware"
     || s == "aws-kms-mrk-aware-discovery"

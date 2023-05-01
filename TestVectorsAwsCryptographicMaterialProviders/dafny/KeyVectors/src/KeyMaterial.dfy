@@ -73,7 +73,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
       var verificationKey :- GetOptionalString("verificationKey", obj);
       var symmetricSigningKeys := GetArrayString("symmetricSigningKeys", obj).ToOption();
 
-      Success(InvalidMaterial(
+      Success(StaticMaterial(
                 name := name,
                 algorithmSuite := algorithmSuite,
                 encryptionContext := encryptionContext,
@@ -202,7 +202,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
         encrypt: bool, decrypt: bool,
         keyIdentifier: string
       )
-    | InvalidMaterial(
+    | StaticMaterial(
         name: string,
         algorithmSuite: MPL.AlgorithmSuiteInfo,
         encryptionContext: MPL.EncryptionContext,

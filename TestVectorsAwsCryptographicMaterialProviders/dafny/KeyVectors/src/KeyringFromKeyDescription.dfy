@@ -34,7 +34,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
     match description
     case Static(StaticKeyring(key)) => {
 
-      :- Need(material.Some? && material.value.InvalidMaterial?, KeyVectorException( message := "Not type: InvalidMaterial"));
+      :- Need(material.Some? && material.value.StaticMaterial?, KeyVectorException( message := "Not type: InvalidMaterial"));
       var encrypt := MPL.EncryptionMaterials(
         algorithmSuite := material.value.algorithmSuite,
         encryptedDataKeys := material.value.encryptedDataKeys,
