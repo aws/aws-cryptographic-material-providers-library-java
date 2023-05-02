@@ -22,8 +22,6 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   import FileIO
 
   // TODO Add a path to write manifies to
-  // TODO Add KMS RSA
-  // TODO Add hierarkey keyring
   // TODO Add negative encrypt tests
   // TODO Add negative decrypt tests
   // TODO Add additional manifest data to decrypt manifiest
