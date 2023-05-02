@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
 using System;
- using AWS.Cryptography.MaterialProviders.Wrapped.Keys; namespace AWS.Cryptography.MaterialProviders.Wrapped.Keys {
+ using AWS.Cryptography.MaterialProvidersTestVectorKeys; namespace AWS.Cryptography.MaterialProvidersTestVectorKeys {
  public class GetKeyDescriptionOutput {
- private AWS.Cryptography.MaterialProviders.Wrapped.Keys.KeyDescription _keyDescription ;
- public AWS.Cryptography.MaterialProviders.Wrapped.Keys.KeyDescription KeyDescription {
+ private AWS.Cryptography.MaterialProvidersTestVectorKeys.KeyDescription _keyDescription ;
+ public AWS.Cryptography.MaterialProvidersTestVectorKeys.KeyDescription KeyDescription {
  get { return this._keyDescription; }
  set { this._keyDescription = value; }
 }

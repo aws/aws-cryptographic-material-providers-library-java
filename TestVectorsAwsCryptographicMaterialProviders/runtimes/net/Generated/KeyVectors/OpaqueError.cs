@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
 using System;
- using AWS.Cryptography.MaterialProviders.Wrapped.Keys; namespace AWS.Cryptography.MaterialProviders.Wrapped.Keys {
+ using AWS.Cryptography.MaterialProvidersTestVectorKeys; namespace AWS.Cryptography.MaterialProvidersTestVectorKeys {
  public class OpaqueError : Exception {
   public readonly object obj;
   public OpaqueError(Exception ex) : base("OpaqueError:", ex) { this.obj = ex; }
