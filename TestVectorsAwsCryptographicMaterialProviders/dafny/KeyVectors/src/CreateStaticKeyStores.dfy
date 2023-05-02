@@ -2,29 +2,25 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
+include "KeyMaterial.dfy"
 
 module {:options "-functionSyntax:4"} CreateStaticKeyStores {
   // import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import MPL = AwsCryptographyMaterialProvidersTypes
   import opened Wrappers
   import opened AwsCryptographyKeyStoreTypes
+  import KeyMaterial
 
-  datatype StaticKeyStoreInformation = StaticKeyStoreInformation(
-    branchKeyIdentifier: string,
-    beaconKeyIdentifier: string,
-    branchKeyVersion: Utf8Bytes,
-    branchKey: Secret,
-    beaconKey: Secret
-  )
 
-  method CreateStaticKeyStore( staticInformation : StaticKeyStoreInformation )
+  method CreateStaticKeyStore( staticKeyMaterial : KeyMaterial.KeyMaterial )
     returns (keyStore: IKeyStoreClient)
+    requires staticKeyMaterial.StaticKeyStoreInformation?
     ensures
       && keyStore.ValidState()
       && fresh(keyStore)
       && fresh(keyStore.Modifies)
   {
-    return new StaticKeyStore(staticInformation);
+    return new StaticKeyStore(staticKeyMaterial);
   }
 
   // The goal of this class is to return *invalid* materials.
@@ -34,18 +30,26 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
   // This is *NOT* at example of a properly desgined keyring!
   class StaticKeyStore extends IKeyStoreClient
   {
-    constructor(staticInformation : StaticKeyStoreInformation)
+    constructor(staticKeyMaterial : KeyMaterial.KeyMaterial)
+      requires staticKeyMaterial.StaticKeyStoreInformation?
       ensures
         && ValidState()
         && fresh(History)
         && fresh(Modifies)
     {
-      this.staticInformation := staticInformation;
+      this.staticKeyMaterial := staticKeyMaterial;
       History := new IKeyStoreClientCallHistory();
       Modifies := {History};
     }
 
-    const staticInformation : StaticKeyStoreInformation
+    const staticKeyMaterial : KeyMaterial.KeyMaterial
+
+    ghost predicate ValidState()
+      ensures ValidState() ==> History in Modifies
+    {
+      && History in Modifies
+      && staticKeyMaterial.StaticKeyStoreInformation?  
+    }
 
     // These are the supported Static information
 
@@ -66,8 +70,8 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures History.GetActiveBranchKey == old(History.GetActiveBranchKey) + [DafnyCallEvent(input, output)]
     {
       output := Success(GetActiveBranchKeyOutput(
-                          branchKeyVersion :=  staticInformation.branchKeyVersion,
-                          branchKey := staticInformation.branchKey
+                          branchKeyVersion :=  staticKeyMaterial.branchKeyVersion,
+                          branchKey := staticKeyMaterial.branchKey
                         ));
       History.GetActiveBranchKey := History.GetActiveBranchKey + [DafnyCallEvent(input, output)];
     }
@@ -89,8 +93,8 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures History.GetBranchKeyVersion == old(History.GetBranchKeyVersion) + [DafnyCallEvent(input, output)]
     {
       output := Success(GetBranchKeyVersionOutput(
-                          branchKeyVersion := staticInformation.branchKeyVersion,
-                          branchKey := staticInformation.branchKey
+                          branchKeyVersion := staticKeyMaterial.branchKeyVersion,
+                          branchKey := staticKeyMaterial.branchKey
                         ));
       History.GetBranchKeyVersion := History.GetBranchKeyVersion + [DafnyCallEvent(input, output)];
     }
@@ -112,17 +116,11 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures History.GetBeaconKey == old(History.GetBeaconKey) + [DafnyCallEvent(input, output)]
     {
       output := Success(GetBeaconKeyOutput(
-                          beaconKeyIdentifier := staticInformation.beaconKeyIdentifier,
-                          beaconKey := staticInformation.beaconKey
+                          beaconKeyIdentifier := staticKeyMaterial.keyIdentifier,
+                          beaconKey := staticKeyMaterial.beaconKey
                         ));
       History.GetBeaconKey := History.GetBeaconKey + [DafnyCallEvent(input, output)];
     }
-
-
-    ghost predicate ValidState()
-      ensures ValidState() ==> History in Modifies
-    {History in Modifies}
-
 
     // Thise are all not supported operations in a static context
 

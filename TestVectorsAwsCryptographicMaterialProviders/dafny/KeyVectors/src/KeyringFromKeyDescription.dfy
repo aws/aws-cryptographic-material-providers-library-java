@@ -6,6 +6,7 @@ include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
 include "../../TestVectorsAwsCryptographicMaterialProviders/src/LibraryIndex.dfy"
 include "KeyMaterial.dfy"
 include "CreateStaticKeyrings.dfy"
+include "CreateStaticKeyStores.dfy"
 
 module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
@@ -13,6 +14,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
   import opened Wrappers
   import KeyMaterial
   import CreateStaticKeyrings
+  import CreateStaticKeyStores
 
   datatype KeyringInfo = KeyringInfo(
     description: KeyDescription,
@@ -84,7 +86,16 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
     case Hierarchy(HierarchyKeyring(key)) => {
       :- Need(material.Some? && material.value.StaticKeyStoreInformation?, KeyVectorException( message := "Not type: StaticKeyStoreInformation" ));
       
-      return Failure( KeyVectorException( message := "Not Yet" ));
+      var keyStore := CreateStaticKeyStores.CreateStaticKeyStore(material.value);
+      var input := MPL.CreateAwsKmsHierarchicalKeyringInput(
+        branchKeyId := Some(material.value.keyIdentifier),
+        branchKeyIdSupplier := None,
+        keyStore := keyStore,
+        ttlSeconds := 0,
+        maxCacheSize := None
+      );
+      var keyring := mpl.CreateAwsKmsHierarchicalKeyring(input);
+      return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));
     }
     case KmsMrkDiscovery(KmsMrkAwareDiscovery(_, defaultMrkRegion, awsKmsDiscoveryFilter)) => {
       :- Need(material.None?, KeyVectorException( message := "Discovery has not key"));
