@@ -5,12 +5,12 @@
   },
   "keys": {
     "no-plaintext-data-key": {
-      "type": "invalid",
+      "type": "static-material",
       "algorithmSuiteId": "0014",
       "encryptionContext": {},
       "encryptedDataKeys": [
         {
-          "keyProviderId": "invalid-keyring",
+          "keyProviderId": "static-material-keyring",
           "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
           "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
         }
@@ -18,12 +18,12 @@
       "requiredEncryptionContextKeys": []
     },
     "static-plaintext-data-key": {
-      "type": "invalid",
+      "type": "static-material",
       "algorithmSuiteId": "0014",
       "encryptionContext": {},
       "encryptedDataKeys": [
         {
-          "keyProviderId": "invalid-keyring",
+          "keyProviderId": "static-material-keyring",
           "keyProviderInfo": "c3RhdGljLXBsYWludGV4dA==",
           "ciphertext": "AQEBAQEBAQEBAQEBAQEBAQ=="
         }

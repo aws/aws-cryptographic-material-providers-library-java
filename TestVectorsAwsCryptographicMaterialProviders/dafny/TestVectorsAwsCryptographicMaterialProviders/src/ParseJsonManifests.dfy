@@ -85,13 +85,13 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
                                    .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                         json := encryptStr
                                                       ))
-                                   .MapFailure((e) => "Whoops");
+                                   .MapFailure(ErrorToString);
 
       var decryptKeyDescription :- keys
                                    .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                         json := decryptStr
                                                       ))
-                                   .MapFailure((e) => "Whoops");
+                                   .MapFailure(ErrorToString);
       Success(PositiveEncryptKeyringVector(
                 name := name,
                 description := description,
@@ -110,7 +110,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
                             .GetKeyDescription(KeyVectorsTypes.GetKeyDescriptionInput(
                                                  json := keyStr
                                                ))
-                            .MapFailure((e) => "Whoops");
+                            .MapFailure(ErrorToString);
 
       var errorDescription :- GetString("errorDescription", obj);
       Success(NegativeEncryptKeyringVector(
@@ -125,5 +125,15 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
                 keyDescription := keyDescription.keyDescription
               ))
     case _ => Failure("Unsupported EncryptTestVector type:" + typ)
+  }
+
+  function ErrorToString(e: KeyVectorsTypes.Error): string
+  {
+    match e
+    case KeyVectorException(message) => message
+    case AwsCryptographyMaterialProviders(mplError) => ( match mplError
+                                                         case AwsCryptographicMaterialProvidersException(message) => message
+                                                         case _ => "Umapped AwsCryptographyMaterialProviders" )
+    case _ => "Umapped KeyVectorException"
   }
 }

@@ -13,6 +13,10 @@ module {:options "-functionSyntax:4"} KeyDescription {
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import opened JSONHelpers
 
+
+  function printErr(e: string) : (){()} by method {print e, "\n", "\n"; return ();}
+  function printJSON(e: seq<(string, JSON)>) : (){()} by method {print e, "\n", "\n"; return ();}
+
   function ToKeyDescription(obj: JSON): Result<KeyDescription, string>
   {
     :- Need(obj.Object?, "KeyDescription not an object");
@@ -21,17 +25,10 @@ module {:options "-functionSyntax:4"} KeyDescription {
     var typ :- GetString(typString, obj);
 
     :- Need(KeyDescriptionString?(typ), "Unsupported KeyDescription type:" + typ);
-    var key :- GetString("key", obj);
 
     match typ
-    case "static-material" =>
-      Success(Static(StaticKeyring( keyId := key )))
-    case "aws-kms" =>
-      Success(Kms(KMSInfo( keyId := key )))
-    case "aws-kms-mrk-aware" =>
-      Success(KmsMrk(KmsMrkAware( keyId := key )))
     case "aws-kms-mrk-aware-discovery" =>
-      var defaultMrkRegion :- GetString("partition", obj);
+      var defaultMrkRegion :- GetString("default-mrk-region", obj);
       var filter := GetObject("aws-kms-discovery-filter", obj);
       var awsKmsDiscoveryFilter := ToDiscoveryFilter(obj);
       Success(KmsMrkDiscovery(KmsMrkAwareDiscovery(
@@ -39,32 +36,41 @@ module {:options "-functionSyntax:4"} KeyDescription {
                                 defaultMrkRegion := defaultMrkRegion,
                                 awsKmsDiscoveryFilter := awsKmsDiscoveryFilter
                               )))
-    case "aws-kms-rsa" =>
-      Success(KmsRsa(KmsRsaKeyring( keyId := key )))
-    case "aws-kms-hierarchy" =>
-      Success(Hierarchy(HierarchyKeyring( keyId := key )))
-    case "raw" =>
-      var algorithm :- GetString("encryption-algorithm", obj);
-      var providerId :- GetString("provider-id", obj);
-      :- Need(RawAlgorithmString?(algorithm), "Unsupported algorithm:" + algorithm);
-      match algorithm
-      case "aes" =>
-        Success(AES(RawAES( keyId := key, providerId := providerId )))
-      case "rsa" =>
-        var paddingAlgorithm :- GetString("padding-algorithm", obj);
-        var paddingHash :- GetString("padding-hash", obj);
-        :- Need(PaddingAlgorithmString?(paddingAlgorithm), "Unsupported paddingAlgorithm:" + paddingAlgorithm);
-        :- Need(PaddingHashString?(paddingHash), "Unsupported paddingHash:" + paddingHash);
+    case _ =>
+      var key :- GetString("key", obj);
+      match typ
+      case "static-material-keyring" =>
+        Success(Static(StaticKeyring( keyId := key )))
+      case "aws-kms" =>
+        Success(Kms(KMSInfo( keyId := key )))
+      case "aws-kms-mrk-aware" =>
+        Success(KmsMrk(KmsMrkAware( keyId := key )))
+      case "aws-kms-rsa" =>
+        Success(KmsRsa(KmsRsaKeyring( keyId := key )))
+      case "aws-kms-hierarchy" =>
+        Success(Hierarchy(HierarchyKeyring( keyId := key )))
+      case "raw" =>
+        var algorithm :- GetString("encryption-algorithm", obj);
+        var providerId :- GetString("provider-id", obj);
+        :- Need(RawAlgorithmString?(algorithm), "Unsupported algorithm:" + algorithm);
+        match algorithm
+        case "aes" =>
+          Success(AES(RawAES( keyId := key, providerId := providerId )))
+        case "rsa" =>
+          var paddingAlgorithm :- GetString("padding-algorithm", obj);
+          var paddingHash :- GetString("padding-hash", obj);
+          :- Need(PaddingAlgorithmString?(paddingAlgorithm), "Unsupported paddingAlgorithm:" + paddingAlgorithm);
+          :- Need(PaddingHashString?(paddingHash), "Unsupported paddingHash:" + paddingHash);
 
-        match paddingAlgorithm
-        case "pkcs1" =>
-          :- Need(paddingHash == "sha1", "Unsupported padding with pkcs1:" + paddingHash);
-          Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.PKCS1 )))
-        case "oaep-mgf1" => match paddingHash
-          case "sha1" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA1_MGF1 )))
-          case "sha256" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA256_MGF1 )))
-          case "sha384" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA384_MGF1 )))
-          case "sha512" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA512_MGF1 )))
+          match paddingAlgorithm
+          case "pkcs1" =>
+            :- Need(paddingHash == "sha1", "Unsupported padding with pkcs1:" + paddingHash);
+            Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.PKCS1 )))
+          case "oaep-mgf1" => match paddingHash
+            case "sha1" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA1_MGF1 )))
+            case "sha256" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA256_MGF1 )))
+            case "sha384" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA384_MGF1 )))
+            case "sha512" => Success(RSA(RawRSA( keyId := key, providerId := providerId, padding := AwsCryptographyMaterialProvidersTypes.OAEP_SHA512_MGF1 )))
   }
 
   function ToDiscoveryFilter(obj: seq<(string, JSON)>)
@@ -81,7 +87,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
 
   predicate KeyDescriptionString?(s: string)
   {
-    || s == "static-material"
+    || s == "static-material-keyring"
     || s == "aws-kms"
     || s == "aws-kms-mrk-aware"
     || s == "aws-kms-mrk-aware-discovery"
