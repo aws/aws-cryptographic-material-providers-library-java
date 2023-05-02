@@ -9,12 +9,14 @@ import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.Error;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.Error_KeyVectorException;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionInput;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.GetKeyDescriptionOutput;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.IKeyVectorsClient;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KMSInfo;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyVectorsConfig;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsMrkAware;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsMrkAwareDiscovery;
+import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.RawAES;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.RawRSA;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionInput;
@@ -58,36 +60,39 @@ public class ToDafny {
     return Error.create_CollectionOfErrors(list);
   }
 
-  public static StaticKeyring StaticKeyring(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.StaticKeyring nativeValue) {
-    DafnySequence<? extends Character> keyId;
-    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
-    return new StaticKeyring(keyId);
-  }
-
-  public static RawRSA RawRSA(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.RawRSA nativeValue) {
-    DafnySequence<? extends Character> keyId;
-    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
-    DafnySequence<? extends Character> providerId;
-    providerId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.providerId());
-    PaddingScheme padding;
-    padding = software.amazon.cryptography.materialProviders.ToDafny.PaddingScheme(nativeValue.padding());
-    return new RawRSA(keyId, providerId, padding);
-  }
-
-  public static SerializeKeyDescriptionOutput SerializeKeyDescriptionOutput(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionOutput nativeValue) {
+  public static GetKeyDescriptionInput GetKeyDescriptionInput(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionInput nativeValue) {
     DafnySequence<? extends Byte> json;
     json = software.amazon.dafny.conversion.ToDafny.Simple.ByteSequence(nativeValue.json());
-    return new SerializeKeyDescriptionOutput(json);
+    return new GetKeyDescriptionInput(json);
   }
 
-  public static SerializeKeyDescriptionInput SerializeKeyDescriptionInput(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionInput nativeValue) {
+  public static GetKeyDescriptionOutput GetKeyDescriptionOutput(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionOutput nativeValue) {
     KeyDescription keyDescription;
     keyDescription = ToDafny.KeyDescription(nativeValue.keyDescription());
-    return new SerializeKeyDescriptionInput(keyDescription);
+    return new GetKeyDescriptionOutput(keyDescription);
+  }
+
+  public static HierarchyKeyring HierarchyKeyring(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.HierarchyKeyring nativeValue) {
+    DafnySequence<? extends Character> keyId;
+    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
+    return new HierarchyKeyring(keyId);
+  }
+
+  public static KeyVectorsConfig KeyVectorsConfig(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyVectorsConfig nativeValue) {
+    DafnySequence<? extends Character> keyManifiestPath;
+    keyManifiestPath = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyManifiestPath());
+    return new KeyVectorsConfig(keyManifiestPath);
+  }
+
+  public static KMSInfo KMSInfo(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.KMSInfo nativeValue) {
+    DafnySequence<? extends Character> keyId;
+    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
+    return new KMSInfo(keyId);
   }
 
   public static KmsMrkAware KmsMrkAware(
@@ -110,25 +115,11 @@ public class ToDafny {
     return new KmsMrkAwareDiscovery(keyId, defaultMrkRegion, awsKmsDiscoveryFilter);
   }
 
-  public static TestVectorKeyringInput TestVectorKeyringInput(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.TestVectorKeyringInput nativeValue) {
-    KeyDescription keyDescription;
-    keyDescription = ToDafny.KeyDescription(nativeValue.keyDescription());
-    return new TestVectorKeyringInput(keyDescription);
-  }
-
-  public static KMSInfo KMSInfo(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.KMSInfo nativeValue) {
+  public static KmsRsaKeyring KmsRsaKeyring(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.KmsRsaKeyring nativeValue) {
     DafnySequence<? extends Character> keyId;
     keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
-    return new KMSInfo(keyId);
-  }
-
-  public static GetKeyDescriptionOutput GetKeyDescriptionOutput(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionOutput nativeValue) {
-    KeyDescription keyDescription;
-    keyDescription = ToDafny.KeyDescription(nativeValue.keyDescription());
-    return new GetKeyDescriptionOutput(keyDescription);
+    return new KmsRsaKeyring(keyId);
   }
 
   public static RawAES RawAES(
@@ -140,18 +131,43 @@ public class ToDafny {
     return new RawAES(keyId, providerId);
   }
 
-  public static GetKeyDescriptionInput GetKeyDescriptionInput(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.GetKeyDescriptionInput nativeValue) {
-    DafnySequence<? extends Byte> json;
-    json = software.amazon.dafny.conversion.ToDafny.Simple.ByteSequence(nativeValue.json());
-    return new GetKeyDescriptionInput(json);
+  public static RawRSA RawRSA(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.RawRSA nativeValue) {
+    DafnySequence<? extends Character> keyId;
+    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
+    DafnySequence<? extends Character> providerId;
+    providerId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.providerId());
+    PaddingScheme padding;
+    padding = software.amazon.cryptography.materialProviders.ToDafny.PaddingScheme(nativeValue.padding());
+    return new RawRSA(keyId, providerId, padding);
   }
 
-  public static KeyVectorsConfig KeyVectorsConfig(
-      software.amazon.cryptography.materialProvidersTestVectorKeys.model.KeyVectorsConfig nativeValue) {
-    DafnySequence<? extends Character> keyManifiestPath;
-    keyManifiestPath = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyManifiestPath());
-    return new KeyVectorsConfig(keyManifiestPath);
+  public static SerializeKeyDescriptionInput SerializeKeyDescriptionInput(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionInput nativeValue) {
+    KeyDescription keyDescription;
+    keyDescription = ToDafny.KeyDescription(nativeValue.keyDescription());
+    return new SerializeKeyDescriptionInput(keyDescription);
+  }
+
+  public static SerializeKeyDescriptionOutput SerializeKeyDescriptionOutput(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.SerializeKeyDescriptionOutput nativeValue) {
+    DafnySequence<? extends Byte> json;
+    json = software.amazon.dafny.conversion.ToDafny.Simple.ByteSequence(nativeValue.json());
+    return new SerializeKeyDescriptionOutput(json);
+  }
+
+  public static StaticKeyring StaticKeyring(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.StaticKeyring nativeValue) {
+    DafnySequence<? extends Character> keyId;
+    keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
+    return new StaticKeyring(keyId);
+  }
+
+  public static TestVectorKeyringInput TestVectorKeyringInput(
+      software.amazon.cryptography.materialProvidersTestVectorKeys.model.TestVectorKeyringInput nativeValue) {
+    KeyDescription keyDescription;
+    keyDescription = ToDafny.KeyDescription(nativeValue.keyDescription());
+    return new TestVectorKeyringInput(keyDescription);
   }
 
   public static Error Error(KeyVectorException nativeValue) {
@@ -179,6 +195,12 @@ public class ToDafny {
     }
     if (Objects.nonNull(nativeValue.Static())) {
       return KeyDescription.create_Static(ToDafny.StaticKeyring(nativeValue.Static()));
+    }
+    if (Objects.nonNull(nativeValue.KmsRsa())) {
+      return KeyDescription.create_KmsRsa(ToDafny.KmsRsaKeyring(nativeValue.KmsRsa()));
+    }
+    if (Objects.nonNull(nativeValue.Hierarchy())) {
+      return KeyDescription.create_Hierarchy(ToDafny.HierarchyKeyring(nativeValue.Hierarchy()));
     }
     throw new IllegalArgumentException("Cannot convert " + nativeValue + " to Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.");
   }

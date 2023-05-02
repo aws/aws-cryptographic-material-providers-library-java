@@ -18,6 +18,10 @@ public class KeyDescription {
 
   private final StaticKeyring Static;
 
+  private final KmsRsaKeyring KmsRsa;
+
+  private final HierarchyKeyring Hierarchy;
+
   protected KeyDescription(BuilderImpl builder) {
     this.Kms = builder.Kms();
     this.KmsMrk = builder.KmsMrk();
@@ -25,6 +29,8 @@ public class KeyDescription {
     this.RSA = builder.RSA();
     this.AES = builder.AES();
     this.Static = builder.Static();
+    this.KmsRsa = builder.KmsRsa();
+    this.Hierarchy = builder.Hierarchy();
   }
 
   public KMSInfo Kms() {
@@ -49,6 +55,14 @@ public class KeyDescription {
 
   public StaticKeyring Static() {
     return this.Static;
+  }
+
+  public KmsRsaKeyring KmsRsa() {
+    return this.KmsRsa;
+  }
+
+  public HierarchyKeyring Hierarchy() {
+    return this.Hierarchy;
   }
 
   public Builder toBuilder() {
@@ -84,6 +98,14 @@ public class KeyDescription {
 
     StaticKeyring Static();
 
+    Builder KmsRsa(KmsRsaKeyring KmsRsa);
+
+    KmsRsaKeyring KmsRsa();
+
+    Builder Hierarchy(HierarchyKeyring Hierarchy);
+
+    HierarchyKeyring Hierarchy();
+
     KeyDescription build();
   }
 
@@ -100,6 +122,10 @@ public class KeyDescription {
 
     protected StaticKeyring Static;
 
+    protected KmsRsaKeyring KmsRsa;
+
+    protected HierarchyKeyring Hierarchy;
+
     protected BuilderImpl() {
     }
 
@@ -110,6 +136,8 @@ public class KeyDescription {
       this.RSA = model.RSA();
       this.AES = model.AES();
       this.Static = model.Static();
+      this.KmsRsa = model.KmsRsa();
+      this.Hierarchy = model.Hierarchy();
     }
 
     public Builder Kms(KMSInfo Kms) {
@@ -166,6 +194,24 @@ public class KeyDescription {
       return this.Static;
     }
 
+    public Builder KmsRsa(KmsRsaKeyring KmsRsa) {
+      this.KmsRsa = KmsRsa;
+      return this;
+    }
+
+    public KmsRsaKeyring KmsRsa() {
+      return this.KmsRsa;
+    }
+
+    public Builder Hierarchy(HierarchyKeyring Hierarchy) {
+      this.Hierarchy = Hierarchy;
+      return this;
+    }
+
+    public HierarchyKeyring Hierarchy() {
+      return this.Hierarchy;
+    }
+
     public KeyDescription build() {
       if (!onlyOneNonNull()) {
         throw new IllegalArgumentException("`KeyDescription` is a Union. A Union MUST have one and only one value set.");
@@ -174,7 +220,7 @@ public class KeyDescription {
     }
 
     private boolean onlyOneNonNull() {
-      Object[] allValues = {this.Kms, this.KmsMrk, this.KmsMrkDiscovery, this.RSA, this.AES, this.Static};
+      Object[] allValues = {this.Kms, this.KmsMrk, this.KmsMrkDiscovery, this.RSA, this.AES, this.Static, this.KmsRsa, this.Hierarchy};
       boolean haveOneNonNull = false;
       for (Object o : allValues) {
         if (Objects.nonNull(o)) {

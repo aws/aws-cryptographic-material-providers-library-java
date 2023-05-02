@@ -20,6 +20,9 @@ include "../../../../StandardLibrary/src/Index.dfy"
  datatype GetKeyDescriptionOutput = | GetKeyDescriptionOutput (
  nameonly keyDescription: KeyDescription
  )
+ datatype HierarchyKeyring = | HierarchyKeyring (
+ nameonly keyId: string
+ )
  datatype KeyDescription =
  | Kms(Kms: KMSInfo)
  | KmsMrk(KmsMrk: KmsMrkAware)
@@ -27,6 +30,8 @@ include "../../../../StandardLibrary/src/Index.dfy"
  | RSA(RSA: RawRSA)
  | AES(AES: RawAES)
  | Static(Static: StaticKeyring)
+ | KmsRsa(KmsRsa: KmsRsaKeyring)
+ | Hierarchy(Hierarchy: HierarchyKeyring)
  class IKeyVectorsClientCallHistory {
  ghost constructor() {
  CreateTestVectorKeyring := [];
@@ -132,6 +137,9 @@ include "../../../../StandardLibrary/src/Index.dfy"
  nameonly keyId: string ,
  nameonly defaultMrkRegion: string ,
  nameonly awsKmsDiscoveryFilter: Option<AwsCryptographyMaterialProvidersTypes.DiscoveryFilter>
+ )
+ datatype KmsRsaKeyring = | KmsRsaKeyring (
+ nameonly keyId: string
  )
  datatype RawAES = | RawAES (
  nameonly keyId: string ,

@@ -40,8 +40,14 @@ using System.Linq; using System; namespace AWS.Cryptography.MaterialProvidersTes
 } if (value.is_AES) {
  converted.AES = FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M3_AES(concrete.dtor_AES);
  return converted;
-} if (value.is_Invalid) {
- converted.Invalid = FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M7_Invalid(concrete.dtor_Invalid);
+} if (value.is_Static) {
+ converted.Static = FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_Static(concrete.dtor_Static);
+ return converted;
+} if (value.is_KmsRsa) {
+ converted.KmsRsa = FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_KmsRsa(concrete.dtor_KmsRsa);
+ return converted;
+} if (value.is_Hierarchy) {
+ converted.Hierarchy = FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M9_Hierarchy(concrete.dtor_Hierarchy);
  return converted;
 }
 throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTestVectorKeys.KeyDescription state");
@@ -57,8 +63,12 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
  return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_RSA(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M3_RSA(value.RSA));
 } if (value.IsSetAES()) {
  return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_AES(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M3_AES(value.AES));
-} if (value.IsSetInvalid()) {
- return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_Invalid(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M7_Invalid(value.Invalid));
+} if (value.IsSetStatic()) {
+ return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_Static(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_Static(value.Static));
+} if (value.IsSetKmsRsa()) {
+ return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_KmsRsa(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_KmsRsa(value.KmsRsa));
+} if (value.IsSetHierarchy()) {
+ return Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KeyDescription.create_Hierarchy(ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M9_Hierarchy(value.Hierarchy));
 }
 throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTestVectorKeys.KeyDescription state");
 }
@@ -149,11 +159,23 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
  internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IRawAES ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M3_AES (AWS.Cryptography.MaterialProvidersTestVectorKeys.RawAES value) {
  return ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S6_RawAES(value);
 }
- internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M7_Invalid (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IInvalidKeyring value) {
- return FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring(value);
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_Static (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IStaticKeyring value) {
+ return FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring(value);
 }
- internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IInvalidKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M7_Invalid (AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring value) {
- return ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring(value);
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IStaticKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_Static (AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring value) {
+ return ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring(value);
+}
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_KmsRsa (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring value) {
+ return FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring(value);
+}
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M6_KmsRsa (AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring value) {
+ return ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring(value);
+}
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M9_Hierarchy (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IHierarchyKeyring value) {
+ return FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring(value);
+}
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IHierarchyKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_KeyDescription__M9_Hierarchy (AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring value) {
+ return ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring(value);
 }
  internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S18_KeyVectorException__M7_message (Dafny.ISequence<char> value) {
  return FromDafny_N6_smithy__N3_api__S6_String(value);
@@ -241,12 +263,26 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
 
  return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.RawAES ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S6_RawAES__M5_keyId(value.KeyId) , ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S6_RawAES__M10_providerId(value.ProviderId) ) ;
 }
- internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IInvalidKeyring value) {
- Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.InvalidKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.InvalidKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring__M5_keyId(concrete._keyId); return converted;
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IStaticKeyring value) {
+ Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring__M5_keyId(concrete._keyId); return converted;
 }
- internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IInvalidKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring (AWS.Cryptography.MaterialProvidersTestVectorKeys.InvalidKeyring value) {
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IStaticKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring (AWS.Cryptography.MaterialProvidersTestVectorKeys.StaticKeyring value) {
 
- return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.InvalidKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring__M5_keyId(value.KeyId) ) ;
+ return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring__M5_keyId(value.KeyId) ) ;
+}
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring value) {
+ Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(concrete._keyId); return converted;
+}
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring (AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring value) {
+
+ return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(value.KeyId) ) ;
+}
+ internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IHierarchyKeyring value) {
+ Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId(concrete._keyId); return converted;
+}
+ internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IHierarchyKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring (AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring value) {
+
+ return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId(value.KeyId) ) ;
 }
  internal static string FromDafny_N6_smithy__N3_api__S6_String (Dafny.ISequence<char> value) {
  return new string(value.Elements);
@@ -314,10 +350,22 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
  internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S6_RawAES__M10_providerId (string value) {
  return ToDafny_N6_smithy__N3_api__S6_String(value);
 }
- internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring__M5_keyId (Dafny.ISequence<char> value) {
+ internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring__M5_keyId (Dafny.ISequence<char> value) {
  return FromDafny_N6_smithy__N3_api__S6_String(value);
 }
- internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S14_InvalidKeyring__M5_keyId (string value) {
+ internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring__M5_keyId (string value) {
+ return ToDafny_N6_smithy__N3_api__S6_String(value);
+}
+ internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId (Dafny.ISequence<char> value) {
+ return FromDafny_N6_smithy__N3_api__S6_String(value);
+}
+ internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId (string value) {
+ return ToDafny_N6_smithy__N3_api__S6_String(value);
+}
+ internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId (Dafny.ISequence<char> value) {
+ return FromDafny_N6_smithy__N3_api__S6_String(value);
+}
+ internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId (string value) {
  return ToDafny_N6_smithy__N3_api__S6_String(value);
 }
  internal static AWS.Cryptography.MaterialProviders.DiscoveryFilter FromDafny_N3_aws__N12_cryptography__N17_materialProviders__S15_DiscoveryFilter (Dafny.Aws.Cryptography.MaterialProviders.Types._IDiscoveryFilter value) {

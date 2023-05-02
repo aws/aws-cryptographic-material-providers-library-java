@@ -117,6 +117,8 @@ module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCr
     case RSA(i) => i.keyId
     case AES(i) => i.keyId
     case Static(i) => i.keyId
+    case Hierarchy(i) => i.keyId
+    case KmsRsa(i) => i.keyId
   }
 
 }

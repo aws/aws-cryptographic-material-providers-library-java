@@ -146,10 +146,10 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       History.CreateKeyStore := History.CreateKeyStore + [DafnyCallEvent(input, output)];
     }
 
-    ghost predicate CreateKeyEnsuresPublicly(input: CreateKeyInput , output: Result<CreateKeyOutput, Error>)
+    ghost predicate CreateKeyEnsuresPublicly( output: Result<CreateKeyOutput, Error>)
     {true}
     // The public method to be called by library consumers
-    method CreateKey ( input: CreateKeyInput )
+    method CreateKey ()
       returns (output: Result<CreateKeyOutput, Error>)
       requires
         && ValidState()
@@ -159,11 +159,11 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       decreases Modifies - {History}
       ensures
         && ValidState()
-      ensures CreateKeyEnsuresPublicly(input, output)
-      ensures History.CreateKey == old(History.CreateKey) + [DafnyCallEvent(input, output)]
+      ensures CreateKeyEnsuresPublicly( output)
+      ensures History.CreateKey == old(History.CreateKey) + [DafnyCallEvent((), output)]
     {
       output := Failure(KeyStoreException( message := "Not Supported"));
-      History.CreateKey := History.CreateKey + [DafnyCallEvent(input, output)];
+      History.CreateKey := History.CreateKey + [DafnyCallEvent((), output)];
     }
 
     ghost predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<(), Error>)

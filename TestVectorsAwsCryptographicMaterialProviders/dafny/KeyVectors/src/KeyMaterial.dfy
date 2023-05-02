@@ -1,9 +1,6 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-// include "JSONHelpers.dfy"
-// include "TestVectors.dfy"
-// include "CompleteVectors.dfy"
 include "../Model/AwsCryptographyMaterialProvidersTestVectorKeysTypes.dfy"
   // Yes, this is reaching across.
   // idealy all these functions would exist in the STD Library.
@@ -85,7 +82,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
                 verificationKey := None,
                 symmetricSigningKeys := None
               ))
-    case "aws-kms-hierarchy" =>
+    case "static-branch-key" =>
       var keyIdentifier :- GetString("key-id", obj);
 
       var branchKeyVersionEncoded :- GetString("branchKeyVersion", obj);
@@ -186,7 +183,6 @@ module {:options "-functionSyntax:4"} KeyMaterial {
             ))
   }
 
-  type KeyMaterialString = s: string | KeyMaterialString?(s) witness *
   predicate KeyMaterialString?(s: string)
   {
     || s == "static-material"
@@ -194,7 +190,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
     || s == "symmetric"
     || s == "private"
     || s == "public"
-    || s == "aws-kms-hierarchy"
+    || s == "static-branch-key"
     || s == "aws-kms-rsa"
   }
 

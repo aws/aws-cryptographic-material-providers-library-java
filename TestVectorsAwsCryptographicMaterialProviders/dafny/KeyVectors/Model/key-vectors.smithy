@@ -75,6 +75,8 @@ union KeyDescription {
   RSA: RawRSA,
   AES: RawAES,
   Static: StaticKeyring,
+  KmsRsa: KmsRsaKeyring,
+  Hierarchy: HierarchyKeyring,
 }
 
 structure KMSInfo {
@@ -111,13 +113,13 @@ structure StaticKeyring {
   keyId: String,
 }
 
-structure KmsRsa {
+structure KmsRsaKeyring {
   @required
   keyId: String,
 }
-structure Hierarchy {
+structure HierarchyKeyring {
   @required
-  branchKeyId: String,
+  keyId: String,
 }
 
 

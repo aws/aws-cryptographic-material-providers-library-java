@@ -33,7 +33,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
     match description
     case Static(StaticKeyring(key)) => {
 
-      :- Need(material.Some? && material.value.StaticMaterial?, KeyVectorException( message := "Not type: InvalidMaterial"));
+      :- Need(material.Some? && material.value.StaticMaterial?, KeyVectorException( message := "Not type: StaticMaterial"));
       var encrypt := MPL.EncryptionMaterials(
         algorithmSuite := material.value.algorithmSuite,
         encryptedDataKeys := material.value.encryptedDataKeys,
@@ -76,6 +76,15 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
       );
       var keyring := mpl.CreateAwsKmsMrkMultiKeyring(input);
       return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));
+    }
+    case KmsRsa(KmsRsaKeyring(key)) => {
+      :- Need(material.Some? && material.value.KMSAsymetric?, KeyVectorException( message := "Not type: KMSAsymetric" ));
+      return Failure( KeyVectorException( message := "Not Yet" ));
+    }
+    case Hierarchy(HierarchyKeyring(key)) => {
+      :- Need(material.Some? && material.value.StaticKeyStoreInformation?, KeyVectorException( message := "Not type: StaticKeyStoreInformation" ));
+      
+      return Failure( KeyVectorException( message := "Not Yet" ));
     }
     case KmsMrkDiscovery(KmsMrkAwareDiscovery(_, defaultMrkRegion, awsKmsDiscoveryFilter)) => {
       :- Need(material.None?, KeyVectorException( message := "Discovery has not key"));
