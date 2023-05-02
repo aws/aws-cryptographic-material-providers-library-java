@@ -11,7 +11,6 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
   import opened AwsCryptographyKeyStoreTypes
   import KeyMaterial
 
-
   method CreateStaticKeyStore( staticKeyMaterial : KeyMaterial.KeyMaterial )
     returns (keyStore: IKeyStoreClient)
     requires staticKeyMaterial.StaticKeyStoreInformation?

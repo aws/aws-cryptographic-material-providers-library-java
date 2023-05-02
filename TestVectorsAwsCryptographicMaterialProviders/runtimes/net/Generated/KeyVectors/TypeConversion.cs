@@ -271,11 +271,12 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
  return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_StaticKeyring__M5_keyId(value.KeyId) ) ;
 }
  internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring value) {
- Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(concrete._keyId); return converted;
+ Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(concrete._keyId);
+  converted.EncryptionAlgorithm = (Amazon.KeyManagementService.EncryptionAlgorithmSpec) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M19_encryptionAlgorithm(concrete._encryptionAlgorithm); return converted;
 }
  internal static Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IKmsRsaKeyring ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring (AWS.Cryptography.MaterialProvidersTestVectorKeys.KmsRsaKeyring value) {
 
- return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(value.KeyId) ) ;
+ return new Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring ( ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId(value.KeyId) , ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M19_encryptionAlgorithm(value.EncryptionAlgorithm) ) ;
 }
  internal static AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types._IHierarchyKeyring value) {
  Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring concrete = (Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.HierarchyKeyring)value; AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring converted = new AWS.Cryptography.MaterialProvidersTestVectorKeys.HierarchyKeyring();  converted.KeyId = (string) FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId(concrete._keyId); return converted;
@@ -362,6 +363,12 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProvidersTe
  internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M5_keyId (string value) {
  return ToDafny_N6_smithy__N3_api__S6_String(value);
 }
+ internal static Amazon.KeyManagementService.EncryptionAlgorithmSpec FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M19_encryptionAlgorithm (Dafny.Com.Amazonaws.Kms.Types._IEncryptionAlgorithmSpec value) {
+ return FromDafny_N3_com__N9_amazonaws__N3_kms__S23_EncryptionAlgorithmSpec(value);
+}
+ internal static Dafny.Com.Amazonaws.Kms.Types._IEncryptionAlgorithmSpec ToDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S13_KmsRsaKeyring__M19_encryptionAlgorithm (Amazon.KeyManagementService.EncryptionAlgorithmSpec value) {
+ return ToDafny_N3_com__N9_amazonaws__N3_kms__S23_EncryptionAlgorithmSpec(value);
+}
  internal static string FromDafny_N3_aws__N12_cryptography__N31_materialProvidersTestVectorKeys__S16_HierarchyKeyring__M5_keyId (Dafny.ISequence<char> value) {
  return FromDafny_N6_smithy__N3_api__S6_String(value);
 }
@@ -391,6 +398,18 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProviders.P
  if (AWS.Cryptography.MaterialProviders.PaddingScheme.OAEP_SHA384_MGF1.Equals(value)) return Dafny.Aws.Cryptography.MaterialProviders.Types.PaddingScheme.create_OAEP__SHA384__MGF1();
  if (AWS.Cryptography.MaterialProviders.PaddingScheme.OAEP_SHA512_MGF1.Equals(value)) return Dafny.Aws.Cryptography.MaterialProviders.Types.PaddingScheme.create_OAEP__SHA512__MGF1();
 throw new System.ArgumentException("Invalid AWS.Cryptography.MaterialProviders.PaddingScheme value");
+}
+ internal static Amazon.KeyManagementService.EncryptionAlgorithmSpec FromDafny_N3_com__N9_amazonaws__N3_kms__S23_EncryptionAlgorithmSpec (Dafny.Com.Amazonaws.Kms.Types._IEncryptionAlgorithmSpec value) {
+ if (value.is_SYMMETRIC__DEFAULT) return Amazon.KeyManagementService.EncryptionAlgorithmSpec.SYMMETRIC_DEFAULT;
+ if (value.is_RSAES__OAEP__SHA__1) return Amazon.KeyManagementService.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_1;
+ if (value.is_RSAES__OAEP__SHA__256) return Amazon.KeyManagementService.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256;
+throw new System.ArgumentException("Invalid Amazon.KeyManagementService.EncryptionAlgorithmSpec value");
+}
+ internal static Dafny.Com.Amazonaws.Kms.Types._IEncryptionAlgorithmSpec ToDafny_N3_com__N9_amazonaws__N3_kms__S23_EncryptionAlgorithmSpec (Amazon.KeyManagementService.EncryptionAlgorithmSpec value) {
+ if (Amazon.KeyManagementService.EncryptionAlgorithmSpec.SYMMETRIC_DEFAULT.Equals(value)) return Dafny.Com.Amazonaws.Kms.Types.EncryptionAlgorithmSpec.create_SYMMETRIC__DEFAULT();
+ if (Amazon.KeyManagementService.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_1.Equals(value)) return Dafny.Com.Amazonaws.Kms.Types.EncryptionAlgorithmSpec.create_RSAES__OAEP__SHA__1();
+ if (Amazon.KeyManagementService.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256.Equals(value)) return Dafny.Com.Amazonaws.Kms.Types.EncryptionAlgorithmSpec.create_RSAES__OAEP__SHA__256();
+throw new System.ArgumentException("Invalid Amazon.KeyManagementService.EncryptionAlgorithmSpec value");
 }
  internal static System.Collections.Generic.List<string> FromDafny_N3_aws__N12_cryptography__N17_materialProviders__S15_DiscoveryFilter__M10_accountIds (Dafny.ISequence<Dafny.ISequence<char>> value) {
  return FromDafny_N3_aws__N12_cryptography__N17_materialProviders__S13_AccountIdList(value);

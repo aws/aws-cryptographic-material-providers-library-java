@@ -122,6 +122,7 @@ public class ToNative {
       Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.KmsRsaKeyring dafnyValue) {
     KmsRsaKeyring.Builder nativeBuilder = KmsRsaKeyring.builder();
     nativeBuilder.keyId(software.amazon.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_keyId()));
+    nativeBuilder.encryptionAlgorithm(Dafny.Com.Amazonaws.Kms.ToNative.EncryptionAlgorithmSpec(dafnyValue.dtor_encryptionAlgorithm()));
     return nativeBuilder.build();
   }
 

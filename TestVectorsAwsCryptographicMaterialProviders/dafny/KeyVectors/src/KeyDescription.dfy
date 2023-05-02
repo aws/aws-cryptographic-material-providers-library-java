@@ -12,6 +12,7 @@ module {:options "-functionSyntax:4"} KeyDescription {
   import AwsCryptographyMaterialProvidersTypes
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import opened JSONHelpers
+  import ComAmazonawsKmsTypes
 
 
   function printErr(e: string) : (){()} by method {print e, "\n", "\n"; return ();}
@@ -46,7 +47,13 @@ module {:options "-functionSyntax:4"} KeyDescription {
       case "aws-kms-mrk-aware" =>
         Success(KmsMrk(KmsMrkAware( keyId := key )))
       case "aws-kms-rsa" =>
-        Success(KmsRsa(KmsRsaKeyring( keyId := key )))
+        var encryptionAlgorithmString :- GetString("encryption-algorithm", obj);
+        var _ := printJSON(obj);
+        :- Need(EncryptionAlgorithmSpec?(encryptionAlgorithmString), "Unsupported EncryptionAlgorithmSpec:" + encryptionAlgorithmString);
+        var encryptionAlgorithm := match encryptionAlgorithmString
+          case "RSAES_OAEP_SHA_1" => ComAmazonawsKmsTypes.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_1
+          case "RSAES_OAEP_SHA_256" => ComAmazonawsKmsTypes.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_256;
+        Success(KmsRsa(KmsRsaKeyring( keyId := key, encryptionAlgorithm := encryptionAlgorithm )))
       case "aws-kms-hierarchy" =>
         Success(Hierarchy(HierarchyKeyring( keyId := key )))
       case "raw" =>
@@ -115,6 +122,13 @@ module {:options "-functionSyntax:4"} KeyDescription {
     || s == "sha256"
     || s == "sha384"
     || s == "sha512"
+  }
+
+  predicate EncryptionAlgorithmSpec?(s: string)
+  {
+    // This is missing SYMMETRIC_DEFAULT because this is asymmetric only
+    || s == "RSAES_OAEP_SHA_1"
+	  || s == "RSAES_OAEP_SHA_256"
   }
 
 }

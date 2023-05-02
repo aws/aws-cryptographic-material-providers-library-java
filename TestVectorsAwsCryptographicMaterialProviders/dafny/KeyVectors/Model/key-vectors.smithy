@@ -116,7 +116,10 @@ structure StaticKeyring {
 structure KmsRsaKeyring {
   @required
   keyId: String,
+  @required
+  encryptionAlgorithm: com.amazonaws.kms#EncryptionAlgorithmSpec,
 }
+
 structure HierarchyKeyring {
   @required
   keyId: String,

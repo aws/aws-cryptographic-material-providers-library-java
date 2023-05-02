@@ -23,6 +23,7 @@ import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKey
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.SerializeKeyDescriptionOutput;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.StaticKeyring;
 import Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types.TestVectorKeyringInput;
+import Dafny.Com.Amazonaws.Kms.Types.EncryptionAlgorithmSpec;
 import Wrappers_Compile.Option;
 import dafny.DafnySequence;
 import java.lang.Byte;
@@ -119,7 +120,9 @@ public class ToDafny {
       software.amazon.cryptography.materialProvidersTestVectorKeys.model.KmsRsaKeyring nativeValue) {
     DafnySequence<? extends Character> keyId;
     keyId = software.amazon.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.keyId());
-    return new KmsRsaKeyring(keyId);
+    EncryptionAlgorithmSpec encryptionAlgorithm;
+    encryptionAlgorithm = Dafny.Com.Amazonaws.Kms.ToDafny.EncryptionAlgorithmSpec(nativeValue.encryptionAlgorithm());
+    return new KmsRsaKeyring(keyId, encryptionAlgorithm);
   }
 
   public static RawAES RawAES(

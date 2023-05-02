@@ -153,6 +153,8 @@ module {:options "-functionSyntax:4"} KeyMaterial {
                     material := material
                   ))
         case "aws-kms-rsa" =>
+        var publicKey :- UTF8.Encode(material);
+
           Success(KMSAsymetric(
                     name := name,
                     encrypt := encrypt,
@@ -161,7 +163,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
                     algorithm := algorithm,
                     bits := bits,
                     encoding := encoding,
-                    publicKey := material
+                    publicKey := publicKey
                   ))
   }
 
@@ -234,7 +236,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
         bits: nat,
         algorithm: string,
         encoding: string,
-        publicKey: string
+        publicKey: MPL.Secret
       )
     | StaticMaterial(
         name: string,

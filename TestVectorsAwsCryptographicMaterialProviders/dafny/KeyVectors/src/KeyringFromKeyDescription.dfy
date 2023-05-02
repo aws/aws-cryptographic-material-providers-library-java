@@ -16,6 +16,11 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
   import CreateStaticKeyrings
   import CreateStaticKeyStores
 
+  // This is a HACK.
+  // This function is not currently public
+  // But we need to know what the region is for a KMS ARN :(
+  import AwsArnParsing
+
   datatype KeyringInfo = KeyringInfo(
     description: KeyDescription,
     material: Option<KeyMaterial.KeyMaterial>
@@ -79,20 +84,38 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
       var keyring := mpl.CreateAwsKmsMrkMultiKeyring(input);
       return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));
     }
-    case KmsRsa(KmsRsaKeyring(key)) => {
+    case KmsRsa(KmsRsaKeyring(key, encryptionAlgorithm)) => {
       :- Need(material.Some? && material.value.KMSAsymetric?, KeyVectorException( message := "Not type: KMSAsymetric" ));
-      return Failure( KeyVectorException( message := "Not Yet" ));
+
+      var arn :- AwsArnParsing.ParseAwsKmsArn(material.value.keyIdentifier)
+      .MapFailure(e => KeyVectorException( message := e ));
+      var maybeClientSupplier := mpl.CreateDefaultClientSupplier(MPL.CreateDefaultClientSupplierInput());
+      var clientSupplier :- maybeClientSupplier
+      .MapFailure(e => AwsCryptographyMaterialProviders(e));
+      var maybeKmsClient := clientSupplier.GetClient(MPL.GetClientInput( region := arn.region ));
+      var kmsClient :- maybeKmsClient
+      .MapFailure(e => AwsCryptographyMaterialProviders(e));
+      var input := MPL.CreateAwsKmsRsaKeyringInput(
+        publicKey := Some(material.value.publicKey),
+        kmsKeyId := material.value.keyIdentifier,
+        encryptionAlgorithm := encryptionAlgorithm,
+        kmsClient := Some(kmsClient),
+        grantTokens := None
+      );
+
+      var keyring := mpl.CreateAwsKmsRsaKeyring(input);
+      return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));
     }
     case Hierarchy(HierarchyKeyring(key)) => {
       :- Need(material.Some? && material.value.StaticKeyStoreInformation?, KeyVectorException( message := "Not type: StaticKeyStoreInformation" ));
-      
+
       var keyStore := CreateStaticKeyStores.CreateStaticKeyStore(material.value);
       var input := MPL.CreateAwsKmsHierarchicalKeyringInput(
         branchKeyId := Some(material.value.keyIdentifier),
         branchKeyIdSupplier := None,
         keyStore := keyStore,
         ttlSeconds := 0,
-        maxCacheSize := None
+        maxCacheSize := Some(10)
       );
       var keyring := mpl.CreateAwsKmsHierarchicalKeyring(input);
       return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));

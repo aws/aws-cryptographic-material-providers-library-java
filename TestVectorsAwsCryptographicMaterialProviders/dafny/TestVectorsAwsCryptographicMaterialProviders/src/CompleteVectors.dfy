@@ -6,6 +6,7 @@ include "JSONHelpers.dfy"
 
 module {:options "-functionSyntax:4"} CompleteVectors {
   import Types = AwsCryptographyMaterialProvidersTypes
+  import ComAmazonawsKmsTypes
   import MaterialProviders
   import TestVectors
   import Seq
@@ -174,11 +175,11 @@ module {:options "-functionSyntax:4"} CompleteVectors {
       ::
         PositiveKeyDescriptionJSON(
           description := "Discovery KMS MRK " + keyId +
-            "->" + if filter.Some? then
-              "Filter " + filter.value.partition + " " + Seq.Flatten(filter.value.accountIds)
-            else
-              "No Filter"
-            ,
+          "->" + if filter.Some? then
+            "Filter " + filter.value.partition + " " + Seq.Flatten(filter.value.accountIds)
+          else
+            "No Filter"
+        ,
           encrypt := Object([
                               ("type", String("aws-kms-mrk-aware")),
                               ("key", String(keyId))
@@ -200,6 +201,51 @@ module {:options "-functionSyntax:4"} CompleteVectors {
                      ("default-mrk-region", String("us-west-2"))])
         );
 
+  const AllHierarchy :=
+    set
+      keyId <- [ "static-branch-key-1" ]
+      ::
+        PositiveKeyDescriptionJSON(
+          description := "Hierarchy KMS " + keyId,
+          encrypt := Object([
+                              ("type", String("aws-kms-hierarchy")),
+                              ("key", String(keyId))
+                            ]),
+          decrypt := Object([
+                              ("type", String("aws-kms-hierarchy")),
+                              ("key", String(keyId))
+                            ])
+        );
+
+  const AllEncryptionAlgorithmSpec :=
+    set e: ComAmazonawsKmsTypes.EncryptionAlgorithmSpec
+      | !e.SYMMETRIC_DEFAULT?
+      :: match e
+         case RSAES_OAEP_SHA_1() => "RSAES_OAEP_SHA_1"
+         case RSAES_OAEP_SHA_256() => "RSAES_OAEP_SHA_256";
+  const AllKmsRsaKeys := [ "us-west-2-rsa-mrk" ];
+
+  const AllKmsRsa :=
+    set
+      keyId <- AllKmsRsaKeys,
+      algorithmSpec <- AllEncryptionAlgorithmSpec
+      ::
+        PositiveKeyDescriptionJSON(
+          description := "Hierarchy KMS " + keyId,
+          encrypt := Object([
+                              ("type", String("aws-kms-rsa")),
+                              ("key", String(keyId)),
+                              ("encryption-algorithm", String(algorithmSpec))
+                            ]),
+          decrypt := Object([
+                              ("type", String("aws-kms-rsa")),
+                              ("key", String(keyId)),
+                              ("encryption-algorithm", String(algorithmSpec))
+                            ])
+        );
+
+
+
   const AllPositiveKeyringTests :=
     set
       postiveKeyDescription <-
@@ -207,7 +253,9 @@ module {:options "-functionSyntax:4"} CompleteVectors {
       AllKmsMrkAware +
       AllKmsMrkAwareDiscovery +
       AllRawAES +
-      AllRawRSA,
+      AllRawRSA +
+      AllHierarchy +
+      AllKmsRsa,
       algorithmSuite <- AllAlgorithmSuites
       ::
         var id := HexStrings.ToHexString(algorithmSuite.binaryId);

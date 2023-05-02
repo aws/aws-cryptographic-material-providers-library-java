@@ -3,12 +3,14 @@
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
 include "../../../../StandardLibrary/src/Index.dfy"
  include "../../../../AwsCryptographicMaterialProviders/dafny/AwsCryptographicMaterialProviders/src/Index.dfy"
+ include "../../../../ComAmazonawsKms/src/Index.dfy"
  module {:extern "Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types" } AwsCryptographyMaterialProvidersTestVectorKeysTypes
  {
  import opened Wrappers
  import opened StandardLibrary.UInt
  import opened UTF8
  import AwsCryptographyMaterialProvidersTypes
+ import ComAmazonawsKmsTypes
  // Generic helpers for verification of mock/unit tests.
  datatype DafnyCallEvent<I, O> = DafnyCallEvent(input: I, output: O)
  
@@ -139,7 +141,8 @@ include "../../../../StandardLibrary/src/Index.dfy"
  nameonly awsKmsDiscoveryFilter: Option<AwsCryptographyMaterialProvidersTypes.DiscoveryFilter>
  )
  datatype KmsRsaKeyring = | KmsRsaKeyring (
- nameonly keyId: string
+ nameonly keyId: string ,
+ nameonly encryptionAlgorithm: ComAmazonawsKmsTypes.EncryptionAlgorithmSpec
  )
  datatype RawAES = | RawAES (
  nameonly keyId: string ,
@@ -169,6 +172,7 @@ include "../../../../StandardLibrary/src/Index.dfy"
  )
  // Any dependent models are listed here
  | AwsCryptographyMaterialProviders(AwsCryptographyMaterialProviders: AwsCryptographyMaterialProvidersTypes.Error)
+ | ComAmazonawsKms(ComAmazonawsKms: ComAmazonawsKmsTypes.Error)
  // The Collection error is used to collect several errors together
  // This is useful when composing OR logic.
  // Consider the following method:
