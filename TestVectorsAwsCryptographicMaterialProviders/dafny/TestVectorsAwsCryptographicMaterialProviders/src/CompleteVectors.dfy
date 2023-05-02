@@ -51,10 +51,8 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   const ESDKAlgorithmSuites := set id: Types.ESDKAlgorithmSuiteId :: AlgorithmSuites.GetESDKSuite(id);
   const DBEAlgorithmSuites := set id: Types.DBEAlgorithmSuiteId :: AlgorithmSuites.GetDBESuite(id);
 
-  const AllAlgorithmSuites := ESDKAlgorithmSuites + DBEAlgorithmSuites;
-
   lemma AllAlgorithmSuitesIsComplete(id: Types.AlgorithmSuiteId)
-    ensures AlgorithmSuites.GetSuite(id) in AllAlgorithmSuites
+    ensures AlgorithmSuites.GetSuite(id) in ESDKAlgorithmSuites + DBEAlgorithmSuites
   {}
 
   datatype PositiveKeyDescriptionJSON = PositiveKeyDescriptionJSON(
@@ -256,7 +254,9 @@ module {:options "-functionSyntax:4"} CompleteVectors {
       AllRawRSA +
       AllHierarchy +
       AllKmsRsa,
-      algorithmSuite <- AllAlgorithmSuites
+      algorithmSuite <-
+      ESDKAlgorithmSuites +
+      DBEAlgorithmSuites
       ::
         var id := HexStrings.ToHexString(algorithmSuite.binaryId);
         Object([

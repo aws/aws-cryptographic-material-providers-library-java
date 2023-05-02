@@ -48,7 +48,6 @@ module {:options "-functionSyntax:4"} KeyDescription {
         Success(KmsMrk(KmsMrkAware( keyId := key )))
       case "aws-kms-rsa" =>
         var encryptionAlgorithmString :- GetString("encryption-algorithm", obj);
-        var _ := printJSON(obj);
         :- Need(EncryptionAlgorithmSpec?(encryptionAlgorithmString), "Unsupported EncryptionAlgorithmSpec:" + encryptionAlgorithmString);
         var encryptionAlgorithm := match encryptionAlgorithmString
           case "RSAES_OAEP_SHA_1" => ComAmazonawsKmsTypes.EncryptionAlgorithmSpec.RSAES_OAEP_SHA_1
