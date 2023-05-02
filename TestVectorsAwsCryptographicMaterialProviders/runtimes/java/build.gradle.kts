@@ -83,9 +83,13 @@ tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
 
-tasks {
-    register("runTests", JavaExec::class.java) {
-        mainClass.set("TestsFromDafny")
-        classpath = sourceSets["test"].runtimeClasspath
-    }
+tasks.register<JavaExec>("runTests") {
+    dependsOn("copyKeysJSON")
+    mainClass.set("TestsFromDafny")
+    classpath = sourceSets["test"].runtimeClasspath
+}
+
+tasks.register<Copy>("copyKeysJSON") {
+    from(layout.projectDirectory.file("../../dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json"))
+    into(layout.projectDirectory.dir("dafny/TestVectorsAwsCryptographicMaterialProviders/test"))
 }
