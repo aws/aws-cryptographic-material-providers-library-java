@@ -13,7 +13,7 @@ include "KeyringFromKeyDescription.dfy"
 module {:options "-functionSyntax:4"} KeysVectorOperations refines AbstractAwsCryptographyMaterialProvidersTestVectorKeysOperations {
   import JSON.API
   import JSON.Errors
-  import JSON.AST
+  import JSON.Values
   import KeyDescription
   import MPL = AwsCryptographyMaterialProvidersTypes
   import KeyMaterial

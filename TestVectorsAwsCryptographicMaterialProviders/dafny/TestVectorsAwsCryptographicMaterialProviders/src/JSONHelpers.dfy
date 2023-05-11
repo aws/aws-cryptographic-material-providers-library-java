@@ -6,7 +6,7 @@ include "../Model/AwsCryptographyMaterialProvidersTypesWrapped.dfy"
 module {:options "-functionSyntax:4"} JSONHelpers {
   import JSON.API
   import BoundedInts
-  import opened JSON.AST
+  import opened JSON.Values
   import opened Wrappers
   import UTF8
   import Types = AwsCryptographyMaterialProvidersTypes
@@ -22,7 +22,7 @@ module {:options "-functionSyntax:4"} JSONHelpers {
   }
 
   function Get(key: string, obj: seq<(string, JSON)>)
-    : Result<AST.JSON, string>
+    : Result<Values.JSON, string>
   {
     if |obj| == 0 then
       Failure("Key: " + key + " does not exist")

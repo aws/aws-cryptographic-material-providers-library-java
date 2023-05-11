@@ -11,7 +11,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
   import Types = AwsCryptographyMaterialProvidersTypes
 
   import JSON.API
-  import opened JSON.AST
+  import opened JSON.Values
   import JSON.Errors
   import opened Wrappers
   import UTF8
@@ -77,7 +77,7 @@ module {:options "-functionSyntax:4"} ParseJsonManifests {
       var encryptKeyDescriptionObject :- Get("encryptKeyDescription", obj);
       var decryptKeyDescriptionObject :- Get("decryptKeyDescription", obj);
 
-      // Be nice if `document` mapped to `JSON.AST.JSON`
+      // Be nice if `document` mapped to `JSON.Values.JSON`
       var encryptStr :- API.Serialize(encryptKeyDescriptionObject).MapFailure((e: Errors.SerializationError) => e.ToString());
       var decryptStr :- API.Serialize(decryptKeyDescriptionObject).MapFailure((e: Errors.SerializationError) => e.ToString());
 

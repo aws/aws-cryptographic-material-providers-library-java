@@ -13,7 +13,7 @@ module {:options "-functionSyntax:4"} CompleteVectors {
   import opened Wrappers
   import opened StandardLibrary.UInt
   import HexStrings
-  import opened JSON.AST
+  import opened JSON.Values
 
   import UUID
   import JSONHelpers

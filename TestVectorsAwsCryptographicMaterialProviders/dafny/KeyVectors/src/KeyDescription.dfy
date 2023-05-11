@@ -8,7 +8,7 @@ include "../../TestVectorsAwsCryptographicMaterialProviders/src/JSONHelpers.dfy"
 
 module {:options "-functionSyntax:4"} KeyDescription {
   import opened Wrappers
-  import opened JSON.AST
+  import opened JSON.Values
   import AwsCryptographyMaterialProvidersTypes
   import opened Types = AwsCryptographyMaterialProvidersTestVectorKeysTypes
   import opened JSONHelpers

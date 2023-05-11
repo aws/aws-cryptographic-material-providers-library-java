@@ -12,7 +12,7 @@ module {:options "-functionSyntax:4"} TestManifests {
   import TestVectors
   import FileIO
   import JSON.API
-  import JSON.AST
+  import JSON.Values
   import Seq
   import BoundedInts
   import opened JSONHelpers

@@ -10,7 +10,7 @@ module {:options "-functionSyntax:4"} KeyMaterial {
 
   import MPL = AwsCryptographyMaterialProvidersTypes
 
-  import opened JSON.AST
+  import opened JSON.Values
   import opened Wrappers
   import Seq
   import opened StandardLibrary.UInt
