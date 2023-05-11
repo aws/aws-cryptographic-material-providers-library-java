@@ -421,6 +421,7 @@ module Base64 {
     ensures StringIs7Bit(s)
     ensures |s| % 4 == 0
     ensures IsBase64String(s)
+    ensures Decode(s) == Success(b)
     // Rather than ensure Decode(s) == Success(b) directly, lemmas are used to verify this property
   {
     if |b| % 3 == 0 then
