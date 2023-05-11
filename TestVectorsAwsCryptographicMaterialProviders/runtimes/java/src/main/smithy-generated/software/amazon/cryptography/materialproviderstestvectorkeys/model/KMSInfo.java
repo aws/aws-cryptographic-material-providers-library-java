@@ -1,14 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
+package software.amazon.cryptography.materialproviderstestvectorkeys.model;
 
 import java.util.Objects;
 
-public class KmsRsa {
+public class KMSInfo {
   private final String keyId;
 
-  protected KmsRsa(BuilderImpl builder) {
+  protected KMSInfo(BuilderImpl builder) {
     this.keyId = builder.keyId();
   }
 
@@ -29,7 +29,7 @@ public class KmsRsa {
 
     String keyId();
 
-    KmsRsa build();
+    KMSInfo build();
   }
 
   static class BuilderImpl implements Builder {
@@ -38,7 +38,7 @@ public class KmsRsa {
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(KmsRsa model) {
+    protected BuilderImpl(KMSInfo model) {
       this.keyId = model.keyId();
     }
 
@@ -51,11 +51,11 @@ public class KmsRsa {
       return this.keyId;
     }
 
-    public KmsRsa build() {
+    public KMSInfo build() {
       if (Objects.isNull(this.keyId()))  {
         throw new IllegalArgumentException("Missing value for required field `keyId`");
       }
-      return new KmsRsa(this);
+      return new KMSInfo(this);
     }
   }
 }

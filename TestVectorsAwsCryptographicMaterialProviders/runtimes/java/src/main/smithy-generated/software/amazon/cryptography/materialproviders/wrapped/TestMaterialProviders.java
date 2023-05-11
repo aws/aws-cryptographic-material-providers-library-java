@@ -62,7 +62,7 @@ public class TestMaterialProviders implements IAwsCryptographicMaterialProviders
       CreateAwsKmsDiscoveryKeyringInput dafnyInput) {
     software.amazon.cryptography.materialproviders.model.CreateAwsKmsDiscoveryKeyringInput nativeInput = ToNative.CreateAwsKmsDiscoveryKeyringInput(dafnyInput);
     try {
-      software.amazon.cryptography.materialProviders.IKeyring nativeOutput = this._impl.CreateAwsKmsDiscoveryKeyring(nativeInput);
+      software.amazon.cryptography.materialproviders.IKeyring nativeOutput = this._impl.CreateAwsKmsDiscoveryKeyring(nativeInput);
       IKeyring dafnyOutput = ToDafny.Keyring(nativeOutput);
       return Result.create_Success(dafnyOutput);
     } catch (RuntimeException ex) {

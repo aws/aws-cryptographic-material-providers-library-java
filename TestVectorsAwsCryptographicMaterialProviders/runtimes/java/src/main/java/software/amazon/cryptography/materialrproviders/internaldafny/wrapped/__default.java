@@ -6,7 +6,7 @@ import software.amazon.cryptography.materialproviders.internaldafny.types.Materi
 import Wrappers_Compile.Result;
 import software.amazon.cryptography.materialproviders.MaterialProviders;
 import software.amazon.cryptography.materialproviders.ToNative;
-import software.amazon.cryptography.materialproviders.wrapped.TestMaterialProviders;
+import software.amazon.cryptography.materialProviders.wrapped.TestMaterialProviders;
 
 public class __default extends _ExternBase___default {
     public static Result<IAwsCryptographicMaterialProvidersClient, Error> WrappedMaterialProviders(MaterialProvidersConfig config) {

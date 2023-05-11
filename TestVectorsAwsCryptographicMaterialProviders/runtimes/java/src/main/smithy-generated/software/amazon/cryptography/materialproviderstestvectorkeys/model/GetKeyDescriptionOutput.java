@@ -1,14 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
+package software.amazon.cryptography.materialproviderstestvectorkeys.model;
 
 import java.util.Objects;
 
-public class SerializeKeyDescriptionInput {
+public class GetKeyDescriptionOutput {
   private final KeyDescription keyDescription;
 
-  protected SerializeKeyDescriptionInput(BuilderImpl builder) {
+  protected GetKeyDescriptionOutput(BuilderImpl builder) {
     this.keyDescription = builder.keyDescription();
   }
 
@@ -29,7 +29,7 @@ public class SerializeKeyDescriptionInput {
 
     KeyDescription keyDescription();
 
-    SerializeKeyDescriptionInput build();
+    GetKeyDescriptionOutput build();
   }
 
   static class BuilderImpl implements Builder {
@@ -38,7 +38,7 @@ public class SerializeKeyDescriptionInput {
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(SerializeKeyDescriptionInput model) {
+    protected BuilderImpl(GetKeyDescriptionOutput model) {
       this.keyDescription = model.keyDescription();
     }
 
@@ -51,11 +51,11 @@ public class SerializeKeyDescriptionInput {
       return this.keyDescription;
     }
 
-    public SerializeKeyDescriptionInput build() {
+    public GetKeyDescriptionOutput build() {
       if (Objects.isNull(this.keyDescription()))  {
         throw new IllegalArgumentException("Missing value for required field `keyDescription`");
       }
-      return new SerializeKeyDescriptionInput(this);
+      return new GetKeyDescriptionOutput(this);
     }
   }
 }

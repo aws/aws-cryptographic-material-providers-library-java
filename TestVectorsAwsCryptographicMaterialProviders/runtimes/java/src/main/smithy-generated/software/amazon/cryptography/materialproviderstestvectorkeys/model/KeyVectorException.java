@@ -1,14 +1,13 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
+package software.amazon.cryptography.materialproviderstestvectorkeys.model;
 
-public class OpaqueError extends RuntimeException {
-  private final Object obj;
+import java.util.Objects;
 
-  protected OpaqueError(BuilderImpl builder) {
+public class KeyVectorException extends RuntimeException {
+  protected KeyVectorException(BuilderImpl builder) {
     super(messageFromBuilder(builder), builder.cause());
-    this.obj = builder.obj();
   }
 
   private static String messageFromBuilder(Builder builder) {
@@ -21,16 +20,18 @@ public class OpaqueError extends RuntimeException {
     return null;
   }
 
+  /**
+   * See {@link Throwable#getMessage()}.
+   */
   public String message() {
     return this.getMessage();
   }
 
+  /**
+   * See {@link Throwable#getCause()}.
+   */
   public Throwable cause() {
     return this.getCause();
-  }
-
-  public Object obj() {
-    return this.obj;
   }
 
   public Builder toBuilder() {
@@ -42,19 +43,27 @@ public class OpaqueError extends RuntimeException {
   }
 
   public interface Builder {
+    /**
+     * @param message The detailed message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+     */
     Builder message(String message);
 
+    /**
+     * @return The detailed message. The detail message is saved for later retrieval by the {@link #getMessage()} method.
+     */
     String message();
 
+    /**
+     * @param cause The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is permitted, and indicates that the cause is nonexistent or unknown.)
+     */
     Builder cause(Throwable cause);
 
+    /**
+     * @return The cause (which is saved for later retrieval by the {@link #getCause()} method). (A {@code null} value is permitted, and indicates that the cause is nonexistent or unknown.)
+     */
     Throwable cause();
 
-    Builder obj(Object obj);
-
-    Object obj();
-
-    OpaqueError build();
+    KeyVectorException build();
   }
 
   static class BuilderImpl implements Builder {
@@ -62,15 +71,12 @@ public class OpaqueError extends RuntimeException {
 
     protected Throwable cause;
 
-    protected Object obj;
-
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(OpaqueError model) {
-      this.cause = model.getCause();
-      this.message = model.getMessage();
-      this.obj = model.obj();
+    protected BuilderImpl(KeyVectorException model) {
+      this.message = model.message();
+      this.cause = model.cause();
     }
 
     public Builder message(String message) {
@@ -91,22 +97,11 @@ public class OpaqueError extends RuntimeException {
       return this.cause;
     }
 
-    public Builder obj(Object obj) {
-      this.obj = obj;
-      return this;
-    }
-
-    public Object obj() {
-      return this.obj;
-    }
-
-    public OpaqueError build() {
-      if (this.obj != null && this.cause == null && this.obj instanceof Throwable) {
-        this.cause = (Throwable) this.obj;
-      } else if (this.obj == null && this.cause != null) {
-        this.obj = this.cause;
+    public KeyVectorException build() {
+      if (Objects.isNull(this.message()))  {
+        throw new IllegalArgumentException("Missing value for required field `message`");
       }
-      return new OpaqueError(this);
+      return new KeyVectorException(this);
     }
   }
 }

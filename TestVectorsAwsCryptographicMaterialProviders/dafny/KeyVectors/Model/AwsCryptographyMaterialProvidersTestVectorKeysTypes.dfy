@@ -4,7 +4,7 @@
 include "../../../../StandardLibrary/src/Index.dfy"
  include "../../../../AwsCryptographicMaterialProviders/dafny/AwsCryptographicMaterialProviders/src/Index.dfy"
  include "../../../../ComAmazonawsKms/src/Index.dfy"
- module {:extern "Dafny.Aws.Cryptography.MaterialProvidersTestVectorKeys.Types" } AwsCryptographyMaterialProvidersTestVectorKeysTypes
+ module {:extern "software.amazon.cryptography.materialproviderstestvectorkeys.internaldafny.types" } AwsCryptographyMaterialProvidersTestVectorKeysTypes
  {
  import opened Wrappers
  import opened StandardLibrary.UInt

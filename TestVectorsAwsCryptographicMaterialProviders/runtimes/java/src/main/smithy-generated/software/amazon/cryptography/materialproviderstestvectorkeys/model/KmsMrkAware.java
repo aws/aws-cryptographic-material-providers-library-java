@@ -1,14 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
+package software.amazon.cryptography.materialproviderstestvectorkeys.model;
 
 import java.util.Objects;
 
-public class KMSInfo {
+public class KmsMrkAware {
   private final String keyId;
 
-  protected KMSInfo(BuilderImpl builder) {
+  protected KmsMrkAware(BuilderImpl builder) {
     this.keyId = builder.keyId();
   }
 
@@ -29,7 +29,7 @@ public class KMSInfo {
 
     String keyId();
 
-    KMSInfo build();
+    KmsMrkAware build();
   }
 
   static class BuilderImpl implements Builder {
@@ -38,7 +38,7 @@ public class KMSInfo {
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(KMSInfo model) {
+    protected BuilderImpl(KmsMrkAware model) {
       this.keyId = model.keyId();
     }
 
@@ -51,11 +51,11 @@ public class KMSInfo {
       return this.keyId;
     }
 
-    public KMSInfo build() {
+    public KmsMrkAware build() {
       if (Objects.isNull(this.keyId()))  {
         throw new IllegalArgumentException("Missing value for required field `keyId`");
       }
-      return new KMSInfo(this);
+      return new KmsMrkAware(this);
     }
   }
 }

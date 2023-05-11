@@ -1,14 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-package software.amazon.cryptography.materialProvidersTestVectorKeys.model;
+package software.amazon.cryptography.materialproviderstestvectorkeys.model;
 
 import java.util.Objects;
 
-public class HierarchyKeyring {
+public class StaticKeyring {
   private final String keyId;
 
-  protected HierarchyKeyring(BuilderImpl builder) {
+  protected StaticKeyring(BuilderImpl builder) {
     this.keyId = builder.keyId();
   }
 
@@ -29,7 +29,7 @@ public class HierarchyKeyring {
 
     String keyId();
 
-    HierarchyKeyring build();
+    StaticKeyring build();
   }
 
   static class BuilderImpl implements Builder {
@@ -38,7 +38,7 @@ public class HierarchyKeyring {
     protected BuilderImpl() {
     }
 
-    protected BuilderImpl(HierarchyKeyring model) {
+    protected BuilderImpl(StaticKeyring model) {
       this.keyId = model.keyId();
     }
 
@@ -51,11 +51,11 @@ public class HierarchyKeyring {
       return this.keyId;
     }
 
-    public HierarchyKeyring build() {
+    public StaticKeyring build() {
       if (Objects.isNull(this.keyId()))  {
         throw new IllegalArgumentException("Missing value for required field `keyId`");
       }
-      return new HierarchyKeyring(this);
+      return new StaticKeyring(this);
     }
   }
 }
