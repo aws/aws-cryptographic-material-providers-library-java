@@ -123,6 +123,26 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
 
     // Thise are all not supported operations in a static context
 
+    ghost predicate GetKeyStoreInfoEnsuresPublicly(output: Result<GetKeyStoreInfoOutput, Error>)
+    {true}
+
+    method GetKeyStoreInfo()
+      returns (output: Result<GetKeyStoreInfoOutput, Error>)
+      requires
+        && ValidState()
+      modifies Modifies - {History} ,
+               History`GetKeyStoreInfo
+      // Dafny will skip type parameters when generating a default decreases clause.
+      decreases Modifies - {History}
+      ensures
+        && ValidState()
+      ensures GetKeyStoreInfoEnsuresPublicly(output)
+      ensures History.GetKeyStoreInfo == old(History.GetKeyStoreInfo) + [DafnyCallEvent((), output)]
+    {
+      output := Failure(KeyStoreException( message := "Not Supported"));
+      History.GetKeyStoreInfo := History.GetKeyStoreInfo + [DafnyCallEvent((), output)];
+    }
+
     ghost predicate CreateKeyStoreEnsuresPublicly(input: CreateKeyStoreInput , output: Result<CreateKeyStoreOutput, Error>)
     {true}
     // The public method to be called by library consumers
