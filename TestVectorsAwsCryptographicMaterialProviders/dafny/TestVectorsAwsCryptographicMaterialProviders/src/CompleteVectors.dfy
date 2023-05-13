@@ -220,14 +220,15 @@ module {:options "-functionSyntax:4"} CompleteVectors {
          case RSAES_OAEP_SHA_1() => "RSAES_OAEP_SHA_1"
          case RSAES_OAEP_SHA_256() => "RSAES_OAEP_SHA_256";
   const AllKmsRsaKeys := [ "us-west-2-rsa-mrk" ];
-
+  const KmsRsa := "KMS RSA ";
+  
   const AllKmsRsa :=
     set
       keyId <- AllKmsRsaKeys,
       algorithmSpec <- AllEncryptionAlgorithmSpec
       ::
         PositiveKeyDescriptionJSON(
-          description := "Hierarchy KMS " + keyId,
+          description := KmsRsa + keyId,
           encrypt := Object([
                               ("type", String("aws-kms-rsa")),
                               ("key", String(keyId)),
@@ -255,17 +256,19 @@ module {:options "-functionSyntax:4"} CompleteVectors {
       algorithmSuite <-
       ESDKAlgorithmSuites +
       DBEAlgorithmSuites
+      // AwsKmsRsaKeyring cannot be used with an Algorithm Suite with asymmetric signing
+      | !(postiveKeyDescription.description[..|KmsRsa|] == KmsRsa && algorithmSuite.signature.ECDSA?) 
       ::
         var id := HexStrings.ToHexString(algorithmSuite.binaryId);
         Object([
-                 ("type", String("positive-keyring")),
-                 ("description", String(postiveKeyDescription.description + " " + id)),
-                 ("algorithmSuiteId", String(id)),
-                 ("encryptionContext", Object([])),
-                 ("requiredEncryptionContextKeys", Array([])),
-                 ("encryptKeyDescription", postiveKeyDescription.encrypt),
-                 ("decryptKeyDescription", postiveKeyDescription.decrypt)
-               ]);
+                ("type", String("positive-keyring")),
+                ("description", String(postiveKeyDescription.description + " " + id)),
+                ("algorithmSuiteId", String(id)),
+                ("encryptionContext", Object([])),
+                ("requiredEncryptionContextKeys", Array([])),
+                ("encryptKeyDescription", postiveKeyDescription.encrypt),
+                ("decryptKeyDescription", postiveKeyDescription.decrypt)
+              ]);
 
   method WriteStuff() {
 
