@@ -50,8 +50,8 @@ module CreateKeyStoreTable {
   type keyStoreDescription = t: DDB.TableDescription | keyStoreHasExpectedConstruction?(t) witness *
   predicate method keyStoreHasExpectedConstruction?(t: DDB.TableDescription) {
     && t.AttributeDefinitions.Some? && t.KeySchema.Some? && t.GlobalSecondaryIndexes.Some? && t.TableName.Some? && t.TableArn.Some?
-    && ToSet(t.AttributeDefinitions.value) == ToSet(attrDef)
-    && ToSet(t.KeySchema.value) == ToSet(keySchema)
+    && ToSet(t.AttributeDefinitions.value) >= ToSet(attrDef)
+    && ToSet(t.KeySchema.value) >= ToSet(keySchema)
     && |t.GlobalSecondaryIndexes.value| >= 1
     && var gsiList := t.GlobalSecondaryIndexes.value;
     && exists gsi | gsi in gsiList :: 
