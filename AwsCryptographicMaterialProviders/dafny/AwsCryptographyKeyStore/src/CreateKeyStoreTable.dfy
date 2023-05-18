@@ -46,7 +46,6 @@ module CreateKeyStoreTable {
   ); 
   const GSI_NAME := "Active-Keys";
 
-  // type tableName = tn : DDB.TableName;
   type keyStoreDescription = t: DDB.TableDescription | keyStoreHasExpectedConstruction?(t) witness *
   predicate method keyStoreHasExpectedConstruction?(t: DDB.TableDescription) {
     && t.AttributeDefinitions.Some? && t.KeySchema.Some? && t.GlobalSecondaryIndexes.Some? && t.TableName.Some? && t.TableArn.Some?
