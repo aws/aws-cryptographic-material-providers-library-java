@@ -109,7 +109,7 @@ module CreateKeyStoreTable {
             KeySchema := keySchema,
             LocalSecondaryIndexes := None,
             //= aws-encryption-sdk-specification/framework/branch-key-store.md#globalsecondary-indexes
-            //# The table MUST configure a single GlobalSecondaryIndex:
+            //# The table MUST contain a GlobalSecondaryIndex defined as follows:
             GlobalSecondaryIndexes := Some(gsi),
             BillingMode := Some(DDB.BillingMode.PAY_PER_REQUEST) ,
             ProvisionedThroughput :=  None,
