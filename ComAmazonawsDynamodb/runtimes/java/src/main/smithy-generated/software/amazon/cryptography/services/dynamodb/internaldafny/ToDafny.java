@@ -434,6 +434,266 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Update
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.WriteRequest;
 
 public class ToDafny {
+  public static Error Error(BackupInUseException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_BackupInUseException(message);
+  }
+
+  public static Error Error(BackupNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_BackupNotFoundException(message);
+  }
+
+  public static Error Error(ConditionalCheckFailedException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ConditionalCheckFailedException(message);
+  }
+
+  public static Error Error(ContinuousBackupsUnavailableException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ContinuousBackupsUnavailableException(message);
+  }
+
+  public static Error Error(DuplicateItemException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_DuplicateItemException(message);
+  }
+
+  public static Error Error(ExportConflictException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ExportConflictException(message);
+  }
+
+  public static Error Error(ExportNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ExportNotFoundException(message);
+  }
+
+  public static Error Error(GlobalTableAlreadyExistsException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_GlobalTableAlreadyExistsException(message);
+  }
+
+  public static Error Error(GlobalTableNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_GlobalTableNotFoundException(message);
+  }
+
+  public static Error Error(IdempotentParameterMismatchException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_IdempotentParameterMismatchException(message);
+  }
+
+  public static Error Error(ImportConflictException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ImportConflictException(message);
+  }
+
+  public static Error Error(ImportNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ImportNotFoundException(message);
+  }
+
+  public static Error Error(IndexNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_IndexNotFoundException(message);
+  }
+
+  public static Error Error(InternalServerErrorException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_InternalServerError(message);
+  }
+
+  public static Error Error(InvalidExportTimeException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_InvalidExportTimeException(message);
+  }
+
+  public static Error Error(InvalidRestoreTimeException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_InvalidRestoreTimeException(message);
+  }
+
+  public static Error Error(ItemCollectionSizeLimitExceededException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ItemCollectionSizeLimitExceededException(message);
+  }
+
+  public static Error Error(LimitExceededException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_LimitExceededException(message);
+  }
+
+  public static Error Error(PointInTimeRecoveryUnavailableException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_PointInTimeRecoveryUnavailableException(message);
+  }
+
+  public static Error Error(ProvisionedThroughputExceededException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ProvisionedThroughputExceededException(message);
+  }
+
+  public static Error Error(ReplicaAlreadyExistsException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ReplicaAlreadyExistsException(message);
+  }
+
+  public static Error Error(ReplicaNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ReplicaNotFoundException(message);
+  }
+
+  public static Error Error(RequestLimitExceededException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_RequestLimitExceeded(message);
+  }
+
+  public static Error Error(ResourceInUseException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ResourceInUseException(message);
+  }
+
+  public static Error Error(ResourceNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_ResourceNotFoundException(message);
+  }
+
+  public static Error Error(TableAlreadyExistsException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_TableAlreadyExistsException(message);
+  }
+
+  public static Error Error(TableInUseException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_TableInUseException(message);
+  }
+
+  public static Error Error(TableNotFoundException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_TableNotFoundException(message);
+  }
+
+  public static Error Error(TransactionCanceledException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    Option<DafnySequence<? extends CancellationReason>> cancellationReasons;
+    cancellationReasons = (Objects.nonNull(nativeValue.cancellationReasons()) && nativeValue.cancellationReasons().size() > 0) ?
+        Option.create_Some(ToDafny.CancellationReasonList(nativeValue.cancellationReasons()))
+        : Option.create_None();
+    return new Error_TransactionCanceledException(message, cancellationReasons);
+  }
+
+  public static Error Error(TransactionConflictException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_TransactionConflictException(message);
+  }
+
+  public static Error Error(TransactionInProgressException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_TransactionInProgressException(message);
+  }
+
+  public static Error Error(DynamoDbException nativeValue) {
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_Opaque(message);
+  }
+
   public static ArchivalSummary ArchivalSummary(
       software.amazon.awssdk.services.dynamodb.model.ArchivalSummary nativeValue) {
     Option<DafnySequence<? extends Character>> archivalDateTime;
@@ -4590,258 +4850,6 @@ public class ToDafny {
         WriteRequest._typeDescriptor());
   }
 
-  public static Error Error(BackupInUseException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_BackupInUseException(message);
-  }
-
-  public static Error Error(BackupNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_BackupNotFoundException(message);
-  }
-
-  public static Error Error(ConditionalCheckFailedException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ConditionalCheckFailedException(message);
-  }
-
-  public static Error Error(ContinuousBackupsUnavailableException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ContinuousBackupsUnavailableException(message);
-  }
-
-  public static Error Error(DuplicateItemException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_DuplicateItemException(message);
-  }
-
-  public static Error Error(ExportConflictException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ExportConflictException(message);
-  }
-
-  public static Error Error(ExportNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ExportNotFoundException(message);
-  }
-
-  public static Error Error(GlobalTableAlreadyExistsException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_GlobalTableAlreadyExistsException(message);
-  }
-
-  public static Error Error(GlobalTableNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_GlobalTableNotFoundException(message);
-  }
-
-  public static Error Error(IdempotentParameterMismatchException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_IdempotentParameterMismatchException(message);
-  }
-
-  public static Error Error(ImportConflictException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ImportConflictException(message);
-  }
-
-  public static Error Error(ImportNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ImportNotFoundException(message);
-  }
-
-  public static Error Error(IndexNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_IndexNotFoundException(message);
-  }
-
-  public static Error Error(InternalServerErrorException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_InternalServerError(message);
-  }
-
-  public static Error Error(InvalidExportTimeException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_InvalidExportTimeException(message);
-  }
-
-  public static Error Error(InvalidRestoreTimeException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_InvalidRestoreTimeException(message);
-  }
-
-  public static Error Error(ItemCollectionSizeLimitExceededException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ItemCollectionSizeLimitExceededException(message);
-  }
-
-  public static Error Error(LimitExceededException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_LimitExceededException(message);
-  }
-
-  public static Error Error(PointInTimeRecoveryUnavailableException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_PointInTimeRecoveryUnavailableException(message);
-  }
-
-  public static Error Error(ProvisionedThroughputExceededException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ProvisionedThroughputExceededException(message);
-  }
-
-  public static Error Error(ReplicaAlreadyExistsException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ReplicaAlreadyExistsException(message);
-  }
-
-  public static Error Error(ReplicaNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ReplicaNotFoundException(message);
-  }
-
-  public static Error Error(RequestLimitExceededException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_RequestLimitExceeded(message);
-  }
-
-  public static Error Error(ResourceInUseException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ResourceInUseException(message);
-  }
-
-  public static Error Error(ResourceNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_ResourceNotFoundException(message);
-  }
-
-  public static Error Error(TableAlreadyExistsException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_TableAlreadyExistsException(message);
-  }
-
-  public static Error Error(TableInUseException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_TableInUseException(message);
-  }
-
-  public static Error Error(TableNotFoundException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_TableNotFoundException(message);
-  }
-
-  public static Error Error(TransactionCanceledException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    Option<DafnySequence<? extends CancellationReason>> cancellationReasons;
-    cancellationReasons = (Objects.nonNull(nativeValue.cancellationReasons()) && nativeValue.cancellationReasons().size() > 0) ?
-        Option.create_Some(ToDafny.CancellationReasonList(nativeValue.cancellationReasons()))
-        : Option.create_None();
-    return new Error_TransactionCanceledException(message, cancellationReasons);
-  }
-
-  public static Error Error(TransactionConflictException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_TransactionConflictException(message);
-  }
-
-  public static Error Error(TransactionInProgressException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_TransactionInProgressException(message);
-  }
-
   public static AttributeAction AttributeAction(
       software.amazon.awssdk.services.dynamodb.model.AttributeAction nativeValue) {
     switch (nativeValue) {
@@ -5722,14 +5730,6 @@ public class ToDafny {
 
   public static TimeToLiveStatus TimeToLiveStatus(String nativeValue) {
     return TimeToLiveStatus(software.amazon.awssdk.services.dynamodb.model.TimeToLiveStatus.fromValue(nativeValue));
-  }
-
-  public static Error Error(DynamoDbException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_Opaque(message);
   }
 
   public static IDynamoDBClient DynamoDB_20120810(DynamoDbClient nativeValue) {
