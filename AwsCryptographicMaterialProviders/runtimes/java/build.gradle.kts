@@ -59,9 +59,6 @@ dependencies {
     implementation("software.amazon.cryptography:AwsCryptographyPrimitives:1.0-SNAPSHOT")
     implementation("software.amazon.cryptography:ComAmazonawsKms:1.0-SNAPSHOT")
     implementation("software.amazon.cryptography:ComAmazonawsDynamodb:1.0-SNAPSHOT")
-    // We want to package this version of BC since it is the one the Primitives depends on.
-    // These dependencies need to remain in sync with one another.
-    implementation("org.bouncycastle:bcprov-jdk18on:1.72")
     implementation(platform("software.amazon.awssdk:bom:2.19.1"))
     implementation("software.amazon.awssdk:dynamodb")
     implementation("software.amazon.awssdk:dynamodb-enhanced")
@@ -111,6 +108,8 @@ tasks.shadowJar {
     configurations {
         runtimeClasspath {
             dependencies {
+                // We want to package this version of BC since it is the one the Primitives depends on.
+                // These dependencies need to remain in sync with one another.
                include(dependency("org.bouncycastle:bcprov-jdk18on:1.72"))
             }
         }
