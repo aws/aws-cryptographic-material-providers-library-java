@@ -103,5 +103,8 @@ tasks.shadowJar {
         include(dependency("software.amazon.cryptography:AwsCryptographyPrimitives:1.0-SNAPSHOT"))
         include(dependency("software.amazon.cryptography:ComAmazonawsKms:1.0-SNAPSHOT"))
         include(dependency("software.amazon.cryptography:ComAmazonawsDynamodb:1.0-SNAPSHOT"))
+        // We want to package this version of BC since it is the one the Primitives depends on.
+        // These dependencies need to remain in sync with one another.
+        include(dependency("org.bouncycastle:bcprov-jdk18on:1.72"))
     }
 }

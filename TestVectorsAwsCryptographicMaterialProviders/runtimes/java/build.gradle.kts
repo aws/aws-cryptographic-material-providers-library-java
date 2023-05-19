@@ -59,7 +59,6 @@ dependencies {
     implementation("org.dafny:DafnyRuntime:4.1.0")
     implementation("software.amazon.smithy.dafny:conversion:1.0-SNAPSHOT")
     implementation("software.amazon.cryptography:AwsCryptographicMaterialProviders:1.0-SNAPSHOT")
-    implementation("org.bouncycastle:bcprov-jdk18on:1.72")
     implementation(platform("software.amazon.awssdk:bom:2.19.1"))
     implementation("software.amazon.awssdk:dynamodb")
     implementation("software.amazon.awssdk:dynamodb-enhanced")
