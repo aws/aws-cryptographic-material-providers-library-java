@@ -156,6 +156,8 @@ import software.amazon.awssdk.services.dynamodb.model.UpdateTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveResponse;
+import software.amazon.cryptography.services.dynamodb.internaldafny.model.CollectionOfErrors;
+import software.amazon.cryptography.services.dynamodb.internaldafny.model.OpaqueError;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.ArchivalSummary;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.AttributeAction;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.AttributeDefinition;
@@ -269,7 +271,6 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_InvalidRestoreTimeException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ItemCollectionSizeLimitExceededException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_LimitExceededException;
-import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_Opaque;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_PointInTimeRecoveryUnavailableException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ProvisionedThroughputExceededException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ReplicaAlreadyExistsException;
@@ -434,6 +435,125 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Update
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.WriteRequest;
 
 public class ToDafny {
+  public static Error Error(RuntimeException nativeValue) {
+    if (nativeValue instanceof BackupInUseException) {
+      return ToDafny.Error((BackupInUseException) nativeValue);
+    }
+    if (nativeValue instanceof BackupNotFoundException) {
+      return ToDafny.Error((BackupNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof ConditionalCheckFailedException) {
+      return ToDafny.Error((ConditionalCheckFailedException) nativeValue);
+    }
+    if (nativeValue instanceof ContinuousBackupsUnavailableException) {
+      return ToDafny.Error((ContinuousBackupsUnavailableException) nativeValue);
+    }
+    if (nativeValue instanceof DuplicateItemException) {
+      return ToDafny.Error((DuplicateItemException) nativeValue);
+    }
+    if (nativeValue instanceof ExportConflictException) {
+      return ToDafny.Error((ExportConflictException) nativeValue);
+    }
+    if (nativeValue instanceof ExportNotFoundException) {
+      return ToDafny.Error((ExportNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof GlobalTableAlreadyExistsException) {
+      return ToDafny.Error((GlobalTableAlreadyExistsException) nativeValue);
+    }
+    if (nativeValue instanceof GlobalTableNotFoundException) {
+      return ToDafny.Error((GlobalTableNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof IdempotentParameterMismatchException) {
+      return ToDafny.Error((IdempotentParameterMismatchException) nativeValue);
+    }
+    if (nativeValue instanceof ImportConflictException) {
+      return ToDafny.Error((ImportConflictException) nativeValue);
+    }
+    if (nativeValue instanceof ImportNotFoundException) {
+      return ToDafny.Error((ImportNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof IndexNotFoundException) {
+      return ToDafny.Error((IndexNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof InternalServerErrorException) {
+      return ToDafny.Error((InternalServerErrorException) nativeValue);
+    }
+    if (nativeValue instanceof InvalidExportTimeException) {
+      return ToDafny.Error((InvalidExportTimeException) nativeValue);
+    }
+    if (nativeValue instanceof InvalidRestoreTimeException) {
+      return ToDafny.Error((InvalidRestoreTimeException) nativeValue);
+    }
+    if (nativeValue instanceof ItemCollectionSizeLimitExceededException) {
+      return ToDafny.Error((ItemCollectionSizeLimitExceededException) nativeValue);
+    }
+    if (nativeValue instanceof LimitExceededException) {
+      return ToDafny.Error((LimitExceededException) nativeValue);
+    }
+    if (nativeValue instanceof PointInTimeRecoveryUnavailableException) {
+      return ToDafny.Error((PointInTimeRecoveryUnavailableException) nativeValue);
+    }
+    if (nativeValue instanceof ProvisionedThroughputExceededException) {
+      return ToDafny.Error((ProvisionedThroughputExceededException) nativeValue);
+    }
+    if (nativeValue instanceof ReplicaAlreadyExistsException) {
+      return ToDafny.Error((ReplicaAlreadyExistsException) nativeValue);
+    }
+    if (nativeValue instanceof ReplicaNotFoundException) {
+      return ToDafny.Error((ReplicaNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof RequestLimitExceededException) {
+      return ToDafny.Error((RequestLimitExceededException) nativeValue);
+    }
+    if (nativeValue instanceof ResourceInUseException) {
+      return ToDafny.Error((ResourceInUseException) nativeValue);
+    }
+    if (nativeValue instanceof ResourceNotFoundException) {
+      return ToDafny.Error((ResourceNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof TableAlreadyExistsException) {
+      return ToDafny.Error((TableAlreadyExistsException) nativeValue);
+    }
+    if (nativeValue instanceof TableInUseException) {
+      return ToDafny.Error((TableInUseException) nativeValue);
+    }
+    if (nativeValue instanceof TableNotFoundException) {
+      return ToDafny.Error((TableNotFoundException) nativeValue);
+    }
+    if (nativeValue instanceof TransactionCanceledException) {
+      return ToDafny.Error((TransactionCanceledException) nativeValue);
+    }
+    if (nativeValue instanceof TransactionConflictException) {
+      return ToDafny.Error((TransactionConflictException) nativeValue);
+    }
+    if (nativeValue instanceof TransactionInProgressException) {
+      return ToDafny.Error((TransactionInProgressException) nativeValue);
+    }
+    if (nativeValue instanceof OpaqueError) {
+      return ToDafny.Error((OpaqueError) nativeValue);
+    }
+    if (nativeValue instanceof CollectionOfErrors) {
+      return ToDafny.Error((CollectionOfErrors) nativeValue);
+    }
+    return Error.create_Opaque(nativeValue);
+  }
+
+  public static Error Error(OpaqueError nativeValue) {
+    return Error.create_Opaque(nativeValue.obj());
+  }
+
+  public static Error Error(DynamoDbException nativeValue) {
+    return Error.create_Opaque(nativeValue);
+  }
+
+  public static Error Error(CollectionOfErrors nativeValue) {
+    DafnySequence<? extends Error> list = software.amazon.smithy.dafny.conversion.ToDafny.Aggregate.GenericToSequence(
+        nativeValue.list(), 
+        ToDafny::Error, 
+        Error._typeDescriptor());
+    return Error.create_CollectionOfErrors(list);
+  }
+
   public static Error Error(BackupInUseException nativeValue) {
     Option<DafnySequence<? extends Character>> message;
     message = Objects.nonNull(nativeValue.getMessage()) ?
@@ -684,14 +804,6 @@ public class ToDafny {
         Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
         : Option.create_None();
     return new Error_TransactionInProgressException(message);
-  }
-
-  public static Error Error(DynamoDbException nativeValue) {
-    Option<DafnySequence<? extends Character>> message;
-    message = Objects.nonNull(nativeValue.getMessage()) ?
-        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
-        : Option.create_None();
-    return new Error_Opaque(message);
   }
 
   public static ArchivalSummary ArchivalSummary(
