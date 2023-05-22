@@ -10,7 +10,7 @@ Parameters:
   RepositoryName:
     Type: String
     Description: Base Name for the Repositories
-    Default: MPL-Java
+    Default: java-mpl
   CreateDomainFlag:
     Type: String
     Description: Attempt to create Domain or not
@@ -35,4 +35,4 @@ Resources:
     Type: AWS::CodeArtifact::Repository
     Properties:
       DomainName: !Ref DomainName
-      RepositoryName: !Sub "${RepositoryName}-Staging"
+      RepositoryName: !Sub "${RepositoryName}-staging"
