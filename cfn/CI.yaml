@@ -50,7 +50,7 @@ Resources:
               "Principal": {
                   "AWS": "arn:aws:iam::587316601012:role/service-role/codebuild-AWS-MPL-Java-service-role-release"
               },
-              "Action": "sts:AssumeRole",
+              "Action": "sts:AssumeRole"
             }
           ]
         }
