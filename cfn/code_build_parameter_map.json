@@ -1,7 +1,7 @@
 {
     "NumberOfBuildsInBatch": 50,
     "ProjectDescription": "CD for Java MPL",
-    "ProjectName": "java-mpl",
+    "ProjectName": "AWS-MPL-Java",
     "SourceLocation": "https://github.com/aws/aws-cryptographic-material-providers-library-dafny.git"
   }
   
