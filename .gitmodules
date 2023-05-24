@@ -7,3 +7,6 @@
 [submodule "aws-encryption-sdk-net-formally-verified/TestVectors/resources/aws-encryption-sdk-test-vectors"]
 	path = aws-encryption-sdk-net/TestVectors/resources/aws-encryption-sdk-test-vectors
 	url = https://github.com/awslabs/aws-encryption-sdk-test-vectors.git
+[submodule "smithy-dafny"]
+	path = smithy-dafny
+	url = git@github.com:awslabs/smithy-dafny.git

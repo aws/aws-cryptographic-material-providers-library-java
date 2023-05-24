@@ -1,0 +1,43 @@
+# This workflow performs static analysis checks.
+name: Library smithy-dafny code generation
+
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  code-generation:
+    strategy:
+      matrix:
+        library: [
+          AwsCryptographyPrimitives,
+          ComAmazonawsKms,
+          ComAmazonawsDynamodb,
+          AwsCryptographicMaterialProviders, 
+          TestVectorsAwsCryptographicMaterialProviders,
+          StandardLibrary,
+        ]
+        os: [ macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Support longpaths
+        run: |
+          git config --global core.longpaths true
+
+      - uses: actions/checkout@v2
+      # The specification submodule is private so we don't have access, but we don't need
+      # it to generate code via smithy-dafny. Instead we manually pull the submodule we DO need.
+      - run: git submodule update --init smithy-dafny
+
+      # For now this just verifies that smithy-dafny runs successfully.
+      # Although we have some manual code edits applied to the output,
+      # in the near future we could assert no other differences show up.
+      # In the longer term we should be able to assert no differences at all.
+      - name: Generate code for ${{ matrix.library }}
+        shell: bash
+        working-directory: ./${{ matrix.library }}
+        run: |
+          CODEGEN_CLI_ROOT=../smithy-dafny/codegen/smithy-dafny-codegen-cli make polymorph_dafny
