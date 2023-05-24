@@ -60,9 +60,10 @@ public class HMac extends _ExternBase_HMac {
       final SecretKeySpec secretKey = new SecretKeySpec(keyBytes, algorithm);
       hmac.init(secretKey);
     } catch (InvalidKeyException e) {
-      // TODO determine that this really is safe
-      // This error appears to be thrown if the key is empty
-      // A requires on the Dafny side makes sure this is never called that way
+      // Dafny preconditions should ensure it is impossible to enter here.
+      // In case this is ever not true, translate to a RuntimeException
+      // which will be bubbled up.
+      throw new InvalidStateException("Encountered InvalidKeyException: " + e.getMessage());
     }
   }
 
