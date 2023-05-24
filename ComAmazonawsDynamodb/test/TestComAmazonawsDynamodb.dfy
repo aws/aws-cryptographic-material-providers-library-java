@@ -100,7 +100,6 @@ module TestComAmazonawsDynamoDB {
         );
 
         var queryRet := client.Query(queryInput);
-        print queryRet;
         expect queryRet.Success?;
 
         var queryOutput := queryRet.value;
