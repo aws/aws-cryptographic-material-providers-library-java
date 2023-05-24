@@ -12,6 +12,7 @@ import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesE
 import javax.crypto.Mac;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
+import java.lang.IllegalStateException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -63,7 +64,7 @@ public class HMac extends _ExternBase_HMac {
       // Dafny preconditions should ensure it is impossible to enter here.
       // In case this is ever not true, translate to a RuntimeException
       // which will be bubbled up.
-      throw new InvalidStateException("Encountered InvalidKeyException: " + e.getMessage());
+      throw new IllegalStateException("Encountered InvalidKeyException: " + e.getMessage());
     }
   }
 
