@@ -9,4 +9,4 @@
 	url = https://github.com/awslabs/aws-encryption-sdk-test-vectors.git
 [submodule "smithy-dafny"]
 	path = smithy-dafny
-	url = git@github.com:awslabs/smithy-dafny.git
+	url = https://github.com/awslabs/smithy-dafny.git
