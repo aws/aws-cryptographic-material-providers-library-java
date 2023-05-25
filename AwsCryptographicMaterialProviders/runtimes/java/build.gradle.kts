@@ -21,6 +21,8 @@ java {
     sourceSets["test"].java {
         srcDir("src/test/dafny-generated")
     }
+
+    withJavadocJar()
 }
 
 var caUrl: URI? = null
