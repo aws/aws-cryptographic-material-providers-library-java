@@ -7,4 +7,14 @@ on:
     branches:
       - main
   
-  jobs
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      # We need to access the role that has permissions to assume the role to publish to CodeArtifact
+      - name: Configure AWS Credentials for CodeArtifact Publishing
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2
+          role-session-name: JarCAPublishing
