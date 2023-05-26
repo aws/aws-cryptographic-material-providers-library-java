@@ -71,7 +71,7 @@ dependencies {
 publishing {
     publications.create<MavenPublication>("maven") {
         groupId = "software.amazon.cryptography"
-        artifactId = "AwsCryptographicMaterialProviders"
+        artifactId = "aws-cryptographic-material-providers"
         artifact(tasks["shadowJar"])
     }
     repositories { mavenLocal() }
@@ -90,6 +90,10 @@ tasks {
 
 tasks.jar {
     enabled = false
+}
+
+tasks.javadoc {
+    exclude("src/main/dafny-generated")
 }
 
 tasks.build {

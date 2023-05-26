@@ -1,0 +1,10 @@
+# This workflow publishes a jar artifact to CodeArtifact
+name: Push artifacts to CodeArtifact
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  
+  jobs
