@@ -4,6 +4,7 @@ import javax.annotation.Nullable
 plugins {
     `java-library`
     `maven-publish`
+    `signing`
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -23,6 +24,7 @@ java {
     }
 
     withJavadocJar()
+    withSourcesJar()
 }
 
 var caUrl: URI? = null
@@ -73,12 +75,29 @@ publishing {
         groupId = "software.amazon.cryptography"
         artifactId = "aws-cryptographic-material-providers"
         artifact(tasks["shadowJar"])
+        artifact(tasks["javadocJar"])
+        artifact(tasks["sourcesJar"])
     }
-    repositories { mavenLocal() }
+
+    repositories {
+        mavenLocal()
+        maven {
+            name = "PublishToCodeArtifact"
+            url = URI.create("https://github-mpl-370957321024.d.codeartifact.us-west-2.amazonaws.com/maven/MPL-Java-CI/")
+            credentials {
+                username = "aws"
+                password = System.getenv("CODEARTIFACT_AUTH_TOKEN")
+            }
+        }
+    }
 }
 
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
+}
+
+tasks.withType<Jar>() {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 tasks {
