@@ -330,7 +330,7 @@ module MultiKeyring {
       // way to get to this place is if there is no plaintext data key, so we
       // omit the 'if' statement checking for it.
       var combinedResult := Types.CollectionOfErrors( list := failures,
-      message := "No Configured Key was able to decrypt the Data Key. The list of encountered Exceptions is avaible via `list`.");
+      message := "No Configured Keyring was able to decrypt the Data Key. The list of encountered Exceptions is available via `list`.");
       return Failure(combinedResult);
     }
   }

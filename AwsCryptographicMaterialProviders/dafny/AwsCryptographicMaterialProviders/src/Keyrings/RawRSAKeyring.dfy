@@ -364,7 +364,7 @@ module RawRSAKeyring {
       //# If no decryption succeeds, the keyring MUST fail and MUST NOT modify
       //# the [decryption materials](structures.md#decryption-materials).
       return Failure(Types.CollectionOfErrors(list := errors,
-      message := "No Configured RSA Key was able to decrypt the Data Key. The list of encountered Exceptions is avaible via `list`."));
+      message := "Raw RSA Key was unable to decrypt any encrypted data key. The list of encountered Exceptions is avaible via `list`."));
     }
 
     predicate method ShouldDecryptEDK(edk: Types.EncryptedDataKey)

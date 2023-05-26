@@ -256,7 +256,7 @@ module AwsKmsRsaKeyring {
 
       var SealedDecryptionMaterials :- outcome
         .MapFailure(errors => Types.CollectionOfErrors(list := errors,
-        message := "No Configured KMS Key was able to decrypt the Data Key. The list of encountered Exceptions is avaible via `list`."));
+        message := "No Configured KMS Key was able to decrypt the Data Key. The list of encountered Exceptions is available via `list`."));
 
       assert decryptClosure.Ensures(Seq.Last(attempts).input, Success(SealedDecryptionMaterials), Seq.DropLast(attempts));
       return Success(Types.OnDecryptOutput(
