@@ -50,7 +50,7 @@ jobs:
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2
-          role-session-name: AWSCredsForPublishingRole
+          role-session-name: AWSCredsForCI
       
       - name: Gradle Build 
         uses: gradle/gradle-build-action@v2
@@ -58,14 +58,16 @@ jobs:
           arguments: build
           build-root-directory: ./AwsCryptographicMaterialProviders/runtimes/java
 
-      - name: PublishToCodeArtifact
-        shell: bash
+      # We need to access the role that has permissions to assume the role to publish to CodeArtifact
+      - name: Configure AWS Credentials to be able to assume Publishing role
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
-          # We need to access the role that has permissions to assume the role to publish to CodeArtifact
           role-to-assume: arn:aws:iam::370957321024:role/MPL-Java-CA-SourceRole-us-west-2
           role-session-name: AwsCredsForPublishingRole
+      
+      - name: PublishToCodeArtifact
+        shell: bash
         working-directory: ./AwsCryptographicMaterialProviders/runtimes/java
         run : |
           # get codeartifact token with permissions to push
