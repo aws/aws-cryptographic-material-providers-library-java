@@ -98,9 +98,9 @@ tasks.withType<JavaCompile>() {
 
 
 tasks.withType<Jar>() {
-    // to compile a sources jar we need a strategy on how to deal with duplicates;
-    // we choose to exclude duplicate class names.
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+   // to compile a sources jar we need a strategy on how to deal with duplicates;
+   // we choose to include duplicate classes.
+   duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 tasks {
