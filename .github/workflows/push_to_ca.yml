@@ -48,20 +48,6 @@ jobs:
           make build_java CORES=$CORES
 
       # We need to access the role that has permissions to assume the role to publish to CodeArtifact
-      - name: Configure AWS Credentials to be able to assume correct role
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-west-2
-          role-to-assume: arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2
-          role-session-name: AWSCredsForCI
-      
-      - name: Gradle Build 
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
-          build-root-directory: ./AwsCryptographicMaterialProviders/runtimes/java
-
-      # We need to access the role that has permissions to assume the role to publish to CodeArtifact
       - name: Configure AWS Credentials to be able to assume Publishing role
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -74,7 +60,7 @@ jobs:
         working-directory: ./AwsCryptographicMaterialProviders/runtimes/java
         run : |
           # get codeartifact token with permissions to push
-          # we can do this since we 
+          # we can do this since we have assumed the role that allows us to push to the mpl repo. 
           export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain github-mpl --domain-owner 370957321024 --region us-west-2 --query authorizationToken --output text`
           make mvn_ca_deploy
         
