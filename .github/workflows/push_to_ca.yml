@@ -57,7 +57,7 @@ jobs:
       
       - name: PublishToCodeArtifact
         shell: bash
-        working-directory: ./AwsCryptographicMaterialProviders/runtimes/java
+        working-directory: ./AwsCryptographicMaterialProviders
         run : |
           # get codeartifact token with permissions to push
           # we can do this since we have assumed the role that allows us to push to the mpl repo. 
