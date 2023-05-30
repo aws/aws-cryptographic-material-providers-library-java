@@ -146,7 +146,7 @@ Resources:
             Action: 'sts:AssumeRole'
           - Effect: Allow
             Principal:
-              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
             Action:
               - 'sts:AssumeRoleWithWebIdentity'
             Condition:
