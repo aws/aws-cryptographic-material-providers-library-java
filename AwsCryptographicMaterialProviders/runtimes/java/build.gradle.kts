@@ -96,8 +96,11 @@ tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
 
+
 tasks.withType<Jar>() {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    // to compile a sources jar we need a strategy on how to deal with duplicates;
+    // we choose to exclude duplicate class names.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks {
