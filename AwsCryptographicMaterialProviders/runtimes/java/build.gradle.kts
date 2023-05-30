@@ -75,6 +75,33 @@ publishing {
         artifact(tasks["shadowJar"])
         artifact(tasks["javadocJar"])
         artifact(tasks["sourcesJar"])
+
+        // Include extra information in the POMs.
+        afterEvaluate {
+            pom {
+                name.set("aws-cryptographic-material-providers-library-java")
+                description.set("AWS Cryptographic Material Providers Library")
+                url.set("https://github.com/aws/aws-cryptographic-material-providers-library-java")
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("amazonwebservices")
+                        organization.set("Amazon Web Services")
+                        organizationUrl.set("https://aws.amazon.com")
+                        roles.add("developer")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/aws/aws-cryptographic-material-providers-library-java.git")
+                }
+            }
+        }
     }
 
     repositories {
