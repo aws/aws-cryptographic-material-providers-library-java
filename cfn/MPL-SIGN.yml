@@ -25,7 +25,7 @@ Resources:
   GitHubCISigningRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: "GitHub-CI-Signing-Role-${AWS::Region}"
+      RoleName: !Sub "GitHub-CI-Signing-Role-${AWS::Region}"
       Description: "Access Signing Resources from CI Account"
       AssumeRolePolicyDocument: !Sub |
         {
