@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "IAM Managed Policies/Role in Prod to give CI access to signing Resources"
+
+Resources:
+  SecretsManagerPolicyCI:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "CryptoTools-SecretsManager-${ProjectName}-Release"
+      Path: "/service-role/"
+      PolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Resource": [
+                "arn:aws:secretsmanager:us-west-2:${AWS::AccountId}:secret:Maven-GPG-Keys-CI-xjAvTM",
+                "arn:aws:secretsmanager:us-west-2:${AWS::AccountId}:secret:Maven-GPG-Keys-CI-Credentials-eBrSNB"
+              ],
+              "Action": "secretsmanager:GetSecretValue"
+            }
+          ]
+        }
+  
+  GitHubCISigningRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: "GitHub-CI-Signing-Role-${AWS::Region}"
+      Description: "Access Signing Resources from CI Account"
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",   
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                  "AWS": "arn:aws:iam::370957321024:role/MPL-Java-CA-SourceRole-us-west-2"
+              },
+              "Action": ["sts:AssumeRole", "sts:AssumeRoleWithWebIdentity"],
+              "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "token.actions.githubusercontent.com:sub": "repo:aws/aws-cryptographic-material-providers-library-java:*"
+                }
+              }
+            }
+          ]
+        }
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        # Add CI Keys to CI role
+        - !Ref SecretsManagerPolicyCI
+
