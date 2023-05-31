@@ -61,6 +61,21 @@ Resources:
                     }
                 }
             }
+            {
+              "Effect": "Allow",
+              "Principal": {
+                  "AWS": "arn:aws:iam::370957321024:role/GitHub-MPL-CI-Signing-Role-us-west-2"
+              },
+              "Action": ["sts:AssumeRole", "sts:AssumeRoleWithWebIdentity"],
+              "Condition": {
+                  "StringEquals": {
+                      "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                  },
+                  "StringLike": {
+                      "token.actions.githubusercontent.com:sub": "repo:aws/aws-cryptographic-material-providers-library-java:*"
+                  }
+              }
+            }
           ]
         }
       MaxSessionDuration: 3600

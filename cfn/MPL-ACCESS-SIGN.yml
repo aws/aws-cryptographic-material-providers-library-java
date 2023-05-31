@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "IAM Managed Policies/Role in Prod to give CI access to signing Resources"
+
+Resources:
+  GitHubCISigningRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !Sub "GitHub-MPL-CI-Signing-Role-${AWS::Region}"
+      Description: "Access Signing Resources from CI Account"
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",   
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                  "Federated": "arn:aws:iam::370957321024:oidc-provider/token.actions.githubusercontent.com"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                  "StringEquals": {
+                      "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                  },
+                  "StringLike": {
+                      "token.actions.githubusercontent.com:sub": "repo:aws/aws-cryptographic-material-providers-library-java:*"
+                  }
+              }
+            }
+          ]
+        }
+      MaxSessionDuration: 3600
+      ManagedPolicyArns:
+        # Add CI Keys to CI role
+        - "arn:aws:iam::587316601012:role/GitHub-CI-Signing-Role-us-west-2"
+
