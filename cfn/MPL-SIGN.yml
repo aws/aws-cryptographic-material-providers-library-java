@@ -5,7 +5,7 @@ Resources:
   SecretsManagerPolicyCI:
     Type: "AWS::IAM::ManagedPolicy"
     Properties:
-      ManagedPolicyName: !Sub "CryptoTools-SecretsManager-CI-Signing-Keys"
+      ManagedPolicyName: "CryptoTools-SecretsManager-CI-Signing-Keys"
       Path: "/service-role/"
       PolicyDocument: !Sub |
         {
