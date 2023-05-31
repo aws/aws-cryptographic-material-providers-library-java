@@ -15,7 +15,7 @@ jobs:
       contents: read
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-west-2
           # This role was manually created.
@@ -49,7 +49,7 @@ jobs:
 
       # We need to assume the role that gives us access to the ci keys
       - name: Configure AWS Credentials to be able to get the CI Signing Keys
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::370957321024:role/GitHub-MPL-CI-Signing-Role-us-west-2
@@ -57,15 +57,16 @@ jobs:
       
       # We need to assume the role in prod account that grants access to the ci keys
       - name: Configure AWS Credentials to be able to get the CI Signing Keys
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::587316601012:role/GitHub-CI-Signing-Role-us-west-2
           role-session-name: AWSCredsForSigningKeys
+          role-chaining: true
       
       # We need to access the role that has permissions to assume the role to publish to CodeArtifact
       - name: Configure AWS Credentials to be able to assume Publishing role
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::370957321024:role/MPL-Java-CA-SourceRole-us-west-2
