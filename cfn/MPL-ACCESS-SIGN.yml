@@ -29,7 +29,4 @@ Resources:
           ]
         }
       MaxSessionDuration: 3600
-      ManagedPolicyArns:
-        # Add CI Keys to CI role
-        - "arn:aws:iam::587316601012:role/GitHub-CI-Signing-Role-us-west-2"
 

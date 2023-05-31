@@ -52,8 +52,17 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
+          role-to-assume: arn:aws:iam::370957321024:role/GitHub-MPL-CI-Signing-Role-us-west-2
+          role-session-name: IntermediaryAWSCredsForSigningResources
+      
+      # We need to assume the role in prod account that grants access to the ci keys
+      - name: Configure AWS Credentials to be able to get the CI Signing Keys
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
           role-to-assume: arn:aws:iam::587316601012:role/GitHub-CI-Signing-Role-us-west-2
-          role-session-name: AwsCredsForGettingCIKeys
+          role-session-name: AWSCredsForSigningKeys
+      
       # We need to access the role that has permissions to assume the role to publish to CodeArtifact
       - name: Configure AWS Credentials to be able to assume Publishing role
         uses: aws-actions/configure-aws-credentials@v1
