@@ -177,3 +177,13 @@ fun SourceDirectorySet.mainSourceSet() {
     srcDir("src/main/dafny-generated")
     srcDir("src/main/smithy-generated")
 }
+
+signing {
+    //Signing is required if building a release version and if we're going to publish it.
+    //Otherwise, signing will only occur if signatory credentials are configured.
+    setRequired({
+        gradle.getTaskGraph().hasTask("publish")
+    })
+
+    sign(publishing.publications["maven"])
+}
