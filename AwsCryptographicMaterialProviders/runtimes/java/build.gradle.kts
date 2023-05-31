@@ -9,8 +9,8 @@ plugins {
 }
 
 group = "software.amazon.cryptography"
-version = "1.0-SNAPSHOT"
-description = "AwsCryptographicMaterialProviders"
+version = "1.0.0"
+description = "AWS Cryptographic Material Providers Library"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
