@@ -28,7 +28,5 @@ phases:
   build:
     commands:
       - ls
-      - cd ../..
-      - ls
       - cd AwsCryptographicMaterialProviders/
       - ls
