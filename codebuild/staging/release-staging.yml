@@ -27,6 +27,5 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
   build:
     commands:
-      - ls
       - cd AwsCryptographicMaterialProviders/
-      - ls
+      - make build_java && make mvn_local_deploy
