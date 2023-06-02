@@ -80,19 +80,11 @@ publishing {
     repositories {
         mavenLocal()
         maven {
-            name = "PublishToCodeArtifactCI"
-            url = URI.create("https://github-mpl-370957321024.d.codeartifact.us-west-2.amazonaws.com/maven/MPL-Java-CI/")
-            credentials {
-                username = "aws"
-                password = System.getenv("CODEARTIFACT_AUTH_TOKEN")
-            }
-        }
-        maven {
             name = "PublishToCodeArtifactStaging"
             url = URI.create("https://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/")
             credentials {
                 username = "aws"
-                password = System.getenv("CODEARTIFACT_AUTH_TOKEN")
+                password = System.getenv("CODEARTIFACT_TOKEN")
             }
         }
     }
