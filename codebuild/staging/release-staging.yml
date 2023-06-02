@@ -29,7 +29,6 @@ phases:
       - unzip -qq gradle.zip && rm gradle.zip
       - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
       # Install GPG2
-      - apt-get install gnupg2 -y
       - gpg --version
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
