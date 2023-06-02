@@ -40,6 +40,6 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
   build:
     commands:
-      - gradle --version
       - cd AwsCryptographicMaterialProviders/
       - make build_java
+      - ls ~/.m2/repository/software/amazon/cryptography/aws-cryptographic-material-providers/1.0.0
