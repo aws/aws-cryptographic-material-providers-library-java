@@ -344,7 +344,7 @@ mvn_local_deploy_dependencies:
 
 # The Java MUST all exist already through the transpile step.
 mvn_local_deploy:
-	gradle -p runtimes/java publishToMavenLocal
+	gradle -p runtimes/java publishMavenLocalPublicationToMavenLocal 
 
 # The Java MUST all exsist if we want to publish to CodeArtifact
 mvn_ca_deploy:

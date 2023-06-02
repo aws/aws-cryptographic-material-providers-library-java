@@ -69,6 +69,14 @@ dependencies {
 }
 
 publishing {
+    publications.create<MavenPublication>("mavenLocal") {
+        groupId = "software.amazon.cryptography"
+        artifactId = "aws-cryptographic-material-providers"
+        artifact(tasks["shadowJar"])
+        artifact(tasks["javadocJar"])
+        artifact(tasks["sourcesJar"])
+    }
+
     publications.create<MavenPublication>("maven") {
         groupId = "software.amazon.cryptography"
         artifactId = "aws-cryptographic-material-providers"
@@ -158,11 +166,11 @@ signing {
     project.ext.set("signing.gnupg.passphrase", System.getenv("GPG_PASS"))
 
     // Signing is required if building a release version and if we're going to publish it.
-    // Signing is required if buillding a release version and if we're going to publish to CodeArtifact Staging
+    // Otherwise if doing a maven publication we will sign
     setRequired({
         gradle.getTaskGraph().hasTask("publish")
-        gradle.getTaskGraph().hasTask("publishMavenPublicationToPublishToCodeArtifactStagingRepository")
     })
+    sign(publishing.publications["maven"])
 }
 
 fun SourceDirectorySet.mainSourceSet() {
