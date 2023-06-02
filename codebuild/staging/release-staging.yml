@@ -25,11 +25,12 @@ phases:
       - unzip -qq dafny.zip && rm dafny.zip
       - export PATH="$PWD/dafny:$PATH"
       # Get Latest Gradle
-      - gradle --version
       - curl https://services.gradle.org/distributions/gradle-8.1.1-all.zip -L -o gradle.zip
       - unzip -qq gradle.zip && rm gradle.zip
       - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
-      - gradle --version
+      # Install GPG2
+      - apt-get install gnupg2 -y
+      - gpg --version
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
