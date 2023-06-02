@@ -89,7 +89,7 @@ publishing {
         }
         maven {
             name = "PublishToCodeArtifactStaging"
-            url = URI.create("ttps://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/")
+            url = URI.create("https://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/")
             credentials {
                 username = "aws"
                 password = System.getenv("CODEARTIFACT_AUTH_TOKEN")
