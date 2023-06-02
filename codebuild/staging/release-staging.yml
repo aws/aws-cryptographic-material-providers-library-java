@@ -28,7 +28,7 @@ phases:
       - curl https://services.gradle.org/distributions/gradle-8.1.1-all.zip -L -o gradle.zip
       - unzip -qq gradle.zip && rm gradle.zip
       - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
-      - pwd
+      - ls -ls /root/.gnupg
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
@@ -37,6 +37,8 @@ phases:
       - export CODEARTIFACT_REPO_URL=hhttps://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/
       - aws secretsmanager get-secret-value --region us-west-2 --secret-id Maven-GPG-Keys-Release --query SecretBinary --output text | base64 -d > ~/mvn_gpg.tgz
       - tar -xvf ~/mvn_gpg.tgz -C ~
+      - mkdir /root/.gnupg
+      - mv -v mvn_gpg/* /root/.gnupg/
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
