@@ -36,4 +36,6 @@ phases:
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
+      - cd runtimes/java
+      - gradle -q javaToolchains
       - make build_java
