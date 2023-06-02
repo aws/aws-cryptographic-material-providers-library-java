@@ -18,6 +18,13 @@ phases:
   install:
     runtime-versions:
       java: corretto11
+    commands:
+      - cd ..
+      # Get Dafny
+      - curl https://github.com/dafny-lang/dafny/releases/download/v4.1.0/dafny-4.1.0-x64-macos-11.zip -L -o dafny.zip
+      - unzip -qq dafny.zip && rm dafny.zip
+      - export PATH="$PWD/dafny:$PATH"
+      - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
       - export SETTINGS_FILE=$(pwd)/codebuild/release/settings.xml
@@ -27,5 +34,6 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
   build:
     commands:
+      - dotnet -version
       - cd AwsCryptographicMaterialProviders/
       - make build_java && make mvn_local_deploy
