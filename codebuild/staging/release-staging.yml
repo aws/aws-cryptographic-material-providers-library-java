@@ -37,7 +37,7 @@ phases:
       - aws secretsmanager get-secret-value --region us-west-2 --secret-id Maven-GPG-Keys-Release --query SecretBinary --output text | base64 -d > ~/mvn_gpg.tgz
       - tar -xvf ~/mvn_gpg.tgz -C ~
       - mkdir /root/.gnupg
-      - mv -v mvn_gpg/* /root/.gnupg/
+      - mv -v ~/mvn_gpg/* /root/.gnupg/
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
