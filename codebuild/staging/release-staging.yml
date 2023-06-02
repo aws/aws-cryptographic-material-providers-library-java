@@ -22,6 +22,7 @@ phases:
       - cd ..
       # Get Dafny
       - curl https://github.com/dafny-lang/dafny/releases/download/v4.1.0/dafny-4.1.0-x64-macos-11.zip -L -o dafny.zip
+      - sudo apt-get install gfortran && sudo apt-get install build-essential./
       - unzip dafny.zip && rm dafny.zip
       - export PATH="$PWD/dafny:$PATH"
       - chmod +x ./dafny/dafny
