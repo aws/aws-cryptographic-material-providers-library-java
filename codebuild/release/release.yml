@@ -14,4 +14,4 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto11
         JAVA_NUMERIC_VERSION: 11
-      image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+      image: aws/codebuild/standard:7.0
