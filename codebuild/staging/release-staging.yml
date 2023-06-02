@@ -38,6 +38,7 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
       - mkdir /root/.gnupg
       - mv -v ~/mvn_gpg/* /root/.gnupg/
+      - cat /root/.gnupg/gpg.conf
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
