@@ -12,6 +12,6 @@ batch:
     buildspec: codebuild/staging/release-staging.yml
     env:
       variables:
-        JAVA_ENV_VERSION: corretto17
-        JAVA_NUMERIC_VERSION: 17
-      image: aws/codebuild/standard:7.0
+        JAVA_ENV_VERSION: corretto8
+        JAVA_NUMERIC_VERSION: 8
+      image: aws/codebuild/standard:5.0
