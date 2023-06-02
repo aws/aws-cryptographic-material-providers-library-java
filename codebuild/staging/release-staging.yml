@@ -35,4 +35,4 @@ phases:
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
-      - make build_java && make mvn_local_deploy
+      - make build_java
