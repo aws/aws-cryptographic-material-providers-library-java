@@ -14,6 +14,7 @@ description = "AWS Cryptographic Material Providers Library"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+    toolchain.implementation.set(JvmImplementation.J9)
     sourceSets["main"].java {
         mainSourceSet()
     }
