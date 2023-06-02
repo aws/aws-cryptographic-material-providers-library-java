@@ -350,7 +350,7 @@ mvn_local_deploy:
 mvn_ca_deploy:
 	gradle -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository
 
-mvn_ca_deploy:
+mvn_staging_deploy:
 	gradle -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository
 
 test_java:
