@@ -161,7 +161,7 @@ signing {
     project.ext.set("signing.gnupg.executable", "gpg")
     project.ext.set("signing.gnupg.useLegacyGpg" , "true")
     project.ext.set("signing.gnupg.homeDir", System.getenv("HOME") + "/.gnupg/")
-    project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/mvn_gpg/gpg.conf")
+    project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/.gnupg/gpg.conf")
     project.ext.set("signing.gnupg.keyName", System.getenv("GPG_KEY"))
     project.ext.set("signing.gnupg.passphrase", System.getenv("GPG_PASS"))
 

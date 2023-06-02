@@ -28,6 +28,7 @@ phases:
       - curl https://services.gradle.org/distributions/gradle-8.1.1-all.zip -L -o gradle.zip
       - unzip -qq gradle.zip && rm gradle.zip
       - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
+      - ls -ls .gnupg
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
