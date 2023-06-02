@@ -34,6 +34,5 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
   build:
     commands:
-      - dotnet -version
       - cd AwsCryptographicMaterialProviders/
       - make build_java && make mvn_local_deploy
