@@ -41,5 +41,4 @@ phases:
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
-      - make build_java
-      - ls ~/.m2/repository/software/amazon/cryptography/aws-cryptographic-material-providers/1.0.0
+      - make build_java && make mvn_local_deploy
