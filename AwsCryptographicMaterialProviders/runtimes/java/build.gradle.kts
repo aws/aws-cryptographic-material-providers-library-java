@@ -158,8 +158,8 @@ signing {
     useGpgCmd()
 
     // Dynamically set these properties
-    project.ext.set("signing.gnupg.executable", "gpg2")
-    project.ext.set("signing.gnupg.useLegacyGpg" , "false")
+    project.ext.set("signing.gnupg.executable", "gpg")
+    project.ext.set("signing.gnupg.useLegacyGpg" , "true")
     project.ext.set("signing.gnupg.homeDir", System.getenv("HOME") + "/mvn_gpg/")
     project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/mvn_gpg/gpg.conf")
     project.ext.set("signing.gnupg.keyName", System.getenv("GPG_KEY"))
