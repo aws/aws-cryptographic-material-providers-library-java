@@ -145,6 +145,26 @@ tasks.shadowJar {
     }
 }
 
+
+signing {
+    useGpgCmd()
+
+    // Dynamically set these properties
+    project.ext.set("signing.gnupg.executable", "gpg2")
+    project.ext.set("signing.gnupg.useLegacyGpg" , "false")
+    project.ext.set("signing.gnupg.homeDir", System.getenv("HOME") + "/mvn_gpg/")
+    project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/mvn_gpg/gpg.conf")
+    project.ext.set("signing.gnupg.keyName", System.getenv("GPG_KEY"))
+    project.ext.set("signing.gnupg.passphrase", System.getenv("GPG_PASS"))
+
+    // Signing is required if building a release version and if we're going to publish it.
+    // Signing is required if buillding a release version and if we're going to publish to CodeArtifact Staging
+    setRequired({
+        gradle.getTaskGraph().hasTask("publish")
+        gradle.getTaskGraph().hasTask("publishMavenPublicationToPublishToCodeArtifactStagingRepository")
+    })
+}
+
 fun SourceDirectorySet.mainSourceSet() {
     srcDir("src/main/java")
     srcDir("src/main/dafny-generated")
