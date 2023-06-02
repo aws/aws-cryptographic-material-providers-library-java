@@ -23,8 +23,9 @@ phases:
       # Get Dafny
       - curl https://github.com/dafny-lang/dafny/releases/download/v4.1.0/dafny-4.1.0-x64-macos-11.zip -L -o dafny.zip
       - unzip -qq dafny.zip && rm dafny.zip
+      - export PATH="$PWD/dafny:$PATH"
+      - dafny /version
       - cd aws-cryptographic-material-providers-library-java/
-      - uname -srv
   pre_build:
     commands:
       - export SETTINGS_FILE=$(pwd)/codebuild/release/settings.xml
