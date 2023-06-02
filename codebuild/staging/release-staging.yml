@@ -41,4 +41,7 @@ phases:
   build:
     commands:
       - cd AwsCryptographicMaterialProviders/
+      # Build and deploy to maven local
       - make build_java && make mvn_local_deploy
+      # Deploy to AWS CodeArtifact
+      - make mvn_staging_deploy
