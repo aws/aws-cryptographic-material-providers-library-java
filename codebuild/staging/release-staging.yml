@@ -30,6 +30,7 @@ phases:
       - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
       # Install GPG2
       - gpg --version
+      - gpg2 --version
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
