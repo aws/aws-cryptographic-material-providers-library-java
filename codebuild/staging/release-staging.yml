@@ -22,10 +22,14 @@ phases:
       - cd ..
       # Get Dafny
       - curl https://github.com/dafny-lang/dafny/releases/download/v4.1.0/dafny-4.1.0-x64-ubuntu-20.04.zip  -L -o dafny.zip
-      - gradle --version
       - unzip -qq dafny.zip && rm dafny.zip
       - export PATH="$PWD/dafny:$PATH"
-      - dafny /version
+      # Get Latest Gradle
+      - gradle --version
+      - curl https://services.gradle.org/distributions/gradle-8.1.1-all.zip -L -o gradle.zip
+      - unzip -qq gradle.zip && rm gradle.zip
+      - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
+      - gradle --version
       - cd aws-cryptographic-material-providers-library-java/
   pre_build:
     commands:
@@ -36,8 +40,6 @@ phases:
       - tar -xvf ~/mvn_gpg.tgz -C ~
   build:
     commands:
+      - gradle --version
       - cd AwsCryptographicMaterialProviders/
-      - cd runtimes/java
-      - ./gradlew wrapper --gradle-version=8.1.1 --distribution-type=bin
-      - cd ../..
       - make build_java
