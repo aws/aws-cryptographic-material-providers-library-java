@@ -37,6 +37,8 @@ phases:
       - aws secretsmanager get-secret-value --region us-west-2 --secret-id Maven-GPG-Keys-Release --query SecretBinary --output text | base64 -d > ~/mvn_gpg.tgz
       - tar -xvf ~/mvn_gpg.tgz -C ~
       - mkdir /root/.gnupg
+      - printf "use-agent\npinentry-mode loopback" >> ~/mvn_gpg/gpg.conf
+      - printf "allow-loopback-pinentry" >> ~/mvn_gpg/gpg-agent.conf
       - mv -v ~/mvn_gpg/* /root/.gnupg/
       - cat /root/.gnupg/gpg.conf
   build:
