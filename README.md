@@ -45,7 +45,9 @@ Many users find that the Amazon Corretto Crypto Provider (ACCP) significantly im
 For help installing and using ACCP, see the [amazon-corretto-crypto-provider repository](https://github.com/corretto/amazon-corretto-crypto-provider).
 
 ### Download the AWS Encryption SDK for Java
-You can get the latest release from Maven:
+You can get the latest release from Maven or Gradle:
+
+#### Maven:
 
 ```xml
 <dependency>
@@ -53,6 +55,13 @@ You can get the latest release from Maven:
   <artifactId>aws-cryptographic-material-providers</artifactId>
   <version>1.0.0</version>
 </dependency>
+```
+
+#### Gradle:
+```
+dependencies {
+    implementation("software.amazon.cryptography:aws-cryptographic-material-providers:1.0.0")
+}
 ```
 
 ## Public API
