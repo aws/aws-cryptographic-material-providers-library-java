@@ -31,7 +31,7 @@ phases:
       - cd TestVectorsAwsCryptographicMaterialProviders/
       - export CODEARTIFACT_TOKEN=$(aws codeartifact get-authorization-token --domain crypto-tools-internal --domain-owner 587316601012 --region us-east-1 --query authorizationToken --output text)
       - export CODEARTIFACT_REPO_URL=hhttps://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/
-      - aws sts assume-role --role-arn "arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2" --role-session-name "CB-TestVectorResources" --debug
+      - aws sts assume-role --role-arn "arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2" --role-session-name "CB-TestVectorResources"
   build:
     commands:
       - make build_java
