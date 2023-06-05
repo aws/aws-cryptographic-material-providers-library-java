@@ -1,0 +1,37 @@
+## Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+## SPDX-License-Identifier: Apache-2.0
+
+version: 0.2
+
+env:
+  variables:
+    REGION: us-east-1
+    DOMAIN: crypto-tools-internal
+    REPOSITORY: java-mpl-staging
+  parameter-store:
+    ACCOUNT: /CodeBuild/AccountId
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+    commands:
+      - cd ..
+      # Get Dafny
+      - curl https://github.com/dafny-lang/dafny/releases/download/v4.1.0/dafny-4.1.0-x64-ubuntu-20.04.zip  -L -o dafny.zip
+      - unzip -qq dafny.zip && rm dafny.zip
+      - export PATH="$PWD/dafny:$PATH"
+      # Get Latest Gradle
+      - curl https://services.gradle.org/distributions/gradle-8.1.1-all.zip -L -o gradle.zip
+      - unzip -qq gradle.zip && rm gradle.zip
+      - export PATH="$PWD/gradle-8.1.1/bin:$PATH"
+      - cd aws-cryptographic-material-providers-library-java/
+  pre_build:
+    commands:
+      - cd TestVectorsAwsCryptographicMaterialProviders/
+      - export CODEARTIFACT_TOKEN=$(aws codeartifact get-authorization-token --domain crypto-tools-internal --domain-owner 587316601012 --region us-east-1 --query authorizationToken --output text)
+      - export CODEARTIFACT_REPO_URL=hhttps://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/
+  build:
+    commands:
+      - make build_java
+      - make test_java
