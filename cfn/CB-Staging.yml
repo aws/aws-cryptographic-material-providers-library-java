@@ -104,7 +104,7 @@ Resources:
         CodeBuildCISTSAllow-${ProjectName}
       Path: /service-role/
       PolicyDocument: !Sub |
-      {
+        {
           "Version": "2012-10-17",
           "Statement": [
               {
@@ -113,7 +113,7 @@ Resources:
                   "Resource": "arn:aws:iam::370957321024:role/GitHub-CI-MPL-Dafny-Role-us-west-2"
               }
           ]
-      }
+        }
 
   CodeBuildBatchPolicy:
     Type: "AWS::IAM::ManagedPolicy"
