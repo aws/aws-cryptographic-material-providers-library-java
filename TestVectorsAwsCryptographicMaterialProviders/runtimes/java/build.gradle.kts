@@ -43,6 +43,13 @@ if (!caPasswordString.isNullOrBlank()) {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven {
+        url = URI.create(System.getenv("CODEARTIFACT_REPO_URL"))
+        credentials {
+            username = "aws"
+            password = System.getenv("CODEARTIFACT_TOKEN")
+        }
+    }
     if (caUrl != null && caPassword != null) {
         maven {
             name = "CodeArtifact"
