@@ -43,4 +43,5 @@ phases:
       - cd TestVectorsAwsCryptographicMaterialProviders/
       # transpile the code only for this project
       - make transpile_implementation_java
+      - make transpile_test_java
       - make test_java
