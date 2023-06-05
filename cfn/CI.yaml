@@ -42,19 +42,17 @@ Resources:
             },
             {
               "Effect": "Allow",
-              "Principal": { "AWS": "arn:aws:iam::${AWS::AccountId}:role/ToolsDevelopment" },
-              "Action": "sts:AssumeRole"
-            },
-            {
-              "Effect": "Allow",
               "Principal": {
-                  "Service": "codebuild.amazonaws.com"
+                "AWS": "*"
               },
               "Action": "sts:AssumeRole",
               "Condition": {
-                  "StringEquals": {
-                      "aws:SourceArn": "arn:aws:codebuild:us-west-2:587316601012:project/AWS-MPL-Java-Release"
-                  }
+                "StringEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::587316601012:role/service-role/codebuild-AWS-MPL-Java-service-role-release",
+                    "arn:aws:iam::370957321024:role/ToolsDevelopment"
+                  ]
+                }
               }
             }
           ]
