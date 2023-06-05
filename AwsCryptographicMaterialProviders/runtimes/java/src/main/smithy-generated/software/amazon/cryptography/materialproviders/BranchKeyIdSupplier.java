@@ -41,7 +41,7 @@ public final class BranchKeyIdSupplier implements IBranchKeyIdSupplier {
   /**
    * Given the Encryption Context associated with this encryption or decryption, returns the branch key that should be responsible for unwrapping or wrapping the data key.
    *
-   * @param GetBranchKeyIdInput Inputs for determining the Branch Key which should be used to wrap or unwrap the data key for this encryption or decryption
+   * @param nativeValue Inputs for determining the Branch Key which should be used to wrap or unwrap the data key for this encryption or decryption
    * @return Outputs for the Branch Key repsonsible for wrapping or unwrapping the data key in this encryption or decryption.
    */
   public GetBranchKeyIdOutput GetBranchKeyId(GetBranchKeyIdInput nativeValue) {

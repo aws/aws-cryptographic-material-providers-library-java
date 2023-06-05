@@ -49,11 +49,11 @@ public class KeyStore {
   /**
    * In the case that the Key Store contains two ACTIVE Branch Key versions (this should not be possible in normal operation), attempt to resolve to one by making one ACTIVE version DECRYPT_ONLY.
    *
-   * @param BranchKeyStatusResolutionInput Inputs for resolving a multiple ACTIVE versions state.
+   * @param branchKeyStatusResolutionInput Inputs for resolving a multiple ACTIVE versions state.
    *
    */
-  public void BranchKeyStatusResolution(BranchKeyStatusResolutionInput nativeValue) {
-    software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput dafnyValue = ToDafny.BranchKeyStatusResolutionInput(nativeValue);
+  public void BranchKeyStatusResolution(BranchKeyStatusResolutionInput branchKeyStatusResolutionInput) {
+    software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput dafnyValue = ToDafny.BranchKeyStatusResolutionInput(branchKeyStatusResolutionInput);
     Result<Tuple0, Error> result = this._impl.BranchKeyStatusResolution(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -88,11 +88,11 @@ public class KeyStore {
   /**
    * Get the ACTIVE version for a particular Branch Key from the Key Store.
    *
-   * @param GetActiveBranchKeyInput Inputs for getting a Branch Key's ACTIVE version.
+   * @param getActiveBranchKeyInput Inputs for getting a Branch Key's ACTIVE version.
    * @return Outputs for getting a Branch Key's ACTIVE version.
    */
-  public GetActiveBranchKeyOutput GetActiveBranchKey(GetActiveBranchKeyInput nativeValue) {
-    software.amazon.cryptography.keystore.internaldafny.types.GetActiveBranchKeyInput dafnyValue = ToDafny.GetActiveBranchKeyInput(nativeValue);
+  public GetActiveBranchKeyOutput GetActiveBranchKey(GetActiveBranchKeyInput getActiveBranchKeyInput) {
+    software.amazon.cryptography.keystore.internaldafny.types.GetActiveBranchKeyInput dafnyValue = ToDafny.GetActiveBranchKeyInput(getActiveBranchKeyInput);
     Result<software.amazon.cryptography.keystore.internaldafny.types.GetActiveBranchKeyOutput, Error> result = this._impl.GetActiveBranchKey(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -103,11 +103,11 @@ public class KeyStore {
   /**
    * Get a Beacon Key from the Key Store.
    *
-   * @param GetBeaconKeyInput Inputs for getting a Beacon Key
+   * @param getBeaconKeyInput Inputs for getting a Beacon Key
    * @return Outputs for getting a Beacon Key
    */
-  public GetBeaconKeyOutput GetBeaconKey(GetBeaconKeyInput nativeValue) {
-    software.amazon.cryptography.keystore.internaldafny.types.GetBeaconKeyInput dafnyValue = ToDafny.GetBeaconKeyInput(nativeValue);
+  public GetBeaconKeyOutput GetBeaconKey(GetBeaconKeyInput getBeaconKeyInput) {
+    software.amazon.cryptography.keystore.internaldafny.types.GetBeaconKeyInput dafnyValue = ToDafny.GetBeaconKeyInput(getBeaconKeyInput);
     Result<software.amazon.cryptography.keystore.internaldafny.types.GetBeaconKeyOutput, Error> result = this._impl.GetBeaconKey(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -118,11 +118,11 @@ public class KeyStore {
   /**
    * Get a particular version of a Branch Key from the Key Store.
    *
-   * @param GetBranchKeyVersionInput Inputs for getting a version of a Branch Key.
+   * @param getBranchKeyVersionInput Inputs for getting a version of a Branch Key.
    * @return Outputs for getting a version of a Branch Key.
    */
-  public GetBranchKeyVersionOutput GetBranchKeyVersion(GetBranchKeyVersionInput nativeValue) {
-    software.amazon.cryptography.keystore.internaldafny.types.GetBranchKeyVersionInput dafnyValue = ToDafny.GetBranchKeyVersionInput(nativeValue);
+  public GetBranchKeyVersionOutput GetBranchKeyVersion(GetBranchKeyVersionInput getBranchKeyVersionInput) {
+    software.amazon.cryptography.keystore.internaldafny.types.GetBranchKeyVersionInput dafnyValue = ToDafny.GetBranchKeyVersionInput(getBranchKeyVersionInput);
     Result<software.amazon.cryptography.keystore.internaldafny.types.GetBranchKeyVersionOutput, Error> result = this._impl.GetBranchKeyVersion(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
@@ -145,11 +145,11 @@ public class KeyStore {
   /**
    * Create a new ACTIVE version of an existing Branch Key in the Key Store, and set the previously ACTIVE version to DECRYPT_ONLY.
    *
-   * @param VersionKeyInput Inputs for versioning a Branch Key.
+   * @param versionKeyInput Inputs for versioning a Branch Key.
    *
    */
-  public void VersionKey(VersionKeyInput nativeValue) {
-    software.amazon.cryptography.keystore.internaldafny.types.VersionKeyInput dafnyValue = ToDafny.VersionKeyInput(nativeValue);
+  public void VersionKey(VersionKeyInput versionKeyInput) {
+    software.amazon.cryptography.keystore.internaldafny.types.VersionKeyInput dafnyValue = ToDafny.VersionKeyInput(versionKeyInput);
     Result<Tuple0, Error> result = this._impl.VersionKey(dafnyValue);
     if (result.is_Failure()) {
       throw ToNative.Error(result.dtor_error());
