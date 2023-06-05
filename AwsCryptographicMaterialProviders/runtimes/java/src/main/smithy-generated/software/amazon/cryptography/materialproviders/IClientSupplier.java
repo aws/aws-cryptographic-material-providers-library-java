@@ -7,5 +7,11 @@ import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.cryptography.materialproviders.model.GetClientInput;
 
 public interface IClientSupplier {
+  /**
+   * Returns an AWS KMS Client.
+   *
+   * @param GetClientInput Inputs for getting a AWS KMS Client.
+   *
+   */
   KmsClient GetClient(GetClientInput nativeValue);
 }

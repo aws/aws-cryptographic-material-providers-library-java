@@ -39,6 +39,12 @@ public final class ClientSupplier implements IClientSupplier {
     return this._impl;
   }
 
+  /**
+   * Returns an AWS KMS Client.
+   *
+   * @param GetClientInput Inputs for getting a AWS KMS Client.
+   *
+   */
   public KmsClient GetClient(GetClientInput nativeValue) {
     software.amazon.cryptography.materialproviders.internaldafny.types.GetClientInput dafnyValue = ToDafny.GetClientInput(nativeValue);
     Result<IKMSClient, Error> result = this._impl.GetClient(dafnyValue);
