@@ -6,7 +6,11 @@ The AWS Cryptographic Material Providers Library for Java provides methods for e
 
 [Security issue notifications](./CONTRIBUTING.md#security-issue-notifications)
 
-See [Support Policy](./SUPPORT_POLICY.rst) for details on the current support status of all major versions of this library.
+## Security
+If you discover a potential security issue in this project
+we ask that you notify AWS/Amazon Security via our
+[vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/).
+Please **do not** create a public GitHub issue.
 
 ## Getting Started
 
@@ -32,7 +36,7 @@ To use the AWS Cryptographic Material Providers Library for Java you must have:
 ### Optional Prerequisites
 
 #### AWS Integration
-You don't need an Amazon Web Services (AWS) account to use the AWS Cryptographic Material Providers Library, but some APIs require an AWS account, an AWS KMS key, and the AWS SDK for Java V2. Note that the `KmsAsyncClient` is not supported, only the synchronous client.
+You don't need an Amazon Web Services (AWS) account to use the AWS Cryptographic Material Providers Library, but some APIs require an AWS account, an AWS KMS key, an AWS DynamoDB Table, and the AWS SDK for Java V2. Note that the `KmsAsyncClient` and `DynamoDBAsyncClient` are not supported, only the synchronous clients.
 
 * **To create an AWS account**, go to [Sign In or Create an AWS Account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) and then choose **I am a new user.** Follow the instructions to create an AWS account.
 
@@ -44,7 +48,7 @@ You don't need an Amazon Web Services (AWS) account to use the AWS Cryptographic
 Many users find that the Amazon Corretto Crypto Provider (ACCP) significantly improves the performance of the AWS Encryption SDK.
 For help installing and using ACCP, see the [amazon-corretto-crypto-provider repository](https://github.com/corretto/amazon-corretto-crypto-provider).
 
-### Download the AWS Encryption SDK for Java
+### Download the AWS Cryptographic Material Providers Library for Java
 You can get the latest release from Maven or Gradle:
 
 #### Maven:
