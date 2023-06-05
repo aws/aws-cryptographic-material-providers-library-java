@@ -10,8 +10,8 @@ public interface IClientSupplier {
   /**
    * Returns an AWS KMS Client.
    *
-   * @param getClientInput Inputs for getting a AWS KMS Client.
+   * @param input Inputs for getting a AWS KMS Client.
    *
    */
-  KmsClient GetClient(GetClientInput getClientInput);
+  KmsClient GetClient(GetClientInput input);
 }
