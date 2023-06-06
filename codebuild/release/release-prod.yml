@@ -17,7 +17,7 @@ env:
 phases:
   install:
     runtime-versions:
-      java: corretto17
+      java: corretto8
     commands:
       - cd ..
       # Get Dafny
