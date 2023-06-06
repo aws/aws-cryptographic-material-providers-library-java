@@ -1,6 +1,8 @@
+// Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 using software.amazon.cryptography.primitives.internaldafny.types;
 
-// [MethodImpl(MethodImplOptions.Synchronized)]
 namespace software.amazon.cryptography.internaldafny
 {
   public partial class SynchronizedLocalCMC : software.amazon.cryptography.materialproviders.internaldafny.types.ICryptographicMaterialsCache
