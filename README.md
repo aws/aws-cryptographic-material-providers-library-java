@@ -1,6 +1,11 @@
 # AWS Cryptographic Material Providers Library for Java
 
-The AWS Cryptographic Material Providers Library abstracts lower level cryptographic materials management of encryption and decryption materials. It uses cryptography best practices to protect the encryption keys that protect your data. The data encryption key is protected with a key encryption key called a *wrapping key* or *master key*. The encryption method returns the data key and the encrypted data key, so you don't need to keep track of the data encryption keys for your data. You can use KMS keys in [AWS Key Management Service](https://aws.amazon.com/kms/) (AWS KMS) as wrapping keys. The AWS Cryptographic Material Providers Library also provides APIs to define and use encryption keys from other key providers. 
+The AWS Cryptographic Material Providers Library abstracts lower level cryptographic materials management of encryption and decryption materials.
+It uses cryptography best practices to protect the encryption keys that protect your data. 
+The data encryption key is protected using envelope encryption with a key encryption key called a *wrapping key* or *master key*.
+The encryption method returns the data key and the encrypted data key, so you don't need to keep track of the data encryption keys for your data. 
+You can use KMS keys in [AWS Key Management Service](https://aws.amazon.com/kms/) (AWS KMS) as wrapping keys. The AWS Cryptographic Material Providers Library
+also provides APIs to define and use encryption keys from other key providers. 
 
 The AWS Cryptographic Material Providers Library for Java provides methods for encrypting and decrypting cryptographic materials used in higher level client side encryption libraries. 
 
