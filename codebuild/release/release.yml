@@ -23,7 +23,7 @@ batch:
     env:
       variables:
         JAVA_ENV_VERSION: corretto8
-        JAVA_NUMERIC_VERSION: 11
+        JAVA_NUMERIC_VERSION: 8
       image: aws/codebuild/standard:5.0
 
   - identifier: validate_staging_corretto11

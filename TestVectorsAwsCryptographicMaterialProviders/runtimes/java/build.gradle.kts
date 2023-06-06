@@ -28,14 +28,14 @@ java {
 
 var caUrl: URI? = null
 @Nullable
-val caUrlStr: String? = System.getenv("CODEARTIFACT_URL_JAVA_CONVERSION")
+val caUrlStr: String? = System.getenv("CODEARTIFACT_REPO_URL")
 if (!caUrlStr.isNullOrBlank()) {
     caUrl = URI.create(caUrlStr)
 }
 
 var caPassword: String? = null
 @Nullable
-val caPasswordString: String? = System.getenv("CODEARTIFACT_AUTH_TOKEN")
+val caPasswordString: String? = System.getenv("CODEARTIFACT_TOKEN")
 if (!caPasswordString.isNullOrBlank()) {
     caPassword = caPasswordString
 }
@@ -43,13 +43,6 @@ if (!caPasswordString.isNullOrBlank()) {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven {
-        url = URI.create(System.getenv("CODEARTIFACT_REPO_URL"))
-        credentials {
-            username = "aws"
-            password = System.getenv("CODEARTIFACT_TOKEN")
-        }
-    }
     if (caUrl != null && caPassword != null) {
         maven {
             name = "CodeArtifact"
