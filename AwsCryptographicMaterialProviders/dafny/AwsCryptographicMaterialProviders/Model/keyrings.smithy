@@ -133,7 +133,7 @@ structure CreateAwsKmsMultiKeyringInput {
   @javadoc("A list of identifiers for the symmetric AWS KMS Keys (other than the generator) responsible for wrapping and unwrapping data keys. This list should not contain AWS KMS Multi-Region Keys.")
   kmsKeyIds: KmsKeyIdList,
 
-  @javadoc("The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.")
+  @javadoc("The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.")
   clientSupplier: ClientSupplierReference,
 
   @javadoc("A list of grant tokens to be used when calling KMS.")
@@ -217,7 +217,7 @@ structure CreateAwsKmsMrkMultiKeyringInput {
   @javadoc("A list of identifiers for the symmetric AWS KMS Keys and/or AWS KMS Multi-Region Keys (other than the generator) responsible for wrapping and unwrapping data keys.")
   kmsKeyIds: KmsKeyIdList,
 
-  @javadoc("The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.")
+  @javadoc("The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.")
   clientSupplier: ClientSupplierReference,
 
   @javadoc("A list of grant tokens to be used when calling KMS.")
@@ -249,7 +249,7 @@ structure CreateAwsKmsMrkDiscoveryKeyringInput {
   region: Region
 }
 
-@javadoc("Creates an AWS KMS MRK Discovery Multi-Keyring in 'discovery mode' that supports unwrapping data keys wrapped by a symmetric AWS KMS Key or AWS KMS Multi-Region Key, for a single region.")
+@javadoc("Creates an AWS KMS MRK Discovery Multi-Keyring that supports unwrapping data keys wrapped by a symmetric AWS KMS Key or AWS KMS Multi-Region Key, for a single region.")
 operation CreateAwsKmsMrkDiscoveryMultiKeyring {
   input: CreateAwsKmsMrkDiscoveryMultiKeyringInput,
   output: CreateKeyringOutput,
@@ -410,7 +410,7 @@ structure CreateRawAesKeyringInput {
     //= aws-encryption-sdk-specification/framework/aws-kms/aws-kms-rsa-keyring.md#initialization
     //= type=implication
     //# - MAY provide a PEM encoded Public Key
-    @javadoc("The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt. A public key and/or KMS Key ID must be specified.")
+    @javadoc("The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt.")
     publicKey: Secret,
     //= aws-encryption-sdk-specification/framework/aws-kms/aws-kms-rsa-keyring.md#initialization
     //= type=implication
