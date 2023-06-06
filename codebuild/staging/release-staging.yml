@@ -57,5 +57,6 @@ phases:
       - make transpile_implementation_java
       - make transpile_test_java
       - make test_java
+      - cd ../AwsCryptographicMaterialProviders/
       # Deploy to AWS CodeArtifact
       - make mvn_staging_deploy
