@@ -22,6 +22,7 @@ module {:options "/functionSyntax:4" } {:extern "software.amazon.cryptography.in
     )
       ensures
         && ValidState()
+        && fresh(this.Modifies)
 
 
     ghost predicate GetCacheEntryEnsuresPublicly(input: Types.GetCacheEntryInput, output: Result<Types.GetCacheEntryOutput, Types.Error>)
