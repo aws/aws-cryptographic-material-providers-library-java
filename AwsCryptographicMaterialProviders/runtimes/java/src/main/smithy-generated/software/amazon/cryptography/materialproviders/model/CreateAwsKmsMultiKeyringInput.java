@@ -22,7 +22,7 @@ public class CreateAwsKmsMultiKeyringInput {
   private final List<String> kmsKeyIds;
 
   /**
-   * The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.
+   * The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.
    */
   private final IClientSupplier clientSupplier;
 
@@ -53,7 +53,7 @@ public class CreateAwsKmsMultiKeyringInput {
   }
 
   /**
-   * @return The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.
+   * @return The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.
    */
   public IClientSupplier clientSupplier() {
     return this.clientSupplier;
@@ -96,12 +96,12 @@ public class CreateAwsKmsMultiKeyringInput {
     List<String> kmsKeyIds();
 
     /**
-     * @param clientSupplier The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.
+     * @param clientSupplier The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.
      */
     Builder clientSupplier(IClientSupplier clientSupplier);
 
     /**
-     * @return The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.
+     * @return The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.
      */
     IClientSupplier clientSupplier();
 

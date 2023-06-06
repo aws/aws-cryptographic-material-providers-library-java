@@ -139,7 +139,7 @@ public class MaterialProviders {
   }
 
   /**
-   * Creates an AWS KMS MRK Discovery Multi-Keyring in 'discovery mode' that supports unwrapping data keys wrapped by a symmetric AWS KMS Key or AWS KMS Multi-Region Key, for a single region.
+   * Creates an AWS KMS MRK Discovery Multi-Keyring that supports unwrapping data keys wrapped by a symmetric AWS KMS Key or AWS KMS Multi-Region Key, for a single region.
    *
    * @param input Inputs for for creating a AWS KMS MRK Discovery Multi-Keyring.
    * @return Outputs for creating a Keyring.

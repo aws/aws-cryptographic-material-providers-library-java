@@ -14,7 +14,7 @@ import software.amazon.awssdk.services.kms.model.EncryptionAlgorithmSpec;
  */
 public class CreateAwsKmsRsaKeyringInput {
   /**
-   * The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt. A public key and/or KMS Key ID must be specified.
+   * The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt.
    */
   private final ByteBuffer publicKey;
 
@@ -47,7 +47,7 @@ public class CreateAwsKmsRsaKeyringInput {
   }
 
   /**
-   * @return The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt. A public key and/or KMS Key ID must be specified.
+   * @return The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt.
    */
   public ByteBuffer publicKey() {
     return this.publicKey;
@@ -91,12 +91,12 @@ public class CreateAwsKmsRsaKeyringInput {
 
   public interface Builder {
     /**
-     * @param publicKey The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt. A public key and/or KMS Key ID must be specified.
+     * @param publicKey The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt.
      */
     Builder publicKey(ByteBuffer publicKey);
 
     /**
-     * @return The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt. A public key and/or KMS Key ID must be specified.
+     * @return The public RSA Key responsible for wrapping data keys, as a UTF8 encoded, PEM encoded X.509 SubjectPublicKeyInfo structure. This should be the public key as exported from KMS. If not specified, this Keyring cannot be used on encrypt.
      */
     ByteBuffer publicKey();
 
