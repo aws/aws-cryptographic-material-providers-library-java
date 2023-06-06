@@ -234,7 +234,7 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../../../../software/amazon/cryptography/materialproviders/model/CreateAwsKmsMultiKeyringInput.Builder.html" title="interface in software.amazon.cryptography.materialproviders.model">CreateAwsKmsMultiKeyringInput.Builder</a>&nbsp;clientSupplier(<a href="../../../../../software/amazon/cryptography/materialproviders/IClientSupplier.html" title="interface in software.amazon.cryptography.materialproviders">IClientSupplier</a>&nbsp;clientSupplier)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>clientSupplier</code> - The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.</dd>
+<dd><code>clientSupplier</code> - The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.</dd>
 </dl>
 </li>
 </ul>
@@ -247,7 +247,7 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../../../../software/amazon/cryptography/materialproviders/IClientSupplier.html" title="interface in software.amazon.cryptography.materialproviders">IClientSupplier</a>&nbsp;clientSupplier()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>The Client Supplier which will be used to get KMS Clients for use with this Keyring. If not specified on input, a Default Client Supplier is created which creates a KMS Client for each region in the 'regions' input.</dd>
+<dd>The Client Supplier which will be used to get KMS Clients for use with this Keyring. The Client Supplier will create a client for each region specified in the generator and kmsKeyIds ARNs. If not specified on input, the Default Client Supplier is used.</dd>
 </dl>
 </li>
 </ul>
