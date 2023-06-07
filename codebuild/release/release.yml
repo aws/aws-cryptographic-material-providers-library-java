@@ -62,8 +62,8 @@ batch:
   ## update its index. For now, a manual download of the jar is needed to assert artifacts are
   ## available. For more information, consult the MCM used for this release.
   - identifier: validate_release_corretto8
-    depend-on:
-        - upload_to_sonatype
+    # depend-on:
+    #     - upload_to_sonatype
     buildspec: codebuild/release/validate-release.yml
     env:
       variables:
@@ -72,8 +72,8 @@ batch:
       image: aws/codebuild/standard:5.0
 
   - identifier: validate_release_corretto11
-    depend-on:
-        - upload_to_sonatype
+    # depend-on:
+    #     - upload_to_sonatype
     buildspec: codebuild/release/validate-release.yml
     env:
       variables:
@@ -82,8 +82,8 @@ batch:
       image: aws/codebuild/standard:5.0
   
   - identifier: validate_release_corretto17
-    depend-on:
-        - upload_to_sonatype
+    # depend-on:
+    #     - upload_to_sonatype
     buildspec: codebuild/release/validate-release.yml
     env:
       variables:
