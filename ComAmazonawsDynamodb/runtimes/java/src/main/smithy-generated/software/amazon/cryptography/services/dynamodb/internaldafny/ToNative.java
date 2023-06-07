@@ -8,6 +8,7 @@ import dafny.DafnySequence;
 import java.lang.Byte;
 import java.lang.Character;
 import java.lang.Double;
+import java.lang.RuntimeException;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -109,9 +110,7 @@ import software.amazon.awssdk.services.dynamodb.model.DestinationStatus;
 import software.amazon.awssdk.services.dynamodb.model.DisableKinesisStreamingDestinationRequest;
 import software.amazon.awssdk.services.dynamodb.model.DisableKinesisStreamingDestinationResponse;
 import software.amazon.awssdk.services.dynamodb.model.DuplicateItemException;
-// BEGIN MANUAL EDIT
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
-// END MANUAL EDIT
 import software.amazon.awssdk.services.dynamodb.model.EnableKinesisStreamingDestinationRequest;
 import software.amazon.awssdk.services.dynamodb.model.EnableKinesisStreamingDestinationResponse;
 import software.amazon.awssdk.services.dynamodb.model.Endpoint;
@@ -288,6 +287,8 @@ import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveResponse;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
+import software.amazon.cryptography.services.dynamodb.internaldafny.model.CollectionOfErrors;
+import software.amazon.cryptography.services.dynamodb.internaldafny.model.OpaqueError;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.BatchExecuteStatementInput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.BatchExecuteStatementOutput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.BatchGetItemInput;
@@ -334,8 +335,10 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Disabl
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.DisableKinesisStreamingDestinationOutput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.EnableKinesisStreamingDestinationInput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.EnableKinesisStreamingDestinationOutput;
+import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_BackupInUseException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_BackupNotFoundException;
+import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_CollectionOfErrors;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ConditionalCheckFailedException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ContinuousBackupsUnavailableException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_DuplicateItemException;
@@ -352,6 +355,7 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_InvalidRestoreTimeException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ItemCollectionSizeLimitExceededException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_LimitExceededException;
+import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_Opaque;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_PointInTimeRecoveryUnavailableException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ProvisionedThroughputExceededException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_ReplicaAlreadyExistsException;
@@ -365,9 +369,6 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_TransactionCanceledException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_TransactionConflictException;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_TransactionInProgressException;
-// BEGIN MANUAL EDIT
-import software.amazon.cryptography.services.dynamodb.internaldafny.types.Error_Opaque;
-// END MANUAL EDIT
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.ExecuteStatementInput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.ExecuteStatementOutput;
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.ExecuteTransactionInput;
@@ -427,17 +428,388 @@ import software.amazon.cryptography.services.dynamodb.internaldafny.types.Update
 import software.amazon.cryptography.services.dynamodb.internaldafny.types.UpdateTimeToLiveOutput;
 
 public class ToNative {
-  // BEGIN MANUAL EDIT
+  public static RuntimeException Error(Error dafnyValue) {
+    if (dafnyValue.is_BackupInUseException()) {
+      return ToNative.Error((Error_BackupInUseException) dafnyValue);
+    }
+    if (dafnyValue.is_BackupNotFoundException()) {
+      return ToNative.Error((Error_BackupNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_ConditionalCheckFailedException()) {
+      return ToNative.Error((Error_ConditionalCheckFailedException) dafnyValue);
+    }
+    if (dafnyValue.is_ContinuousBackupsUnavailableException()) {
+      return ToNative.Error((Error_ContinuousBackupsUnavailableException) dafnyValue);
+    }
+    if (dafnyValue.is_DuplicateItemException()) {
+      return ToNative.Error((Error_DuplicateItemException) dafnyValue);
+    }
+    if (dafnyValue.is_ExportConflictException()) {
+      return ToNative.Error((Error_ExportConflictException) dafnyValue);
+    }
+    if (dafnyValue.is_ExportNotFoundException()) {
+      return ToNative.Error((Error_ExportNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_GlobalTableAlreadyExistsException()) {
+      return ToNative.Error((Error_GlobalTableAlreadyExistsException) dafnyValue);
+    }
+    if (dafnyValue.is_GlobalTableNotFoundException()) {
+      return ToNative.Error((Error_GlobalTableNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_IdempotentParameterMismatchException()) {
+      return ToNative.Error((Error_IdempotentParameterMismatchException) dafnyValue);
+    }
+    if (dafnyValue.is_ImportConflictException()) {
+      return ToNative.Error((Error_ImportConflictException) dafnyValue);
+    }
+    if (dafnyValue.is_ImportNotFoundException()) {
+      return ToNative.Error((Error_ImportNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_IndexNotFoundException()) {
+      return ToNative.Error((Error_IndexNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_InternalServerError()) {
+      return ToNative.Error((Error_InternalServerError) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidExportTimeException()) {
+      return ToNative.Error((Error_InvalidExportTimeException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidRestoreTimeException()) {
+      return ToNative.Error((Error_InvalidRestoreTimeException) dafnyValue);
+    }
+    if (dafnyValue.is_ItemCollectionSizeLimitExceededException()) {
+      return ToNative.Error((Error_ItemCollectionSizeLimitExceededException) dafnyValue);
+    }
+    if (dafnyValue.is_LimitExceededException()) {
+      return ToNative.Error((Error_LimitExceededException) dafnyValue);
+    }
+    if (dafnyValue.is_PointInTimeRecoveryUnavailableException()) {
+      return ToNative.Error((Error_PointInTimeRecoveryUnavailableException) dafnyValue);
+    }
+    if (dafnyValue.is_ProvisionedThroughputExceededException()) {
+      return ToNative.Error((Error_ProvisionedThroughputExceededException) dafnyValue);
+    }
+    if (dafnyValue.is_ReplicaAlreadyExistsException()) {
+      return ToNative.Error((Error_ReplicaAlreadyExistsException) dafnyValue);
+    }
+    if (dafnyValue.is_ReplicaNotFoundException()) {
+      return ToNative.Error((Error_ReplicaNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_RequestLimitExceeded()) {
+      return ToNative.Error((Error_RequestLimitExceeded) dafnyValue);
+    }
+    if (dafnyValue.is_ResourceInUseException()) {
+      return ToNative.Error((Error_ResourceInUseException) dafnyValue);
+    }
+    if (dafnyValue.is_ResourceNotFoundException()) {
+      return ToNative.Error((Error_ResourceNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_TableAlreadyExistsException()) {
+      return ToNative.Error((Error_TableAlreadyExistsException) dafnyValue);
+    }
+    if (dafnyValue.is_TableInUseException()) {
+      return ToNative.Error((Error_TableInUseException) dafnyValue);
+    }
+    if (dafnyValue.is_TableNotFoundException()) {
+      return ToNative.Error((Error_TableNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_TransactionCanceledException()) {
+      return ToNative.Error((Error_TransactionCanceledException) dafnyValue);
+    }
+    if (dafnyValue.is_TransactionConflictException()) {
+      return ToNative.Error((Error_TransactionConflictException) dafnyValue);
+    }
+    if (dafnyValue.is_TransactionInProgressException()) {
+      return ToNative.Error((Error_TransactionInProgressException) dafnyValue);
+    }
+    if (dafnyValue.is_Opaque()) {
+      return ToNative.Error((Error_Opaque) dafnyValue);
+    }
+    if (dafnyValue.is_CollectionOfErrors()) {
+      return ToNative.Error((Error_CollectionOfErrors) dafnyValue);
+    }
+    OpaqueError.Builder nativeBuilder = OpaqueError.builder();
+    nativeBuilder.obj(dafnyValue);
+    return nativeBuilder.build();
+  }
+
   public static RuntimeException Error(Error_Opaque dafnyValue) {
     if (dafnyValue.dtor_obj() instanceof DynamoDbException) {
       return (DynamoDbException) dafnyValue.dtor_obj();
     }
-    // Because we only ever put `DynamoDbException` into `Error_Opaque`,
-    // recieving any other type here indicates a bug with the codegen.
-    // Bubble up some error to indicate this failure state.
-    return new IllegalStateException("Unknown error recieved from DynamoDb.");
+    if (dafnyValue.dtor_obj() instanceof RuntimeException) {
+      return (RuntimeException) dafnyValue.dtor_obj();
+    }
+    OpaqueError.Builder nativeBuilder = OpaqueError.builder();
+    nativeBuilder.obj(dafnyValue.dtor_obj());
+    return nativeBuilder.build();
   }
-  // END MANUAL EDIT
+
+  public static CollectionOfErrors Error(Error_CollectionOfErrors dafnyValue) {
+    CollectionOfErrors.Builder nativeBuilder = CollectionOfErrors.builder();
+    nativeBuilder.list(software.amazon.smithy.dafny.conversion.ToNative.Aggregate.GenericToList(dafnyValue.dtor_list(), ToNative::Error));
+    return nativeBuilder.build();
+  }
+
+  public static BackupInUseException Error(Error_BackupInUseException dafnyValue) {
+    BackupInUseException.Builder builder = BackupInUseException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static BackupNotFoundException Error(Error_BackupNotFoundException dafnyValue) {
+    BackupNotFoundException.Builder builder = BackupNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ConditionalCheckFailedException Error(
+      Error_ConditionalCheckFailedException dafnyValue) {
+    ConditionalCheckFailedException.Builder builder = ConditionalCheckFailedException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ContinuousBackupsUnavailableException Error(
+      Error_ContinuousBackupsUnavailableException dafnyValue) {
+    ContinuousBackupsUnavailableException.Builder builder = ContinuousBackupsUnavailableException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static DuplicateItemException Error(Error_DuplicateItemException dafnyValue) {
+    DuplicateItemException.Builder builder = DuplicateItemException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ExportConflictException Error(Error_ExportConflictException dafnyValue) {
+    ExportConflictException.Builder builder = ExportConflictException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ExportNotFoundException Error(Error_ExportNotFoundException dafnyValue) {
+    ExportNotFoundException.Builder builder = ExportNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static GlobalTableAlreadyExistsException Error(
+      Error_GlobalTableAlreadyExistsException dafnyValue) {
+    GlobalTableAlreadyExistsException.Builder builder = GlobalTableAlreadyExistsException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static GlobalTableNotFoundException Error(Error_GlobalTableNotFoundException dafnyValue) {
+    GlobalTableNotFoundException.Builder builder = GlobalTableNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static IdempotentParameterMismatchException Error(
+      Error_IdempotentParameterMismatchException dafnyValue) {
+    IdempotentParameterMismatchException.Builder builder = IdempotentParameterMismatchException.builder();
+    if (dafnyValue.dtor_Message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ImportConflictException Error(Error_ImportConflictException dafnyValue) {
+    ImportConflictException.Builder builder = ImportConflictException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ImportNotFoundException Error(Error_ImportNotFoundException dafnyValue) {
+    ImportNotFoundException.Builder builder = ImportNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static IndexNotFoundException Error(Error_IndexNotFoundException dafnyValue) {
+    IndexNotFoundException.Builder builder = IndexNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InternalServerErrorException Error(Error_InternalServerError dafnyValue) {
+    InternalServerErrorException.Builder builder = InternalServerErrorException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidExportTimeException Error(Error_InvalidExportTimeException dafnyValue) {
+    InvalidExportTimeException.Builder builder = InvalidExportTimeException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidRestoreTimeException Error(Error_InvalidRestoreTimeException dafnyValue) {
+    InvalidRestoreTimeException.Builder builder = InvalidRestoreTimeException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ItemCollectionSizeLimitExceededException Error(
+      Error_ItemCollectionSizeLimitExceededException dafnyValue) {
+    ItemCollectionSizeLimitExceededException.Builder builder = ItemCollectionSizeLimitExceededException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static LimitExceededException Error(Error_LimitExceededException dafnyValue) {
+    LimitExceededException.Builder builder = LimitExceededException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static PointInTimeRecoveryUnavailableException Error(
+      Error_PointInTimeRecoveryUnavailableException dafnyValue) {
+    PointInTimeRecoveryUnavailableException.Builder builder = PointInTimeRecoveryUnavailableException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ProvisionedThroughputExceededException Error(
+      Error_ProvisionedThroughputExceededException dafnyValue) {
+    ProvisionedThroughputExceededException.Builder builder = ProvisionedThroughputExceededException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ReplicaAlreadyExistsException Error(
+      Error_ReplicaAlreadyExistsException dafnyValue) {
+    ReplicaAlreadyExistsException.Builder builder = ReplicaAlreadyExistsException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ReplicaNotFoundException Error(Error_ReplicaNotFoundException dafnyValue) {
+    ReplicaNotFoundException.Builder builder = ReplicaNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static RequestLimitExceededException Error(Error_RequestLimitExceeded dafnyValue) {
+    RequestLimitExceededException.Builder builder = RequestLimitExceededException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ResourceInUseException Error(Error_ResourceInUseException dafnyValue) {
+    ResourceInUseException.Builder builder = ResourceInUseException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ResourceNotFoundException Error(Error_ResourceNotFoundException dafnyValue) {
+    ResourceNotFoundException.Builder builder = ResourceNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TableAlreadyExistsException Error(Error_TableAlreadyExistsException dafnyValue) {
+    TableAlreadyExistsException.Builder builder = TableAlreadyExistsException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TableInUseException Error(Error_TableInUseException dafnyValue) {
+    TableInUseException.Builder builder = TableInUseException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TableNotFoundException Error(Error_TableNotFoundException dafnyValue) {
+    TableNotFoundException.Builder builder = TableNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TransactionCanceledException Error(Error_TransactionCanceledException dafnyValue) {
+    TransactionCanceledException.Builder builder = TransactionCanceledException.builder();
+    if (dafnyValue.dtor_CancellationReasons().is_Some()) {
+      builder.cancellationReasons(ToNative.CancellationReasonList(dafnyValue.dtor_CancellationReasons().dtor_value()));
+    }
+    if (dafnyValue.dtor_Message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TransactionConflictException Error(Error_TransactionConflictException dafnyValue) {
+    TransactionConflictException.Builder builder = TransactionConflictException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TransactionInProgressException Error(
+      Error_TransactionInProgressException dafnyValue) {
+    TransactionInProgressException.Builder builder = TransactionInProgressException.builder();
+    if (dafnyValue.dtor_Message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
+    }
+    return builder.build();
+  }
 
   public static ArchivalSummary ArchivalSummary(
       software.amazon.cryptography.services.dynamodb.internaldafny.types.ArchivalSummary dafnyValue) {
@@ -4614,369 +4986,6 @@ public class ToNative {
         dafnyValue, 
         software.amazon.cryptography.services.dynamodb.internaldafny.ToNative::WriteRequest);
   }
-
-  public static BackupInUseException Error(Error_BackupInUseException dafnyValue) {
-    BackupInUseException.Builder builder = BackupInUseException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static BackupNotFoundException Error(Error_BackupNotFoundException dafnyValue) {
-    BackupNotFoundException.Builder builder = BackupNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ConditionalCheckFailedException Error(
-      Error_ConditionalCheckFailedException dafnyValue) {
-    ConditionalCheckFailedException.Builder builder = ConditionalCheckFailedException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ContinuousBackupsUnavailableException Error(
-      Error_ContinuousBackupsUnavailableException dafnyValue) {
-    ContinuousBackupsUnavailableException.Builder builder = ContinuousBackupsUnavailableException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static DuplicateItemException Error(Error_DuplicateItemException dafnyValue) {
-    DuplicateItemException.Builder builder = DuplicateItemException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ExportConflictException Error(Error_ExportConflictException dafnyValue) {
-    ExportConflictException.Builder builder = ExportConflictException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ExportNotFoundException Error(Error_ExportNotFoundException dafnyValue) {
-    ExportNotFoundException.Builder builder = ExportNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static GlobalTableAlreadyExistsException Error(
-      Error_GlobalTableAlreadyExistsException dafnyValue) {
-    GlobalTableAlreadyExistsException.Builder builder = GlobalTableAlreadyExistsException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static GlobalTableNotFoundException Error(Error_GlobalTableNotFoundException dafnyValue) {
-    GlobalTableNotFoundException.Builder builder = GlobalTableNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static IdempotentParameterMismatchException Error(
-      Error_IdempotentParameterMismatchException dafnyValue) {
-    IdempotentParameterMismatchException.Builder builder = IdempotentParameterMismatchException.builder();
-    if (dafnyValue.dtor_Message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ImportConflictException Error(Error_ImportConflictException dafnyValue) {
-    ImportConflictException.Builder builder = ImportConflictException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ImportNotFoundException Error(Error_ImportNotFoundException dafnyValue) {
-    ImportNotFoundException.Builder builder = ImportNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static IndexNotFoundException Error(Error_IndexNotFoundException dafnyValue) {
-    IndexNotFoundException.Builder builder = IndexNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InternalServerErrorException Error(Error_InternalServerError dafnyValue) {
-    InternalServerErrorException.Builder builder = InternalServerErrorException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidExportTimeException Error(Error_InvalidExportTimeException dafnyValue) {
-    InvalidExportTimeException.Builder builder = InvalidExportTimeException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidRestoreTimeException Error(Error_InvalidRestoreTimeException dafnyValue) {
-    InvalidRestoreTimeException.Builder builder = InvalidRestoreTimeException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ItemCollectionSizeLimitExceededException Error(
-      Error_ItemCollectionSizeLimitExceededException dafnyValue) {
-    ItemCollectionSizeLimitExceededException.Builder builder = ItemCollectionSizeLimitExceededException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static LimitExceededException Error(Error_LimitExceededException dafnyValue) {
-    LimitExceededException.Builder builder = LimitExceededException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static PointInTimeRecoveryUnavailableException Error(
-      Error_PointInTimeRecoveryUnavailableException dafnyValue) {
-    PointInTimeRecoveryUnavailableException.Builder builder = PointInTimeRecoveryUnavailableException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ProvisionedThroughputExceededException Error(
-      Error_ProvisionedThroughputExceededException dafnyValue) {
-    ProvisionedThroughputExceededException.Builder builder = ProvisionedThroughputExceededException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ReplicaAlreadyExistsException Error(
-      Error_ReplicaAlreadyExistsException dafnyValue) {
-    ReplicaAlreadyExistsException.Builder builder = ReplicaAlreadyExistsException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ReplicaNotFoundException Error(Error_ReplicaNotFoundException dafnyValue) {
-    ReplicaNotFoundException.Builder builder = ReplicaNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static RequestLimitExceededException Error(Error_RequestLimitExceeded dafnyValue) {
-    RequestLimitExceededException.Builder builder = RequestLimitExceededException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ResourceInUseException Error(Error_ResourceInUseException dafnyValue) {
-    ResourceInUseException.Builder builder = ResourceInUseException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ResourceNotFoundException Error(Error_ResourceNotFoundException dafnyValue) {
-    ResourceNotFoundException.Builder builder = ResourceNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TableAlreadyExistsException Error(Error_TableAlreadyExistsException dafnyValue) {
-    TableAlreadyExistsException.Builder builder = TableAlreadyExistsException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TableInUseException Error(Error_TableInUseException dafnyValue) {
-    TableInUseException.Builder builder = TableInUseException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TableNotFoundException Error(Error_TableNotFoundException dafnyValue) {
-    TableNotFoundException.Builder builder = TableNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TransactionCanceledException Error(Error_TransactionCanceledException dafnyValue) {
-    TransactionCanceledException.Builder builder = TransactionCanceledException.builder();
-    if (dafnyValue.dtor_CancellationReasons().is_Some()) {
-      builder.cancellationReasons(ToNative.CancellationReasonList(dafnyValue.dtor_CancellationReasons().dtor_value()));
-    }
-    if (dafnyValue.dtor_Message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TransactionConflictException Error(Error_TransactionConflictException dafnyValue) {
-    TransactionConflictException.Builder builder = TransactionConflictException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TransactionInProgressException Error(
-      Error_TransactionInProgressException dafnyValue) {
-    TransactionInProgressException.Builder builder = TransactionInProgressException.builder();
-    if (dafnyValue.dtor_Message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_Message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  // BEGIN MANUAL EDIT
-  public static RuntimeException Error(software.amazon.cryptography.services.dynamodb.internaldafny.types.Error dafnyValue) {
-    if (dafnyValue.is_BackupInUseException()) {
-      return ToNative.Error((Error_BackupInUseException) dafnyValue);
-    }
-    if (dafnyValue.is_BackupNotFoundException()) {
-      return ToNative.Error((Error_BackupNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_ConditionalCheckFailedException()) {
-      return ToNative.Error((Error_ConditionalCheckFailedException) dafnyValue);
-    }
-    if (dafnyValue.is_ContinuousBackupsUnavailableException()) {
-      return ToNative.Error((Error_ContinuousBackupsUnavailableException) dafnyValue);
-    }
-    if (dafnyValue.is_DuplicateItemException()) {
-      return ToNative.Error((Error_DuplicateItemException) dafnyValue);
-    }
-    if (dafnyValue.is_ExportConflictException()) {
-      return ToNative.Error((Error_ExportConflictException) dafnyValue);
-    }
-    if (dafnyValue.is_ExportNotFoundException()) {
-      return ToNative.Error((Error_ExportNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_GlobalTableAlreadyExistsException()) {
-      return ToNative.Error((Error_GlobalTableAlreadyExistsException) dafnyValue);
-    }
-    if (dafnyValue.is_GlobalTableNotFoundException()) {
-      return ToNative.Error((Error_GlobalTableNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_IdempotentParameterMismatchException()) {
-      return ToNative.Error((Error_IdempotentParameterMismatchException) dafnyValue);
-    }
-    if (dafnyValue.is_ImportConflictException()) {
-      return ToNative.Error((Error_ImportConflictException) dafnyValue);
-    }
-    if (dafnyValue.is_ImportNotFoundException()) {
-      return ToNative.Error((Error_ImportNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_IndexNotFoundException()) {
-      return ToNative.Error((Error_IndexNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_InternalServerError()) {
-      return ToNative.Error((Error_InternalServerError) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidExportTimeException()) {
-      return ToNative.Error((Error_InvalidExportTimeException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidRestoreTimeException()) {
-      return ToNative.Error((Error_InvalidRestoreTimeException) dafnyValue);
-    }
-    if (dafnyValue.is_ItemCollectionSizeLimitExceededException()) {
-      return ToNative.Error((Error_ItemCollectionSizeLimitExceededException) dafnyValue);
-    }
-    if (dafnyValue.is_LimitExceededException()) {
-      return ToNative.Error((Error_LimitExceededException) dafnyValue);
-    }
-    if (dafnyValue.is_PointInTimeRecoveryUnavailableException()) {
-      return ToNative.Error((Error_PointInTimeRecoveryUnavailableException) dafnyValue);
-    }
-    if (dafnyValue.is_ProvisionedThroughputExceededException()) {
-      return ToNative.Error((Error_ProvisionedThroughputExceededException) dafnyValue);
-    }
-    if (dafnyValue.is_ReplicaAlreadyExistsException()) {
-      return ToNative.Error((Error_ReplicaAlreadyExistsException) dafnyValue);
-    }
-    if (dafnyValue.is_ReplicaNotFoundException()) {
-      return ToNative.Error((Error_ReplicaNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_RequestLimitExceeded()) {
-      return ToNative.Error((Error_RequestLimitExceeded) dafnyValue);
-    }
-    if (dafnyValue.is_ResourceInUseException()) {
-      return ToNative.Error((Error_ResourceInUseException) dafnyValue);
-    }
-    if (dafnyValue.is_ResourceNotFoundException()) {
-      return ToNative.Error((Error_ResourceNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_TableAlreadyExistsException()) {
-      return ToNative.Error((Error_TableAlreadyExistsException) dafnyValue);
-    }
-    if (dafnyValue.is_TableInUseException()) {
-      return ToNative.Error((Error_TableInUseException) dafnyValue);
-    }
-    if (dafnyValue.is_TableNotFoundException()) {
-      return ToNative.Error((Error_TableNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_TransactionCanceledException()) {
-      return ToNative.Error((Error_TransactionCanceledException) dafnyValue);
-    }
-    if (dafnyValue.is_TransactionConflictException()) {
-      return ToNative.Error((Error_TransactionConflictException) dafnyValue);
-    }
-    if (dafnyValue.is_TransactionInProgressException()) {
-      return ToNative.Error((Error_TransactionInProgressException) dafnyValue);
-    }
-    if (dafnyValue.is_Opaque()) {
-      return ToNative.Error((Error_Opaque) dafnyValue);
-    }
-    // TODO This should indicate a codegen bug
-    return new IllegalStateException("Unknown error recieved from DynamoDb.");
-  }
-// END MANUAL EDIT
 
   public static DynamoDbClient DynamoDB_20120810(IDynamoDBClient dafnyValue) {
     return ((Shim) dafnyValue).impl();

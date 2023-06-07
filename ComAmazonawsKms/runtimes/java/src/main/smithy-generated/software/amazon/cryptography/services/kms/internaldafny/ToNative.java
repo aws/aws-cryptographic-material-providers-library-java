@@ -6,6 +6,7 @@ package software.amazon.cryptography.services.kms.internaldafny;
 import dafny.DafnyMap;
 import dafny.DafnySequence;
 import java.lang.Character;
+import java.lang.RuntimeException;
 import java.lang.String;
 import java.util.List;
 import java.util.Map;
@@ -103,9 +104,7 @@ import software.amazon.awssdk.services.kms.model.KeySpec;
 import software.amazon.awssdk.services.kms.model.KeyState;
 import software.amazon.awssdk.services.kms.model.KeyUnavailableException;
 import software.amazon.awssdk.services.kms.model.KeyUsageType;
-// BEGIN MANUAL EDIT
 import software.amazon.awssdk.services.kms.model.KmsException;
-// END MANUAL EDIT
 import software.amazon.awssdk.services.kms.model.KmsInternalException;
 import software.amazon.awssdk.services.kms.model.KmsInvalidSignatureException;
 import software.amazon.awssdk.services.kms.model.KmsInvalidStateException;
@@ -150,12 +149,16 @@ import software.amazon.awssdk.services.kms.model.UpdatePrimaryRegionRequest;
 import software.amazon.awssdk.services.kms.model.VerifyRequest;
 import software.amazon.awssdk.services.kms.model.VerifyResponse;
 import software.amazon.awssdk.services.kms.model.WrappingKeySpec;
+import software.amazon.cryptography.services.kms.internaldafny.model.CollectionOfErrors;
+import software.amazon.cryptography.services.kms.internaldafny.model.OpaqueError;
+import software.amazon.cryptography.services.kms.internaldafny.types.Error;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_AlreadyExistsException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CloudHsmClusterInUseException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CloudHsmClusterInvalidConfigurationException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CloudHsmClusterNotActiveException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CloudHsmClusterNotFoundException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CloudHsmClusterNotRelatedException;
+import software.amazon.cryptography.services.kms.internaldafny.types.Error_CollectionOfErrors;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CustomKeyStoreHasCMKsException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CustomKeyStoreInvalidStateException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_CustomKeyStoreNameInUseException;
@@ -181,25 +184,417 @@ import software.amazon.cryptography.services.kms.internaldafny.types.Error_KeyUn
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_LimitExceededException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_MalformedPolicyDocumentException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_NotFoundException;
+import software.amazon.cryptography.services.kms.internaldafny.types.Error_Opaque;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_TagException;
 import software.amazon.cryptography.services.kms.internaldafny.types.Error_UnsupportedOperationException;
-// BEGIN MANUAL EDIT
-import software.amazon.cryptography.services.kms.internaldafny.types.Error_Opaque;
-// END MANUAL EDIT
 import software.amazon.cryptography.services.kms.internaldafny.types.IKMSClient;
 
 public class ToNative {
-  // BEGIN MANUAL EDIT
+  public static RuntimeException Error(Error dafnyValue) {
+    if (dafnyValue.is_AlreadyExistsException()) {
+      return ToNative.Error((Error_AlreadyExistsException) dafnyValue);
+    }
+    if (dafnyValue.is_CloudHsmClusterInUseException()) {
+      return ToNative.Error((Error_CloudHsmClusterInUseException) dafnyValue);
+    }
+    if (dafnyValue.is_CloudHsmClusterInvalidConfigurationException()) {
+      return ToNative.Error((Error_CloudHsmClusterInvalidConfigurationException) dafnyValue);
+    }
+    if (dafnyValue.is_CloudHsmClusterNotActiveException()) {
+      return ToNative.Error((Error_CloudHsmClusterNotActiveException) dafnyValue);
+    }
+    if (dafnyValue.is_CloudHsmClusterNotFoundException()) {
+      return ToNative.Error((Error_CloudHsmClusterNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_CloudHsmClusterNotRelatedException()) {
+      return ToNative.Error((Error_CloudHsmClusterNotRelatedException) dafnyValue);
+    }
+    if (dafnyValue.is_CustomKeyStoreHasCMKsException()) {
+      return ToNative.Error((Error_CustomKeyStoreHasCMKsException) dafnyValue);
+    }
+    if (dafnyValue.is_CustomKeyStoreInvalidStateException()) {
+      return ToNative.Error((Error_CustomKeyStoreInvalidStateException) dafnyValue);
+    }
+    if (dafnyValue.is_CustomKeyStoreNameInUseException()) {
+      return ToNative.Error((Error_CustomKeyStoreNameInUseException) dafnyValue);
+    }
+    if (dafnyValue.is_CustomKeyStoreNotFoundException()) {
+      return ToNative.Error((Error_CustomKeyStoreNotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_DependencyTimeoutException()) {
+      return ToNative.Error((Error_DependencyTimeoutException) dafnyValue);
+    }
+    if (dafnyValue.is_DisabledException()) {
+      return ToNative.Error((Error_DisabledException) dafnyValue);
+    }
+    if (dafnyValue.is_ExpiredImportTokenException()) {
+      return ToNative.Error((Error_ExpiredImportTokenException) dafnyValue);
+    }
+    if (dafnyValue.is_IncorrectKeyException()) {
+      return ToNative.Error((Error_IncorrectKeyException) dafnyValue);
+    }
+    if (dafnyValue.is_IncorrectKeyMaterialException()) {
+      return ToNative.Error((Error_IncorrectKeyMaterialException) dafnyValue);
+    }
+    if (dafnyValue.is_IncorrectTrustAnchorException()) {
+      return ToNative.Error((Error_IncorrectTrustAnchorException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidAliasNameException()) {
+      return ToNative.Error((Error_InvalidAliasNameException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidArnException()) {
+      return ToNative.Error((Error_InvalidArnException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidCiphertextException()) {
+      return ToNative.Error((Error_InvalidCiphertextException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidGrantIdException()) {
+      return ToNative.Error((Error_InvalidGrantIdException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidGrantTokenException()) {
+      return ToNative.Error((Error_InvalidGrantTokenException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidImportTokenException()) {
+      return ToNative.Error((Error_InvalidImportTokenException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidKeyUsageException()) {
+      return ToNative.Error((Error_InvalidKeyUsageException) dafnyValue);
+    }
+    if (dafnyValue.is_InvalidMarkerException()) {
+      return ToNative.Error((Error_InvalidMarkerException) dafnyValue);
+    }
+    if (dafnyValue.is_KeyUnavailableException()) {
+      return ToNative.Error((Error_KeyUnavailableException) dafnyValue);
+    }
+    if (dafnyValue.is_KMSInternalException()) {
+      return ToNative.Error((Error_KMSInternalException) dafnyValue);
+    }
+    if (dafnyValue.is_KMSInvalidSignatureException()) {
+      return ToNative.Error((Error_KMSInvalidSignatureException) dafnyValue);
+    }
+    if (dafnyValue.is_KMSInvalidStateException()) {
+      return ToNative.Error((Error_KMSInvalidStateException) dafnyValue);
+    }
+    if (dafnyValue.is_LimitExceededException()) {
+      return ToNative.Error((Error_LimitExceededException) dafnyValue);
+    }
+    if (dafnyValue.is_MalformedPolicyDocumentException()) {
+      return ToNative.Error((Error_MalformedPolicyDocumentException) dafnyValue);
+    }
+    if (dafnyValue.is_NotFoundException()) {
+      return ToNative.Error((Error_NotFoundException) dafnyValue);
+    }
+    if (dafnyValue.is_TagException()) {
+      return ToNative.Error((Error_TagException) dafnyValue);
+    }
+    if (dafnyValue.is_UnsupportedOperationException()) {
+      return ToNative.Error((Error_UnsupportedOperationException) dafnyValue);
+    }
+    if (dafnyValue.is_Opaque()) {
+      return ToNative.Error((Error_Opaque) dafnyValue);
+    }
+    if (dafnyValue.is_CollectionOfErrors()) {
+      return ToNative.Error((Error_CollectionOfErrors) dafnyValue);
+    }
+    OpaqueError.Builder nativeBuilder = OpaqueError.builder();
+    nativeBuilder.obj(dafnyValue);
+    return nativeBuilder.build();
+  }
+
   public static RuntimeException Error(Error_Opaque dafnyValue) {
     if (dafnyValue.dtor_obj() instanceof KmsException) {
       return (KmsException) dafnyValue.dtor_obj();
     }
-    // Because we only ever put `KmsException` into `Error_Opaque`,
-    // recieving any other type here indicates a bug with the codegen.
-    // Bubble up some error to indicate this failure state.
-    return new IllegalStateException("Unknown error recieved from KMS.");
+    if (dafnyValue.dtor_obj() instanceof RuntimeException) {
+      return (RuntimeException) dafnyValue.dtor_obj();
+    }
+    OpaqueError.Builder nativeBuilder = OpaqueError.builder();
+    nativeBuilder.obj(dafnyValue.dtor_obj());
+    return nativeBuilder.build();
   }
-  // END MANUAL EDIT
+
+  public static CollectionOfErrors Error(Error_CollectionOfErrors dafnyValue) {
+    CollectionOfErrors.Builder nativeBuilder = CollectionOfErrors.builder();
+    nativeBuilder.list(software.amazon.smithy.dafny.conversion.ToNative.Aggregate.GenericToList(dafnyValue.dtor_list(), ToNative::Error));
+    return nativeBuilder.build();
+  }
+
+  public static AlreadyExistsException Error(Error_AlreadyExistsException dafnyValue) {
+    AlreadyExistsException.Builder builder = AlreadyExistsException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CloudHsmClusterInUseException Error(
+      Error_CloudHsmClusterInUseException dafnyValue) {
+    CloudHsmClusterInUseException.Builder builder = CloudHsmClusterInUseException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CloudHsmClusterInvalidConfigurationException Error(
+      Error_CloudHsmClusterInvalidConfigurationException dafnyValue) {
+    CloudHsmClusterInvalidConfigurationException.Builder builder = CloudHsmClusterInvalidConfigurationException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CloudHsmClusterNotActiveException Error(
+      Error_CloudHsmClusterNotActiveException dafnyValue) {
+    CloudHsmClusterNotActiveException.Builder builder = CloudHsmClusterNotActiveException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CloudHsmClusterNotFoundException Error(
+      Error_CloudHsmClusterNotFoundException dafnyValue) {
+    CloudHsmClusterNotFoundException.Builder builder = CloudHsmClusterNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CloudHsmClusterNotRelatedException Error(
+      Error_CloudHsmClusterNotRelatedException dafnyValue) {
+    CloudHsmClusterNotRelatedException.Builder builder = CloudHsmClusterNotRelatedException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CustomKeyStoreHasCmKsException Error(
+      Error_CustomKeyStoreHasCMKsException dafnyValue) {
+    CustomKeyStoreHasCmKsException.Builder builder = CustomKeyStoreHasCmKsException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CustomKeyStoreInvalidStateException Error(
+      Error_CustomKeyStoreInvalidStateException dafnyValue) {
+    CustomKeyStoreInvalidStateException.Builder builder = CustomKeyStoreInvalidStateException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CustomKeyStoreNameInUseException Error(
+      Error_CustomKeyStoreNameInUseException dafnyValue) {
+    CustomKeyStoreNameInUseException.Builder builder = CustomKeyStoreNameInUseException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static CustomKeyStoreNotFoundException Error(
+      Error_CustomKeyStoreNotFoundException dafnyValue) {
+    CustomKeyStoreNotFoundException.Builder builder = CustomKeyStoreNotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static DependencyTimeoutException Error(Error_DependencyTimeoutException dafnyValue) {
+    DependencyTimeoutException.Builder builder = DependencyTimeoutException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static DisabledException Error(Error_DisabledException dafnyValue) {
+    DisabledException.Builder builder = DisabledException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static ExpiredImportTokenException Error(Error_ExpiredImportTokenException dafnyValue) {
+    ExpiredImportTokenException.Builder builder = ExpiredImportTokenException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static IncorrectKeyException Error(Error_IncorrectKeyException dafnyValue) {
+    IncorrectKeyException.Builder builder = IncorrectKeyException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static IncorrectKeyMaterialException Error(
+      Error_IncorrectKeyMaterialException dafnyValue) {
+    IncorrectKeyMaterialException.Builder builder = IncorrectKeyMaterialException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static IncorrectTrustAnchorException Error(
+      Error_IncorrectTrustAnchorException dafnyValue) {
+    IncorrectTrustAnchorException.Builder builder = IncorrectTrustAnchorException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidAliasNameException Error(Error_InvalidAliasNameException dafnyValue) {
+    InvalidAliasNameException.Builder builder = InvalidAliasNameException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidArnException Error(Error_InvalidArnException dafnyValue) {
+    InvalidArnException.Builder builder = InvalidArnException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidCiphertextException Error(Error_InvalidCiphertextException dafnyValue) {
+    InvalidCiphertextException.Builder builder = InvalidCiphertextException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidGrantIdException Error(Error_InvalidGrantIdException dafnyValue) {
+    InvalidGrantIdException.Builder builder = InvalidGrantIdException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidGrantTokenException Error(Error_InvalidGrantTokenException dafnyValue) {
+    InvalidGrantTokenException.Builder builder = InvalidGrantTokenException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidImportTokenException Error(Error_InvalidImportTokenException dafnyValue) {
+    InvalidImportTokenException.Builder builder = InvalidImportTokenException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidKeyUsageException Error(Error_InvalidKeyUsageException dafnyValue) {
+    InvalidKeyUsageException.Builder builder = InvalidKeyUsageException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static InvalidMarkerException Error(Error_InvalidMarkerException dafnyValue) {
+    InvalidMarkerException.Builder builder = InvalidMarkerException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static KeyUnavailableException Error(Error_KeyUnavailableException dafnyValue) {
+    KeyUnavailableException.Builder builder = KeyUnavailableException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static KmsInternalException Error(Error_KMSInternalException dafnyValue) {
+    KmsInternalException.Builder builder = KmsInternalException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static KmsInvalidSignatureException Error(Error_KMSInvalidSignatureException dafnyValue) {
+    KmsInvalidSignatureException.Builder builder = KmsInvalidSignatureException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static KmsInvalidStateException Error(Error_KMSInvalidStateException dafnyValue) {
+    KmsInvalidStateException.Builder builder = KmsInvalidStateException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static LimitExceededException Error(Error_LimitExceededException dafnyValue) {
+    LimitExceededException.Builder builder = LimitExceededException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static MalformedPolicyDocumentException Error(
+      Error_MalformedPolicyDocumentException dafnyValue) {
+    MalformedPolicyDocumentException.Builder builder = MalformedPolicyDocumentException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static NotFoundException Error(Error_NotFoundException dafnyValue) {
+    NotFoundException.Builder builder = NotFoundException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static TagException Error(Error_TagException dafnyValue) {
+    TagException.Builder builder = TagException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
+
+  public static UnsupportedOperationException Error(
+      Error_UnsupportedOperationException dafnyValue) {
+    UnsupportedOperationException.Builder builder = UnsupportedOperationException.builder();
+    if (dafnyValue.dtor_message().is_Some()) {
+      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
+    }
+    return builder.build();
+  }
 
   public static AlgorithmSpec AlgorithmSpec(
       software.amazon.cryptography.services.kms.internaldafny.types.AlgorithmSpec dafnyValue) {
@@ -1817,392 +2212,6 @@ public class ToNative {
     }
     return WrappingKeySpec.fromValue(dafnyValue.toString());
   }
-
-  public static AlreadyExistsException Error(Error_AlreadyExistsException dafnyValue) {
-    AlreadyExistsException.Builder builder = AlreadyExistsException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CloudHsmClusterInUseException Error(
-      Error_CloudHsmClusterInUseException dafnyValue) {
-    CloudHsmClusterInUseException.Builder builder = CloudHsmClusterInUseException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CloudHsmClusterInvalidConfigurationException Error(
-      Error_CloudHsmClusterInvalidConfigurationException dafnyValue) {
-    CloudHsmClusterInvalidConfigurationException.Builder builder = CloudHsmClusterInvalidConfigurationException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CloudHsmClusterNotActiveException Error(
-      Error_CloudHsmClusterNotActiveException dafnyValue) {
-    CloudHsmClusterNotActiveException.Builder builder = CloudHsmClusterNotActiveException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CloudHsmClusterNotFoundException Error(
-      Error_CloudHsmClusterNotFoundException dafnyValue) {
-    CloudHsmClusterNotFoundException.Builder builder = CloudHsmClusterNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CloudHsmClusterNotRelatedException Error(
-      Error_CloudHsmClusterNotRelatedException dafnyValue) {
-    CloudHsmClusterNotRelatedException.Builder builder = CloudHsmClusterNotRelatedException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CustomKeyStoreHasCmKsException Error(
-      Error_CustomKeyStoreHasCMKsException dafnyValue) {
-    CustomKeyStoreHasCmKsException.Builder builder = CustomKeyStoreHasCmKsException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CustomKeyStoreInvalidStateException Error(
-      Error_CustomKeyStoreInvalidStateException dafnyValue) {
-    CustomKeyStoreInvalidStateException.Builder builder = CustomKeyStoreInvalidStateException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CustomKeyStoreNameInUseException Error(
-      Error_CustomKeyStoreNameInUseException dafnyValue) {
-    CustomKeyStoreNameInUseException.Builder builder = CustomKeyStoreNameInUseException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static CustomKeyStoreNotFoundException Error(
-      Error_CustomKeyStoreNotFoundException dafnyValue) {
-    CustomKeyStoreNotFoundException.Builder builder = CustomKeyStoreNotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static DependencyTimeoutException Error(Error_DependencyTimeoutException dafnyValue) {
-    DependencyTimeoutException.Builder builder = DependencyTimeoutException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static DisabledException Error(Error_DisabledException dafnyValue) {
-    DisabledException.Builder builder = DisabledException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static ExpiredImportTokenException Error(Error_ExpiredImportTokenException dafnyValue) {
-    ExpiredImportTokenException.Builder builder = ExpiredImportTokenException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static IncorrectKeyException Error(Error_IncorrectKeyException dafnyValue) {
-    IncorrectKeyException.Builder builder = IncorrectKeyException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static IncorrectKeyMaterialException Error(
-      Error_IncorrectKeyMaterialException dafnyValue) {
-    IncorrectKeyMaterialException.Builder builder = IncorrectKeyMaterialException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static IncorrectTrustAnchorException Error(
-      Error_IncorrectTrustAnchorException dafnyValue) {
-    IncorrectTrustAnchorException.Builder builder = IncorrectTrustAnchorException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidAliasNameException Error(Error_InvalidAliasNameException dafnyValue) {
-    InvalidAliasNameException.Builder builder = InvalidAliasNameException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidArnException Error(Error_InvalidArnException dafnyValue) {
-    InvalidArnException.Builder builder = InvalidArnException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidCiphertextException Error(Error_InvalidCiphertextException dafnyValue) {
-    InvalidCiphertextException.Builder builder = InvalidCiphertextException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidGrantIdException Error(Error_InvalidGrantIdException dafnyValue) {
-    InvalidGrantIdException.Builder builder = InvalidGrantIdException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidGrantTokenException Error(Error_InvalidGrantTokenException dafnyValue) {
-    InvalidGrantTokenException.Builder builder = InvalidGrantTokenException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidImportTokenException Error(Error_InvalidImportTokenException dafnyValue) {
-    InvalidImportTokenException.Builder builder = InvalidImportTokenException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidKeyUsageException Error(Error_InvalidKeyUsageException dafnyValue) {
-    InvalidKeyUsageException.Builder builder = InvalidKeyUsageException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static InvalidMarkerException Error(Error_InvalidMarkerException dafnyValue) {
-    InvalidMarkerException.Builder builder = InvalidMarkerException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static KeyUnavailableException Error(Error_KeyUnavailableException dafnyValue) {
-    KeyUnavailableException.Builder builder = KeyUnavailableException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static KmsInternalException Error(Error_KMSInternalException dafnyValue) {
-    KmsInternalException.Builder builder = KmsInternalException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static KmsInvalidSignatureException Error(Error_KMSInvalidSignatureException dafnyValue) {
-    KmsInvalidSignatureException.Builder builder = KmsInvalidSignatureException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static KmsInvalidStateException Error(Error_KMSInvalidStateException dafnyValue) {
-    KmsInvalidStateException.Builder builder = KmsInvalidStateException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static LimitExceededException Error(Error_LimitExceededException dafnyValue) {
-    LimitExceededException.Builder builder = LimitExceededException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static MalformedPolicyDocumentException Error(
-      Error_MalformedPolicyDocumentException dafnyValue) {
-    MalformedPolicyDocumentException.Builder builder = MalformedPolicyDocumentException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static NotFoundException Error(Error_NotFoundException dafnyValue) {
-    NotFoundException.Builder builder = NotFoundException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static TagException Error(Error_TagException dafnyValue) {
-    TagException.Builder builder = TagException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  public static UnsupportedOperationException Error(
-      Error_UnsupportedOperationException dafnyValue) {
-    UnsupportedOperationException.Builder builder = UnsupportedOperationException.builder();
-    if (dafnyValue.dtor_message().is_Some()) {
-      builder.message(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_message().dtor_value()));
-    }
-    return builder.build();
-  }
-
-  // BEGIN MANUAL EDIT
-  public static RuntimeException Error(software.amazon.cryptography.services.kms.internaldafny.types.Error dafnyValue) {
-    if (dafnyValue.is_AlreadyExistsException()) {
-      return ToNative.Error((Error_AlreadyExistsException) dafnyValue);
-    }
-    if (dafnyValue.is_CloudHsmClusterInUseException()) {
-      return ToNative.Error((Error_CloudHsmClusterInUseException) dafnyValue);
-    }
-    if (dafnyValue.is_CloudHsmClusterInvalidConfigurationException()) {
-      return ToNative.Error((Error_CloudHsmClusterInvalidConfigurationException) dafnyValue);
-    }
-    if (dafnyValue.is_CloudHsmClusterNotActiveException()) {
-      return ToNative.Error((Error_CloudHsmClusterNotActiveException) dafnyValue);
-    }
-    if (dafnyValue.is_CloudHsmClusterNotFoundException()) {
-      return ToNative.Error((Error_CloudHsmClusterNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_CloudHsmClusterNotRelatedException()) {
-      return ToNative.Error((Error_CloudHsmClusterNotRelatedException) dafnyValue);
-    }
-    if (dafnyValue.is_CustomKeyStoreHasCMKsException()) {
-      return ToNative.Error((Error_CustomKeyStoreHasCMKsException) dafnyValue);
-    }
-    if (dafnyValue.is_CustomKeyStoreInvalidStateException()) {
-      return ToNative.Error((Error_CustomKeyStoreInvalidStateException) dafnyValue);
-    }
-    if (dafnyValue.is_CustomKeyStoreNameInUseException()) {
-      return ToNative.Error((Error_CustomKeyStoreNameInUseException) dafnyValue);
-    }
-    if (dafnyValue.is_CustomKeyStoreNotFoundException()) {
-      return ToNative.Error((Error_CustomKeyStoreNotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_DependencyTimeoutException()) {
-      return ToNative.Error((Error_DependencyTimeoutException) dafnyValue);
-    }
-    if (dafnyValue.is_DisabledException()) {
-      return ToNative.Error((Error_DisabledException) dafnyValue);
-    }
-    if (dafnyValue.is_ExpiredImportTokenException()) {
-      return ToNative.Error((Error_ExpiredImportTokenException) dafnyValue);
-    }
-    if (dafnyValue.is_IncorrectKeyException()) {
-      return ToNative.Error((Error_IncorrectKeyException) dafnyValue);
-    }
-    if (dafnyValue.is_IncorrectKeyMaterialException()) {
-      return ToNative.Error((Error_IncorrectKeyMaterialException) dafnyValue);
-    }
-    if (dafnyValue.is_IncorrectTrustAnchorException()) {
-      return ToNative.Error((Error_IncorrectTrustAnchorException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidAliasNameException()) {
-      return ToNative.Error((Error_InvalidAliasNameException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidArnException()) {
-      return ToNative.Error((Error_InvalidArnException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidCiphertextException()) {
-      return ToNative.Error((Error_InvalidCiphertextException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidGrantIdException()) {
-      return ToNative.Error((Error_InvalidGrantIdException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidGrantTokenException()) {
-      return ToNative.Error((Error_InvalidGrantTokenException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidImportTokenException()) {
-      return ToNative.Error((Error_InvalidImportTokenException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidKeyUsageException()) {
-      return ToNative.Error((Error_InvalidKeyUsageException) dafnyValue);
-    }
-    if (dafnyValue.is_InvalidMarkerException()) {
-      return ToNative.Error((Error_InvalidMarkerException) dafnyValue);
-    }
-    if (dafnyValue.is_KeyUnavailableException()) {
-      return ToNative.Error((Error_KeyUnavailableException) dafnyValue);
-    }
-    if (dafnyValue.is_KMSInternalException()) {
-      return ToNative.Error((Error_KMSInternalException) dafnyValue);
-    }
-    if (dafnyValue.is_KMSInvalidSignatureException()) {
-      return ToNative.Error((Error_KMSInvalidSignatureException) dafnyValue);
-    }
-    if (dafnyValue.is_KMSInvalidStateException()) {
-      return ToNative.Error((Error_KMSInvalidStateException) dafnyValue);
-    }
-    if (dafnyValue.is_LimitExceededException()) {
-      return ToNative.Error((Error_LimitExceededException) dafnyValue);
-    }
-    if (dafnyValue.is_MalformedPolicyDocumentException()) {
-      return ToNative.Error((Error_MalformedPolicyDocumentException) dafnyValue);
-    }
-    if (dafnyValue.is_NotFoundException()) {
-      return ToNative.Error((Error_NotFoundException) dafnyValue);
-    }
-    if (dafnyValue.is_TagException()) {
-      return ToNative.Error((Error_TagException) dafnyValue);
-    }
-    if (dafnyValue.is_UnsupportedOperationException()) {
-      return ToNative.Error((Error_UnsupportedOperationException) dafnyValue);
-    }
-    if (dafnyValue.is_Opaque()) {
-      return ToNative.Error((Error_Opaque) dafnyValue);
-    }
-    // TODO This should indicate a codegen bug
-    return new IllegalStateException("Unknown error recieved from KMS.");
-  }
-// END MANUAL EDIT
 
   public static KmsClient TrentService(IKMSClient dafnyValue) {
     return ((Shim) dafnyValue).impl();
