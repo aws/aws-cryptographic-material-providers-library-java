@@ -38,6 +38,7 @@ RawRSAKeyring_Compile
 StrictMultiKeyring_Compile
 _System
 dafny
+software.amazon.cryptography.internaldafny
 software.amazon.cryptography.keystore
 software.amazon.cryptography.keystore.internaldafny
 software.amazon.cryptography.keystore.internaldafny.types
