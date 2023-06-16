@@ -8,7 +8,7 @@ include "../Defaults.dfy"
 include "../Commitment.dfy"
 include "../../Model/AwsCryptographyMaterialProvidersTypes.dfy"
 
-module ExpectedEncryptionContextCMM {
+module RequiredEncryptionContextCMM {
   import opened Wrappers
   import opened UInt = StandardLibrary.UInt
   import Materials
@@ -17,7 +17,7 @@ module ExpectedEncryptionContextCMM {
   import Types = AwsCryptographyMaterialProvidersTypes
   import Seq
 
-  class ExpectedEncryptionContextCMM
+  class RequiredEncryptionContextCMM
     extends CMM.VerifiableInterface
   {
     const underlyingCMM: Types.ICryptographicMaterialsManager
