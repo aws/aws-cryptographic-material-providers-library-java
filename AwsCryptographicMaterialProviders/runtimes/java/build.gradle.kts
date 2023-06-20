@@ -70,6 +70,9 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb")
     implementation("software.amazon.awssdk:kms")
 
+    // BC
+    implementation("org.bouncycastle:bcprov-jdk18on:1.72")
+
     // https://mvnrepository.com/artifact/org.testng/testng
     testImplementation("org.testng:testng:7.5")
 }
@@ -161,11 +164,11 @@ tasks.shadowJar {
     }
 
     configurations {
-        runtimeClasspath {
+        shadow {
             dependencies {
                 // We want to package this version of BC since it is the one the Primitives depends on.
                 // These dependencies need to remain in sync with one another.
-               include(dependency("org.bouncycastle:bcprov-jdk18on:1.72"))
+                dependency("org.bouncycastle:bcprov-jdk18on:1.72")
             }
         }
         sourceSets["main"].java {
