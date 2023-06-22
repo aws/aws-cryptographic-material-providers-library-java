@@ -164,13 +164,6 @@ tasks.shadowJar {
     }
 
     configurations {
-        shadow {
-            dependencies {
-                // We want to package this version of BC since it is the one the Primitives depends on.
-                // These dependencies need to remain in sync with one another.
-                dependency("org.bouncycastle:bcprov-jdk18on:1.72")
-            }
-        }
         sourceSets["main"].java {
             mainSourceSet()
         }
