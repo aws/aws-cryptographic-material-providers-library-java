@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "software.amazon.cryptography"
-version = "1.0.0-preview-2"
+version = "1.0.0-preview-3"
 description = "AWS Cryptographic Material Providers Library"
 
 java {

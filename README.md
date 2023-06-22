@@ -79,7 +79,7 @@ You can get the latest release from Maven or Gradle:
 #### Gradle:
 ```
 dependencies {
-    implementation("software.amazon.cryptography:aws-cryptographic-material-providers:1.0.0-preview-1")
+    implementation("software.amazon.cryptography:aws-cryptographic-material-providers:1.0.0-preview-3")
 }
 ```
 
