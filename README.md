@@ -72,7 +72,7 @@ You can get the latest release from Maven or Gradle:
 <dependency>
   <groupId>software.amazon.cryptography</groupId>
   <artifactId>aws-cryptographic-material-providers</artifactId>
-  <version>1.0.0-preview-1</version>
+  <version>1.0.0-preview-3</version>
 </dependency>
 ```
 
