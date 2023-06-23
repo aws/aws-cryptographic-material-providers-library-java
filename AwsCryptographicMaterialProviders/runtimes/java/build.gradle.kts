@@ -247,8 +247,6 @@ tasks.test {
         }
     })
 }
-<<<<<<< HEAD
-=======
 
 fun buildPom(mavenPublication: MavenPublication) {
     mavenPublication.pom.withXml {
@@ -309,4 +307,3 @@ fun buildPom(mavenPublication: MavenPublication) {
         }
     }
 }
->>>>>>> 0c3d3d817ca544f4bb512ffd2954088321fadb5d
