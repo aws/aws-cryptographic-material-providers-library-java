@@ -80,7 +80,7 @@ dependencies {
 publishing {
     publications.create<MavenPublication>("mavenLocal") {
         groupId = "software.amazon.cryptography"
-        artifactId = "AwsCryptographicMaterialProviders"
+        artifactId = "aws-cryptographic-material-providers"
         artifact(tasks["shadowJar"])
         artifact(tasks["javadocJar"])
         artifact(tasks["sourcesJar"])
@@ -94,7 +94,7 @@ publishing {
 
     publications.create<MavenPublication>("maven") {
         groupId = "software.amazon.cryptography"
-        artifactId = "AwsCryptographicMaterialProviders"
+        artifactId = "aws-cryptographic-material-providers"
         artifact(tasks["shadowJar"])
         artifact(tasks["javadocJar"])
         artifact(tasks["sourcesJar"])
