@@ -295,10 +295,10 @@ public class MaterialProviders {
   }
 
   /**
-   * Creates an Expected Cryptographic Materials Manager.
+   * Creates an Required Encryption Context Cryptographic Materials Manager.
    *
-   * @param input Inputs for creating an Expected Cryptographic Materials Manager.
-   * @return Outputs for creating an Expected Cryptographic Materials Manager.
+   * @param input Inputs for creating an Required Encryption Context Cryptographic Materials Manager.
+   * @return Outputs for creating an Required Encryption Context Cryptographic Materials Manager.
    */
   public ICryptographicMaterialsManager CreateRequiredEncryptionContextCMM(
       CreateRequiredEncryptionContextCMMInput input) {

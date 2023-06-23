@@ -126,7 +126,7 @@ module RequiredEncryptionContextCMM {
 
       //= aws-encryption-sdk-specification/framework/required-encryption-context-cmm.md#get-encryption-materials
       //= type=implication
-      //# The Expected Encryption Context CMM MUST attempt to obtain [encryption materials](./structures.md#encryption-materials)
+      //# The Required Encryption Context CMM MUST attempt to obtain [encryption materials](./structures.md#encryption-materials)
       //# by making a call to the [underlying CMM's](#underlying-cryptographic-materials-manager)
       //# [Get Encryption Materials](cmm-interface.md#get-encryption-materials).
       ensures
@@ -249,7 +249,7 @@ module RequiredEncryptionContextCMM {
 
       //= aws-encryption-sdk-specification/framework/required-encryption-context-cmm.md#decrypt-materials
       //= type=implication
-      //# The Expected Encryption Context
+      //# The Required Encryption Context
       //# CMM MUST attempt to obtain [decryption materials](./structures.md#decryption-materials)
       //# by making a call to the [underlying CMM's](#underlying-cryptographic-materials-manager)
       //# [decrypt materials](cmm-interface.md#decrypt-materials) interface
