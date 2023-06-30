@@ -2417,9 +2417,11 @@ public class ToDafny {
   }
 
   public static Error Error(KmsException nativeValue) {
-    // BEGIN MANUAL EDIT
-    return new Error_Opaque(nativeValue);
-    // END MANUAL EDIT
+    Option<DafnySequence<? extends Character>> message;
+    message = Objects.nonNull(nativeValue.getMessage()) ?
+        Option.create_Some(software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.getMessage()))
+        : Option.create_None();
+    return new Error_Opaque(message);
   }
 
   public static IKMSClient TrentService(KmsClient nativeValue) {
