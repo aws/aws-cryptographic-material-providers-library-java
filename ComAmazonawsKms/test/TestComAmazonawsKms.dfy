@@ -110,8 +110,6 @@ module TestComAmazonawsKms {
 
     var ret := client.GenerateDataKey(input);
 
-    print ret;
-    
     expect(ret.Success?);
 
     var GenerateDataKeyResponse(CiphertextBlob, Plaintext, KeyId) := ret.value;
@@ -144,8 +142,6 @@ module TestComAmazonawsKms {
 
     var ret := client.Encrypt(input);
 
-    print ret;
-    
     expect(ret.Success?);
 
     var EncryptResponse(CiphertextBlob, KeyId, EncryptionAlgorithm) := ret.value;
