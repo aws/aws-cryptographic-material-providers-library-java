@@ -181,6 +181,30 @@ transpile_test:
 		$(if $(strip $(STD_LIBRARY)) , -library:$(PROJECT_ROOT)/$(STD_LIBRARY)/src/Index.dfy, ) \
 		$(TRANSPILE_DEPENDENCIES)
 
+# Transpile the entire project's benchmarks
+_transpile_benchmark_all: TRANSPILE_DEPENDENCIES=$(if ${DIR_STRUCTURE_V2}, $(patsubst %, -library:dafny/%/src/Index.dfy, $(PROJECT_SERVICES)), -library:src/Index.dfy)
+_transpile_benchmark_all: transpile_benchmark
+
+# TODO: Find from either an unzipped release or Binaries if building from source...
+BENCHMARKING_PLUGIN := /Users/salkeldr/Documents/GitHub/dafny/Binaries/net6.0/DafnyBenchmarkingPlugin.dll
+
+transpile_benchmark:
+	find ./dafny/**/benchmark ./test -name "*.dfy" -name '*.dfy' | sed -e 's/^/include "/' -e 's/$$/"/' | dafny \
+		-stdin \
+		-noVerify \
+		-vcsCores:$(CORES) \
+		-compileTarget:$(TARGET) \
+		-spillTargetCode:3 \
+		-compile:0 \
+		-optimizeErasableDatatypeWrapper:0 \
+		-quantifierSyntax:3 \
+		-unicodeChar:0 \
+		-functionSyntax:3 \
+		-useRuntimeLib \
+		-out $(OUT) \
+		-plugin $(BENCHMARKING_PLUGIN) \
+		$(if $(strip $(STD_LIBRARY)) , -library:$(PROJECT_ROOT)/$(STD_LIBRARY)/src/Index.dfy, ) \
+		$(TRANSPILE_DEPENDENCIES)
 
 # If we are not the StandardLibrary, transpile the StandardLibrary.
 # Transpile all other dependencies
@@ -322,6 +346,10 @@ transpile_test_java: TARGET=java
 transpile_test_java: OUT=runtimes/java/TestsFromDafny
 transpile_test_java: _transpile_test_all _mv_test_java
 
+transpile_benchmark_java: TARGET=java
+transpile_benchmark_java: OUT=runtimes/java/BenchmarksFromDafny
+transpile_benchmark_java: _transpile_benchmark_all _mv_benchmark_java
+
 # Currently Dafny compiles to Java by changing the directory name.
 # Java puts things under a `java` directory.
 # To avoid `java/implementation-java` the code is generated and then moved.
@@ -332,6 +360,10 @@ _mv_test_java:
 	rm -rf runtimes/java/src/test/dafny-generated
 	mkdir -p runtimes/java/src/test
 	mv runtimes/java/TestsFromDafny-java runtimes/java/src/test/dafny-generated
+_mv_benchmark_java:
+	rm -rf runtimes/java/src/jmh/dafny-generated
+	mkdir -p runtimes/java/src/jmh
+	mv runtimes/java/BenchmarksFromDafny-java runtimes/java/src/jmh/dafny-generated
 
 transpile_dependencies_java: LANG=java
 transpile_dependencies_java: transpile_dependencies

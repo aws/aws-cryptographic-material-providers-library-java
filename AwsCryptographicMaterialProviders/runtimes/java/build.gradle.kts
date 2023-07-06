@@ -7,6 +7,7 @@ plugins {
     `signing`
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+    id("me.champeau.jmh") version "0.7.0"
 }
 
 group = "software.amazon.cryptography"
@@ -306,4 +307,12 @@ fun buildPom(mavenPublication: MavenPublication) {
             }
         }
     }
+}
+
+jmh {
+    warmupIterations.set(2)
+    iterations.set(20)
+    timeOnIteration.set("1s")
+    fork.set(2)
+    threads.set(10)
 }
