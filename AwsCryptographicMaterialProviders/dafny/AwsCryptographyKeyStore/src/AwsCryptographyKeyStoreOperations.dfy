@@ -19,6 +19,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   import CreateKeyStoreTable
   import KeyResolution
   import GetKeys
+  import UUID
 
   datatype Config = Config(
     nameonly id: string,
@@ -35,7 +36,6 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   predicate ValidInternalConfig?(config: InternalConfig)
   {
     && DDB.IsValid_TableName(config.ddbTableName)
-    && DDB.IsValid_IndexName(CreateKeyStoreTable.GSI_NAME)
     && KMS.IsValid_KeyIdType(config.kmsConfiguration.kmsKeyArn)
     && config.kmsClient.ValidState()
     && config.ddbClient.ValidState()
@@ -100,7 +100,20 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method CreateKey ( config: InternalConfig , input: CreateKeyInput )
     returns (output: Result<CreateKeyOutput, Error>)
   {
-    output := CreateKeys.CreateBranchAndBeaconKeys(config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
+    var maybeBranchKeyId := UUID.GenerateUUID();
+    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
+    //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
+    var branchKeyId :- maybeBranchKeyId
+      .MapFailure(e => Types.KeyStoreException(message := e));
+    output := CreateKeys.CreateBranchAndBeaconKeys(
+      branchKeyId,
+      config.ddbTableName,
+      config.logicalKeyStoreName,
+      config.kmsConfiguration.kmsKeyArn,
+      config.grantTokens,
+      config.kmsClient,
+      config.ddbClient
+    );
   }
 
   predicate VersionKeyEnsuresPublicly(input: VersionKeyInput, output: Result<(), Error>)

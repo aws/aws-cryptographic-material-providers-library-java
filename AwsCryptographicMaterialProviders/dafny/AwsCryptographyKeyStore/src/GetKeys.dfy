@@ -148,7 +148,6 @@ module GetKeys {
               && ddbOperationOutput.Success?
               && ddbOperationInput.TableName == ddbTableName
               && ddbOperationInput.IndexName.Some?
-              && ddbOperationInput.IndexName.value == CreateKeyStoreTable.GSI_NAME
               && ddbOperationInput.KeyConditionExpression.Some?
               && ddbOperationInput.KeyConditionExpression.value == STATUS_BRANCH_KEY_ID_MATCH_EXPRESSION
               && ddbOperationInput.ExpressionAttributeNames.Some?
@@ -164,7 +163,7 @@ module GetKeys {
 
     var queryInput := DDB.QueryInput(
       TableName := ddbTableName,
-      IndexName := Some(CreateKeyStoreTable.GSI_NAME),
+      IndexName := None,
       Select := None,
       AttributesToGet := None,
       Limit := None,

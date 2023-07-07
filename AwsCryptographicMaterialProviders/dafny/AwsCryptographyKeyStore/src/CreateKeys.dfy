@@ -85,6 +85,7 @@ module CreateKeys {
   }
 
   method CreateBranchAndBeaconKeys(
+    branchKeyId: string,
     ddbTableName: DDB.TableName,
     logicalKeyStoreName: string,
     kmsKeyArn: Types.KmsKeyArn,
@@ -99,11 +100,6 @@ module CreateKeys {
     modifies ddbClient.Modifies, kmsClient.Modifies
     ensures ddbClient.ValidState() && kmsClient.ValidState()
   {
-    var maybeBranchKeyId := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
-    //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
-    var branchKeyId :- maybeBranchKeyId
-      .MapFailure(e => Types.KeyStoreException(message := e));
     //= aws-encryption-sdk-specification/framework/key-store.md#wrapped-branch-key-creation
     //# - `timestamp`: a timestamp for the current time.
     //# This timestamp MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
@@ -115,12 +111,7 @@ module CreateKeys {
     //# - `version`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
-
-    :- Need(
-      && maybeBranchKeyId.Success?
-      && maybeBranchKeyVersion.Success?,
-      Types.KeyStoreException(message := "Failed to generate UUID for Key ID or Key Version.")
-    );
+    
 
     var activeBranchKeyEncryptionContext: BranchKeyContext := activeBranchKeyEncryptionContext(branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn);
 
