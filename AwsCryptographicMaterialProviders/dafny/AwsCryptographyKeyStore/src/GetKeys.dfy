@@ -136,16 +136,10 @@ module GetKeys {
     ensures
       && |ddbClient.History.Query| > 0
       && var ddbOperationOutput := Last(ddbClient.History.Query).output;
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-      //= type=implication
-      //# 1. If the client is unable to fetch an `ACTIVE` key, GetActiveBranchKey MUST fail.
       && ddbOperationOutput.Failure?
       ==> res.Failure?
     ensures res.Success? ==>
               && |ddbClient.History.Query| > 0
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-                 //= type=implication
-                 //# This operation MUST make a DDB::Query to get the branch key at `branchKeyId` with status `ACTIVE`
               && var ddbOperationInput := Last(ddbClient.History.Query).input;
               && var ddbOperationOutput := Last(ddbClient.History.Query).output;
               && var expressionAttributeValues: DDB.AttributeMap := map[
@@ -270,7 +264,7 @@ module GetKeys {
     modifies ddbClient.Modifies, kmsClient.Modifies
     ensures ddbClient.ValidState() && kmsClient.ValidState()
   {
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+    //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
     //# MUST call AWS DDB `GetItem`
     //# using the `branch-key-id` as the Partition Key and "beacon:true" value as the Sort Key.
     var dynamoDbKey: DDB.Key := map[
@@ -298,7 +292,7 @@ module GetKeys {
     );
 
     :- Need(
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+      //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
       //# The AWS DDB response MUST contain the fields defined in the [branch keystore record format](../branch-key-store.md#record-format).
       //# If the record does not contain the defined fields, this operation MUST fail.
       //# If the record does not contain "SEARCH" as the "status" field, this operation MUST fail.
@@ -307,23 +301,23 @@ module GetKeys {
     );
 
     var beaconKeyItem: baseKeyStoreItem := getItemResponse.Item.value;
-
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+    
+    //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
     //# The operation MUST decrypt the beacon key according to the [AWS KMS Branch Key Decryption](#aws-kms-branch-key-decryption) section.
     var beaconKeyResponse :- decryptKeyStoreItem(beaconKeyItem, kmsKeyArn, grantTokens, logicalKeyStoreName, kmsClient);
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+    //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
     //# This operation MUST return the constructed [beacon key materials](./structures.md#beacon-key-materials).
     return Success(Types.GetBeaconKeyOutput(
-                     //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
-                     //# This operation MUST construct [beacon key materials](./structures.md#beacon-key-materials) from the decrypted branch key material
-                     //# and the `branchKeyId` from the returned `branch-key-id` field.
-                     beaconKeyMaterials := Types.BeaconKeyMaterials(
-                       beaconKeyIdentifier := input.branchKeyIdentifier,
-                       beaconKey := Some(beaconKeyResponse.Plaintext.value),
-                       hmacKeys := None
-                     )
-                   ));
+      //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
+      //# This operation MUST construct [beacon key materials](./structures.md#beacon-key-materials) from the decrypted branch key material
+      //# and the `branchKeyId` from the returned `branch-key-id` field.
+      beaconKeyMaterials := Types.BeaconKeyMaterials(
+        beaconKeyIdentifier := input.branchKeyIdentifier,
+        beaconKey := Some(beaconKeyResponse.Plaintext.value),
+        hmacKeys := None
+      )
+    ));
   }
 
   method decryptKeyStoreItem(
@@ -335,28 +329,26 @@ module GetKeys {
   )
     returns (output: Result<KMS.DecryptResponse, Types.Error>)
     requires baseKeyStoreItemHasRequiredAttributes?(branchKeyRecord)
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
+    //= aws-encryption-sdk-specification/framework/key-store.md#aws-kms-branch-key-decryption
     //= type=implication
     //# The operation MUST use the configured `KMS SDK Client` to decrypt the value of the branch key field.
     requires kmsClient.ValidState()
     modifies kmsClient.Modifies
     ensures kmsClient.ValidState()
     ensures output.Success?
-            ==>
-              && output.value.KeyId.Some?
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
-                 //= type=implication
-                 //# - The `KeyId` field in the AWS KMS response MUST equal the configured AWS KMS Key ARN.
-              && output.value.KeyId.value == awsKmsKeyArn
-              && output.value.Plaintext.Some?
-              && 32 == |output.value.Plaintext.value|
+      ==> 
+        && output.value.KeyId.Some?
+        //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
+        //= type=implication
+        //# - The `KeyId` field in the AWS KMS response MUST equal the configured AWS KMS Key ARN.
+        && output.value.KeyId.value == awsKmsKeyArn
+        && output.value.Plaintext.Some?
+        && 32 == |output.value.Plaintext.value|
   {
     var wrappedBranchKey: KMS.CiphertextType := branchKeyRecord[BRANCH_KEY_FIELD].B;
 
     var encCtxDdbMap := branchKeyRecord - {BRANCH_KEY_FIELD};
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-    //# The operation MUST create a branch key [encryption context](../structures.md#encryption-context).
     var encCtxMap: map<string, string> :=
       map k <- encCtxDdbMap ::
         k := ValueToString(encCtxDdbMap[k]).value;
@@ -369,23 +361,23 @@ module GetKeys {
 
     var decryptRequest :=
       KMS.DecryptRequest(
-        //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-        //# - `KeyId` MUST be the AWS KMS Key ARN configured in the key store operation.
+        //= aws-encryption-sdk-specification/framework/key-store.md#aws-kms-branch-key-decryption
+        //# `KeyId` MUST be the configured `AWS KMS Key ARN` in the [AWS KMS Configuration](#aws-kms-configuration) for this keystore
         KeyId := Some(awsKmsKeyArn),
-        //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-        //# - `CiphertextBlob` MUST be the `enc` AWS DDB response value.
+        //= aws-encryption-sdk-specification/framework/key-store.md#aws-kms-branch-key-decryption
+        //# - `CiphertextBlob` MUST be the `enc` attribute value on the AWS DDB response item
         CiphertextBlob := wrappedBranchKey,
-        //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-        //# - `EncryptionContext` MUST be the branch key encryption context map.
+        //= aws-encryption-sdk-specification/framework/key-store.md#aws-kms-branch-key-decryption
+        //# - `EncryptionContext` MUST be the [encryption context](#encryption-context) constructed above
         EncryptionContext := Some(encCtxMap),
-        //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-        //# - `GrantTokens` MUST be this keysotre's [grant tokens](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#grant_token).
+        //= aws-encryption-sdk-specification/framework/key-store.md#aws-kms-branch-key-decryption
+        //# - `GrantTokens` MUST be this keystore's [grant tokens](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#grant_token).
         GrantTokens := Some(grantTokens),
         EncryptionAlgorithm := None
       );
 
     var maybeDecryptResponse := kmsClient.Decrypt(decryptRequest);
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+    //= aws-encryption-sdk-specification/framework/key-store.md#getbeaconkey
     //# If the beacon key fails to decrypt, this operation MUST fail.
     var decryptResponse :- maybeDecryptResponse
     .MapFailure(e => Types.ComAmazonawsKms(ComAmazonawsKms := e));

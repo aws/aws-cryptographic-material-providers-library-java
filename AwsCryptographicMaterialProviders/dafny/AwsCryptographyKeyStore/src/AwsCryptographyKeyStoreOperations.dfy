@@ -50,18 +50,18 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
 
   method GetKeyStoreInfo(config: InternalConfig)
     returns (output: Result<GetKeyStoreInfoOutput, Error>)
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getkeystoreinfo
+    //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
     //= type=implication
-    //# This operation MUST return the key store information in this key store configuration.
+    //# This operation MUST return the keystore information in this keystore configuration.
     ensures output.Success? ==>
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#getkeystoreinfo
-              //= type=implication
-              //# This MUST include:
-              && output.value.keyStoreId == config.id
-              && output.value.keyStoreName == config.ddbTableName
-              && output.value.logicalKeyStoreName == config.logicalKeyStoreName
-              && output.value.grantTokens == config.grantTokens
-              && output.value.kmsConfiguration == config.kmsConfiguration
+      //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
+      //= type=implication
+      //# This MUST include:
+      && output.value.keyStoreId == config.id 
+      && output.value.keyStoreName == config.ddbTableName
+      && output.value.logicalKeyStoreName == config.logicalKeyStoreName
+      && output.value.grantTokens == config.grantTokens
+      && output.value.kmsConfiguration == config.kmsConfiguration
   {
     output := Success(
       Types.GetKeyStoreInfoOutput(

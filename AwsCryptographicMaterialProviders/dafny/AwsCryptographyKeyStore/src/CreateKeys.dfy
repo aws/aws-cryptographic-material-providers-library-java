@@ -100,18 +100,18 @@ module CreateKeys {
     ensures ddbClient.ValidState() && kmsClient.ValidState()
   {
     var maybeBranchKeyId := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
     //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyId :- maybeBranchKeyId
-    .MapFailure(e => Types.KeyStoreException(message := e));
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+      .MapFailure(e => Types.KeyStoreException(message := e));
+    //= aws-encryption-sdk-specification/framework/key-store.md#wrapped-branch-key-creation
     //# - `timestamp`: a timestamp for the current time.
-    //# This MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
+    //# This timestamp MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
     var timestamp :- Time.GetCurrentTimeStamp()
     .MapFailure(e => E(e));
 
     var maybeBranchKeyVersion := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+    //= aws-encryption-sdk-specification/framework/key-store.md#wrapped-branch-key-creation
     //# - `version`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
@@ -124,12 +124,10 @@ module CreateKeys {
 
     var activeBranchKeyEncryptionContext: BranchKeyContext := activeBranchKeyEncryptionContext(branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn);
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
     //# The operation MUST call [AWS KMS API GenerateDataKeyWithoutPlaintext]
     //# (https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyWithoutPlaintext.html).
     var branchKeyWithoutPlaintext :- GenerateKey(
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
-      //# - `EncryptionContext` MUST be the [encryption context for branch keys](#encryption-context).
       activeBranchKeyEncryptionContext,
       kmsKeyArn,
       grantTokens,
@@ -139,22 +137,16 @@ module CreateKeys {
     // Beacon Key Creation
     var beaconKeyEncryptionContext: BranchKeyContext := beaconKeyEncryptionContext(branchKeyId, timestamp, logicalKeyStoreName, kmsKeyArn);
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
     //# The operation MUST call [AWS KMS API GenerateDataKeyWithoutPlaintext]
     //# (https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyWithoutPlaintext.html).
     var beaconKeyWithoutPlaintext :- GenerateKey(
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
-      //# - `EncryptionContext` MUST be the [encryption context for beacon keys](#encryption-context).
       beaconKeyEncryptionContext,
       kmsKeyArn,
       grantTokens,
       kmsClient
     );
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
-    //# If creation of both keys is successful,
-    //# this operation MUST call [Amazon DynamoDB API TransactWriteItems]
-    //# (https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html).
     var transactWriteItemsToKeyStore :- WriteNewKeyToStore(
       activeBranchKeyEncryptionContext,
       branchKeyWithoutPlaintext.CiphertextBlob.value,
@@ -164,7 +156,7 @@ module CreateKeys {
       ddbClient
     );
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
+    //= aws-encryption-sdk-specification/framework/key-store.md#createkey
     //# If writing to the key store succeeds, the operation MUST return the branch-key-id that maps to both
     //# the branch key and the beacon key.
     res := Success(Types.CreateKeyOutput(
@@ -368,30 +360,17 @@ module CreateKeys {
     ensures ddbClient.ValidState() && kmsClient.ValidState()
   {
     var maybeQueryOutput := GetKeys.QueryForActiveBranchKey(input.branchKeyIdentifier, ddbTableName, ddbClient);
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-    //= type=implication
-    //# 1. If the client is unable to fetch an `ACTIVE` key, GetActiveBranchKey MUST fail.
     var queryOutput :- maybeQueryOutput
     .MapFailure(e => Types.ComAmazonawsDynamodb(ComAmazonawsDynamodb := e));
 
     :- Need(
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-      //= type=implication
-      //# There MUST only be one `ACTIVE` key. If there is more than one `ACTIVE` key, the operation MUST fail.
       && queryOutput.Items.Some?
       && |queryOutput.Items.value| == 1,
       E("Found more than one active key under: " + input.branchKeyIdentifier + ". Resolve by calling ActiveKeyResolution API.")
     );
 
     :- Need(
-      //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-      //= type=implication
-      //# The AWS DDB response MUST contain the fields defined in the [branch keystore record format](../#record-format).
-      //# If the record does not contain the defined fields, this operation MUST fail.
       && validActiveBranchKey?(queryOutput.Items.value[0])
-         //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-         //= type=implication
-         //# If the `type` on the item is not prefixed by "version", this operation MUST fail.
       && queryOutput.Items.value[0][TYPE_FIELD].S[..|BRANCH_KEY_TYPE_PREFIX|] == BRANCH_KEY_TYPE_PREFIX,
       Types.KeyStoreException(message := "Active key for " + input.branchKeyIdentifier + " does not have required fields.")
     );
@@ -402,12 +381,8 @@ module CreateKeys {
       item[KMS_FIELD].S == kmsKeyArn,
       Types.KeyStoreException(message := "Configured AWS KMS Key ARN does not match KMS Key ARN for branch-key-id: " + item[BRANCH_KEY_IDENTIFIER_FIELD].S)
     );
+    
 
-
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-    //= type=implication
-    //# The operation MUST create a branch key [encryption context](./structures.md#encryption-context)
-    //# from the branch AWS DDB query response according to [branch key encryption context](#encryption-context).
     var oldActiveBranchKeyEncryptionContext := activeBranchKeyEncryptionContext(
       item[BRANCH_KEY_IDENTIFIER_FIELD].S,
       item[TYPE_FIELD].S[|BRANCH_KEY_TYPE_PREFIX|..],
@@ -417,9 +392,7 @@ module CreateKeys {
     );
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-    //= type=implication
-    //# The operation MUST create a branch key [encryption context](./structures.md#encryption-context)
-    //# for DECRYPT_ONLY branch keys according to the [decrypt only branch key encryption context](#decrypt_only-encryption-context).
+    
     var decryptOnlyBranchKeyEncryptionContext: BranchKeyContext := decryptOnlyBranchKeyEncryptionContext(
       item[BRANCH_KEY_IDENTIFIER_FIELD].S,
       item[TYPE_FIELD].S[|BRANCH_KEY_TYPE_PREFIX|..],
@@ -437,19 +410,10 @@ module CreateKeys {
       kmsClient
     );
 
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-    //# To create a new `ACTIVE` branch key under the supplied `branch-key-id` the operation
-    //# MUST generate the following values:
-
 
     var maybeBranchKeyVersion := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-    //# - `version`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
-    //# - `timestamp`: a timestamp for the current time.
-    //# This MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
     var timestamp :- Time.GetCurrentTimeStamp()
     .MapFailure(e => E(e));
 
@@ -500,38 +464,16 @@ module CreateKeys {
               && res.value.KeyId.Some?
               && res.value.SourceKeyId.value == awsKmsKey
               && res.value.KeyId.value == awsKmsKey
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                 //= type=implication
-                 //# The operation MUST use the configured `KMS SDK Client` to decrypt the value of the branch key field.
               && |kmsClient.History.ReEncrypt| > 0
               && KMS.IsValid_CiphertextType(res.value.CiphertextBlob.value)
               && var kmsOperationInput := Last(kmsClient.History.ReEncrypt).input;
               && var kmsOperationOutput := Last(kmsClient.History.ReEncrypt).output;
               && kmsOperationOutput.Success?
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                 //= type=implication
-                 //# When calling [AWS KMS API ReEncrypt](https://docs.aws.amazon.com/kms/latest/APIReference/API_ReEncrypt.html),
-                 //# the key store operation MUST call with a request constructed as follows:
               && KMS.ReEncryptRequest(
-                   //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                   //= type=implication
-                   //# - `CiphertextBlob` MUST be the encrypted branch key value that is stored in AWS DDB.
                    CiphertextBlob := ciphertext,
-                   //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                   //= type=implication
-                   //# - `SourceEncryptionContext` MUST be the branch key encryption context.
                    SourceEncryptionContext := Some(oldEncryptionContext),
-                   //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                   //= type=implication
-                   //# - `SourceKeyId` MUST be the AWS KMS Key ARN configured in the key store operation.
                    SourceKeyId := Some(awsKmsKey),
-                   //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                   //= type=implication
-                   //# - `DestinationKeyId` MUST be the AWS KMS Key ARN configured in the key store operation.
                    DestinationKeyId := awsKmsKey,
-                   //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-reencryption
-                   //= type=implication
-                   //# - `DestinationEncryptionContext` MUST be the DECRYPT_ONLY branch key encryption context created.
                    DestinationEncryptionContext := Some(decryptOnlyEncryptionContext),
                    SourceEncryptionAlgorithm := None,
                    DestinationEncryptionAlgorithm := None,

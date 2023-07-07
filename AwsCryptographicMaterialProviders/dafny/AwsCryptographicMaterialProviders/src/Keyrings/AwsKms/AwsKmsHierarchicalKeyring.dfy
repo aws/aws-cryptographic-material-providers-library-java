@@ -146,7 +146,7 @@ module AwsKmsHierarchicalKeyring {
     constructor (
       //= aws-encryption-sdk-specification/framework/aws-kms/aws-kms-hierarchical-keyring.md#initialization
       //= type=implication
-      //# - MUST provide a [KeyStore](../branch-key-store.md)
+      //# - MUST provide a [KeyStore](../key-store.md)
       keyStore: KeyStore.IKeyStoreClient,
       //= aws-encryption-sdk-specification/framework/aws-kms/aws-kms-hierarchical-keyring.md#initialization
       //= type=implication
