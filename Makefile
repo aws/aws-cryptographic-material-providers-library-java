@@ -6,7 +6,6 @@ verify:
 	$(MAKE) -C ComAmazonawsKms verify CORES=4
 	$(MAKE) -C ComAmazonawsDynamodb verify CORES=4
 	$(MAKE) -C AwsCryptographicMaterialProviders verify CORES=4
-	$(MAKE) -C AwsEncryptionSDK verify CORES=4
 
 dafny-reportgenerator:
 	$(MAKE) -C StandardLibrary dafny-reportgenerator
@@ -14,7 +13,6 @@ dafny-reportgenerator:
 	$(MAKE) -C ComAmazonawsKms dafny-reportgenerator
 	$(MAKE) -C ComAmazonawsDynamodb dafny-reportgenerator
 	$(MAKE) -C AwsCryptographicMaterialProviders dafny-reportgenerator
-	$(MAKE) -C AwsEncryptionSDK dafny-reportgenerator
 
 duvet: | duvet_extract duvet_report
 
@@ -33,3 +31,10 @@ duvet_report:
 		--source-pattern "AwsCryptographicMaterialProviders/compliance_exceptions/**/*.txt" \
 		--source-pattern "(# //=,# //#).github/workflows/duvet.yaml" \
 		--html specification_compliance_report.html
+
+format:
+	$(MAKE) -C StandardLibrary format
+	$(MAKE) -C AwsCryptographyPrimitives format
+	$(MAKE) -C ComAmazonawsKms format
+	$(MAKE) -C ComAmazonawsDynamodb format
+	$(MAKE) -C AwsCryptographicMaterialProviders format
