@@ -339,7 +339,7 @@ setup_net:
 build_java: transpile_java mvn_local_deploy_dependencies
 	gradle -p runtimes/java build
 
-transpile_java: | transpile_implementation_java transpile_test_java transpile_dependencies_java
+transpile_java: | transpile_implementation_java transpile_test_java transpile_benchmark_java transpile_dependencies_java
 
 transpile_implementation_java: TARGET=java
 transpile_implementation_java: OUT=runtimes/java/ImplementationFromDafny

@@ -21,6 +21,10 @@ java {
     }
     sourceSets["test"].java {
         srcDir("src/test")
+        srcDir("src/test/dafny-generated")
+    }
+    sourceSets["jmh"].java {
+        srcDir("src/jmh/dafny-generated")
     }
     withJavadocJar()
     withSourcesJar()
