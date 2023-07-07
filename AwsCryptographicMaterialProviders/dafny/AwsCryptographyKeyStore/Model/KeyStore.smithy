@@ -38,6 +38,18 @@ structure DdbClientReference {}
 )
 service KeyStore {
   version: "2023-04-01",
+
+  //= aws-encryption-sdk-specification/framework/key-store.md#operations
+  //= type=implication
+  //# The Keystore MUST support the following operations:
+  //#
+  //#- [GetKeyStoreInfo](#getKeyStoreInfo)
+  //#- [CreateKeyStore](#createkeystore)
+  //#- [CreateKey](#createkey)
+  //#- [VersionKey](#versionkey)
+  //#- [GetActiveBranchKey](#getactivebranchkey)
+  //#- [GetBranchKeyVersion](#getbranchkeyversion)
+  //#- [GetBeaconKey](#beacon-key)
   operations: [
     GetKeyStoreInfo,
     CreateKeyStore,
@@ -52,6 +64,15 @@ service KeyStore {
 }
 
 structure KeyStoreConfig {
+
+  //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+  //= type=implication
+  //# The following inputs MUST be specified to create a KeyStore:
+  //# 
+  //# - [Table Name](#table-name)
+  //# - [AWS KMS Configuration](#aws-kms-configuration)
+  //# - [Logical KeyStore Name](#logical-keystore-name)
+
   @required
   @javadoc("The DynamoDB table name that backs this Key Store.")
   ddbTableName: TableName,
@@ -61,6 +82,15 @@ structure KeyStoreConfig {
   @required
   @javadoc("The logical name for this Key Store, which is cryptographically bound to the keys it holds.")
   logicalKeyStoreName: String,
+
+  //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+  //= type=implication
+  //# The following inputs MAY be specified to create a KeyStore:
+  //# 
+  //# - [ID](#keystore-id)
+  //# - [AWS KMS Grant Tokens](#gran-tokens)
+  //# - [DynamoDb Client](#dynamodb-client)
+  //# - [KMS Client](#kms-client)
   
   @javadoc("An identifier for this Key Store.")
   id: String,
