@@ -1,5 +1,5 @@
 # This workflow performs static analysis checks.
-name: Library Dafny verification
+name: Library Dafny format check
 
 on:
   pull_request:
