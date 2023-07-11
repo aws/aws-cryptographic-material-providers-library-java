@@ -279,10 +279,10 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.KeyStore.KMSConfigu
  return ToDafny_N6_smithy__N3_api__S6_String(value);
 }
  internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S16_KMSConfiguration__M9_kmsKeyArn (Dafny.ISequence<char> value) {
- return FromDafny_N3_aws__N12_cryptography__N8_keyStore__S9_KmsKeyArn(value);
+ return FromDafny_N3_com__N9_amazonaws__N3_kms__S9_KeyIdType(value);
 }
  internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N8_keyStore__S16_KMSConfiguration__M9_kmsKeyArn (string value) {
- return ToDafny_N3_aws__N12_cryptography__N8_keyStore__S9_KmsKeyArn(value);
+ return ToDafny_N3_com__N9_amazonaws__N3_kms__S9_KeyIdType(value);
 }
  internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S15_VersionKeyInput__M19_branchKeyIdentifier (Dafny.ISequence<char> value) {
  return FromDafny_N6_smithy__N3_api__S6_String(value);
@@ -345,10 +345,10 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.KeyStore.KMSConfigu
  public static software.amazon.cryptography.services.kms.internaldafny.types.IKMSClient ToDafny_N3_aws__N12_cryptography__N8_keyStore__S18_KmsClientReference (Amazon.KeyManagementService.IAmazonKeyManagementService value) {
  if (value is Amazon.KeyManagementService.AmazonKeyManagementServiceClient impl) { return new Com.Amazonaws.Kms.KeyManagementServiceShim(impl); } throw new System.ArgumentException("Custom implementations of Amazon.KeyManagementService.IAmazonKeyManagementService are not supported yet");
 }
- internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S9_KmsKeyArn (Dafny.ISequence<char> value) {
+ internal static string FromDafny_N3_com__N9_amazonaws__N3_kms__S9_KeyIdType (Dafny.ISequence<char> value) {
  return new string(value.Elements);
 }
- internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N8_keyStore__S9_KmsKeyArn (string value) {
+ internal static Dafny.ISequence<char> ToDafny_N3_com__N9_amazonaws__N3_kms__S9_KeyIdType (string value) {
  return Dafny.Sequence<char>.FromString(value);
 }
  internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S18_BranchKeyMaterials__M19_branchKeyIdentifier (Dafny.ISequence<char> value) {
@@ -434,6 +434,10 @@ return Dafny.Sequence<byte>.FromArray(utf8.GetBytes(value));
   return Com.Amazonaws.Dynamodb.TypeConversion.FromDafny_CommonError(
     dafnyVal._ComAmazonawsDynamodb
   );
+ case software.amazon.cryptography.keystore.internaldafny.types.Error_ComAmazonawsKms dafnyVal:
+  return Com.Amazonaws.KMS.TypeConversion.FromDafny_CommonError(
+    dafnyVal._ComAmazonawsKms
+  );
  case software.amazon.cryptography.keystore.internaldafny.types.Error_KeyStoreException dafnyVal:
 return FromDafny_N3_aws__N12_cryptography__N8_keyStore__S17_KeyStoreException(dafnyVal);
  case software.amazon.cryptography.keystore.internaldafny.types.Error_CollectionOfErrors dafnyVal:
@@ -450,6 +454,10 @@ return FromDafny_N3_aws__N12_cryptography__N8_keyStore__S17_KeyStoreException(da
 }
  public static software.amazon.cryptography.keystore.internaldafny.types._IError ToDafny_CommonError(System.Exception value) {
  switch (value.GetType().Namespace) {
+ case "Com.Amazonaws.KMS":
+  return software.amazon.cryptography.keystore.internaldafny.types.Error.create_ComAmazonawsKms(
+    Com.Amazonaws.KMS.TypeConversion.ToDafny_CommonError(value)
+  );
  case "Com.Amazonaws.Dynamodb":
   return software.amazon.cryptography.keystore.internaldafny.types.Error.create_ComAmazonawsDynamodb(
     Com.Amazonaws.Dynamodb.TypeConversion.ToDafny_CommonError(value)
