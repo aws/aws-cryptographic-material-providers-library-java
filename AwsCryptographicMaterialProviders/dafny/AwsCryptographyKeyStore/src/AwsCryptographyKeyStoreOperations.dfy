@@ -7,7 +7,6 @@ include "../../AwsCryptographicMaterialProviders/src/Keyrings/AwsKms/AwsKmsUtils
 include "GetKeys.dfy"
 include "CreateKeyStoreTable.dfy"
 include "CreateKeys.dfy"
-include "KeyResolution.dfy"
 
 module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStoreOperations {
   import opened AwsArnParsing
@@ -17,7 +16,6 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   import MPL = AwsCryptographyMaterialProvidersTypes
   import CreateKeys
   import CreateKeyStoreTable
-  import KeyResolution
   import GetKeys
   import UUID
 
@@ -54,14 +52,14 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     //= type=implication
     //# This operation MUST return the keystore information in this keystore configuration.
     ensures output.Success? ==>
-      //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
-      //= type=implication
-      //# This MUST include:
-      && output.value.keyStoreId == config.id 
-      && output.value.keyStoreName == config.ddbTableName
-      && output.value.logicalKeyStoreName == config.logicalKeyStoreName
-      && output.value.grantTokens == config.grantTokens
-      && output.value.kmsConfiguration == config.kmsConfiguration
+              //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
+              //= type=implication
+              //# This MUST include:
+              && output.value.keyStoreId == config.id
+              && output.value.keyStoreName == config.ddbTableName
+              && output.value.logicalKeyStoreName == config.logicalKeyStoreName
+              && output.value.grantTokens == config.grantTokens
+              && output.value.kmsConfiguration == config.kmsConfiguration
   {
     output := Success(
       Types.GetKeyStoreInfoOutput(
@@ -104,12 +102,13 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
     //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyId :- maybeBranchKeyId
-      .MapFailure(e => Types.KeyStoreException(message := e));
+    .MapFailure(e => Types.KeyStoreException(message := e));
+
     output := CreateKeys.CreateBranchAndBeaconKeys(
       branchKeyId,
       config.ddbTableName,
       config.logicalKeyStoreName,
-      config.kmsConfiguration.kmsKeyArn,
+      config.kmsConfiguration,
       config.grantTokens,
       config.kmsClient,
       config.ddbClient
@@ -122,7 +121,15 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method VersionKey(config: InternalConfig, input: VersionKeyInput)
     returns (output: Result<(), Error>)
   {
-    output := CreateKeys.VersionActiveBranchKey(input, config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
+    output := CreateKeys.VersionActiveBranchKey(
+      input,
+      config.ddbTableName,
+      config.logicalKeyStoreName,
+      config.kmsConfiguration,
+      config.grantTokens,
+      config.kmsClient,
+      config.ddbClient
+    );
   }
 
   predicate GetActiveBranchKeyEnsuresPublicly(input: GetActiveBranchKeyInput, output: Result<GetActiveBranchKeyOutput, Error>)
@@ -131,7 +138,15 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method GetActiveBranchKey(config: InternalConfig, input: GetActiveBranchKeyInput)
     returns (output: Result<GetActiveBranchKeyOutput, Error>)
   {
-    output := GetKeys.GetActiveKeyAndUnwrap(input, config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
+    output := GetKeys.GetActiveKeyAndUnwrap(
+      input,
+      config.ddbTableName,
+      config.logicalKeyStoreName,
+      config.kmsConfiguration,
+      config.grantTokens,
+      config.kmsClient,
+      config.ddbClient
+    );
   }
 
   predicate GetBranchKeyVersionEnsuresPublicly(input: GetBranchKeyVersionInput, output: Result<GetBranchKeyVersionOutput, Error>)
@@ -140,7 +155,15 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method GetBranchKeyVersion(config: InternalConfig, input: GetBranchKeyVersionInput)
     returns (output: Result<GetBranchKeyVersionOutput, Error>)
   {
-    output := GetKeys.GetBranchKeyVersion(input, config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
+    output := GetKeys.GetBranchKeyVersion(
+      input,
+      config.ddbTableName,
+      config.logicalKeyStoreName,
+      config.kmsConfiguration,
+      config.grantTokens,
+      config.kmsClient,
+      config.ddbClient
+    );
   }
 
   predicate GetBeaconKeyEnsuresPublicly(input: GetBeaconKeyInput, output: Result<GetBeaconKeyOutput, Error>)
@@ -149,15 +172,15 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method GetBeaconKey(config: InternalConfig, input: GetBeaconKeyInput)
     returns (output: Result<GetBeaconKeyOutput, Error>)
   {
-    output := GetKeys.GetBeaconKeyAndUnwrap(input, config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
+    output := GetKeys.GetBeaconKeyAndUnwrap(
+      input,
+      config.ddbTableName,
+      config.logicalKeyStoreName,
+      config.kmsConfiguration,
+      config.grantTokens,
+      config.kmsClient,
+      config.ddbClient
+    );
   }
 
-  predicate BranchKeyStatusResolutionEnsuresPublicly(input: BranchKeyStatusResolutionInput, output: Result<(), Error>)
-  {true}
-
-  method BranchKeyStatusResolution(config: InternalConfig, input: BranchKeyStatusResolutionInput)
-    returns (output: Result<(), Error>)
-  {
-    output := KeyResolution.ActiveBranchKeysResolution(input, config.ddbTableName, config.logicalKeyStoreName, config.kmsConfiguration.kmsKeyArn, config.grantTokens, config.kmsClient, config.ddbClient);
-  }
 }

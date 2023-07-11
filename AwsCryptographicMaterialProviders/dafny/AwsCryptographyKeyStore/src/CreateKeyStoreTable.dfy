@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../Model/AwsCryptographyKeyStoreTypes.dfy"
+include "Structure.dfy"
 
 module CreateKeyStoreTable {
   import opened StandardLibrary
@@ -9,24 +10,25 @@ module CreateKeyStoreTable {
   import opened Seq
   import Types = AwsCryptographyKeyStoreTypes
   import DDB = ComAmazonawsDynamodbTypes
+  import Structure
 
   // KeyStore Definitions
-  const attrDef: DDB.AttributeDefinitions := [
+  const ATTRIBUTE_DEFINITIONS: DDB.AttributeDefinitions := [
     DDB.AttributeDefinition(
-      AttributeName := "branch-key-id",
+      AttributeName := Structure.BRANCH_KEY_IDENTIFIER_FIELD,
       AttributeType := DDB.ScalarAttributeType.S),
     DDB.AttributeDefinition(
-      AttributeName := "type",
+      AttributeName := Structure.TYPE_FIELD,
       AttributeType := DDB.ScalarAttributeType.S)
-  ];
-  const keySchema: DDB.KeySchema := [
+  ]
+  const KEY_SCHEMA: DDB.KeySchema := [
     DDB.KeySchemaElement(
-      AttributeName := "branch-key-id",
+      AttributeName := Structure.BRANCH_KEY_IDENTIFIER_FIELD,
       KeyType := DDB.KeyType.HASH),
     DDB.KeySchemaElement(
-      AttributeName := "type",
+      AttributeName := Structure.TYPE_FIELD,
       KeyType := DDB.KeyType.RANGE)
-  ];
+  ]
 
   type keyStoreDescription = t: DDB.TableDescription | keyStoreHasExpectedConstruction?(t) witness *
   predicate method keyStoreHasExpectedConstruction?(t: DDB.TableDescription) {
@@ -34,8 +36,8 @@ module CreateKeyStoreTable {
        //= aws-encryption-sdk-specification/framework/key-store.md#keyschema
        //= type=implication
        //# The following KeySchema MUST be configured on the table:
-    && ToSet(t.AttributeDefinitions.value) >= ToSet(attrDef)
-    && ToSet(t.KeySchema.value) >= ToSet(keySchema)
+    && ToSet(t.AttributeDefinitions.value) >= ToSet(ATTRIBUTE_DEFINITIONS)
+    && ToSet(t.KeySchema.value) >= ToSet(KEY_SCHEMA)
   }
 
   method CreateKeyStoreTable(tableName: DDB.TableName, ddbClient: DDB.IDynamoDBClient)
@@ -71,7 +73,7 @@ module CreateKeyStoreTable {
         //# - TableName is the configured tableName.
         //# - [KeySchema](#keyschema) as defined below.
         && CreateTableInput.TableName == tableName
-        && CreateTableInput.KeySchema == keySchema
+        && CreateTableInput.KeySchema == KEY_SCHEMA
            //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
            //= type=implication
            //# If the operation fails to create table, the operation MUST fail.
@@ -109,75 +111,74 @@ module CreateKeyStoreTable {
           //# If the [KeySchema](#keyschema) does not match
           //# this operation MUST yield an error.
           && res.Failure?
+  {
+    //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
+    //# This operation MUST first calls the DDB::DescribeTable API with the configured `tableName`.
+    var maybeDescribeTableResponse := ddbClient.DescribeTable(
+      DDB.DescribeTableInput(
+        TableName := tableName
+      )
+    );
 
-    {
+    if maybeDescribeTableResponse.Failure? {
+      var error := maybeDescribeTableResponse.error;
       //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-      //# This operation MUST first calls the DDB::DescribeTable API with the configured `tableName`.
-      var maybeDescribeTableResponse := ddbClient.DescribeTable(
-        DDB.DescribeTableInput(
-          TableName := tableName
-        )
-      );
-
-      if maybeDescribeTableResponse.Failure? {
-        var error := maybeDescribeTableResponse.error;
+      //# If the client responds with a `ResourceNotFoundException`,
+      //# then this operation MUST continue and
+      if error.ResourceNotFoundException? {
         //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-        //# If the client responds with a `ResourceNotFoundException`,
-        //# then this operation MUST continue and
-        if error.ResourceNotFoundException? {
-          //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-          //# MUST call [AWS DDB CreateTable](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html)
-          //# with the following specifics:
-          var maybeCreateTableResponse := ddbClient.CreateTable(
-            DDB.CreateTableInput(
-              AttributeDefinitions := attrDef,
-              TableName := tableName,
-              //= aws-encryption-sdk-specification/framework/key-store.md#keyschema
-              //# The following KeySchema MUST be configured on the table:
-              KeySchema := keySchema,
-              LocalSecondaryIndexes := None,
-              GlobalSecondaryIndexes := None,
-              BillingMode := Some(DDB.BillingMode.PAY_PER_REQUEST) ,
-              ProvisionedThroughput :=  None,
-              StreamSpecification := None,
-              SSESpecification := None,
-              Tags := None,
-              TableClass := None
-            )
-          );
+        //# MUST call [AWS DDB CreateTable](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html)
+        //# with the following specifics:
+        var maybeCreateTableResponse := ddbClient.CreateTable(
+          DDB.CreateTableInput(
+            AttributeDefinitions := ATTRIBUTE_DEFINITIONS,
+            TableName := tableName,
+            //= aws-encryption-sdk-specification/framework/key-store.md#keyschema
+            //# The following KeySchema MUST be configured on the table:
+            KeySchema := KEY_SCHEMA,
+            LocalSecondaryIndexes := None,
+            GlobalSecondaryIndexes := None,
+            BillingMode := Some(DDB.BillingMode.PAY_PER_REQUEST) ,
+            ProvisionedThroughput :=  None,
+            StreamSpecification := None,
+            SSESpecification := None,
+            Tags := None,
+            TableClass := None
+          )
+        );
 
-          if maybeCreateTableResponse.Failure? {
-            //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-            //# If the operation fails to create table, the operation MUST fail.
-            res := Failure(Types.ComAmazonawsDynamodb(maybeCreateTableResponse.error));
-          } else {
-            :- Need(
-              && maybeCreateTableResponse.value.TableDescription.Some?
-              && keyStoreHasExpectedConstruction?(maybeCreateTableResponse.value.TableDescription.value),
-              E("Configured table name does not conform to expected Key Store construction.")
-            );
-            //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-            //# If the operation successfully creates a table, the operation MUST return the AWS DDB Table Arn
-            //# back to the caller.
-            res := Success(maybeCreateTableResponse.value.TableDescription.value.TableArn.value);
-          }
+        if maybeCreateTableResponse.Failure? {
+          //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
+          //# If the operation fails to create table, the operation MUST fail.
+          res := Failure(Types.ComAmazonawsDynamodb(maybeCreateTableResponse.error));
         } else {
-          res := Failure(Types.ComAmazonawsDynamodb(error));
+          :- Need(
+            && maybeCreateTableResponse.value.TableDescription.Some?
+            && keyStoreHasExpectedConstruction?(maybeCreateTableResponse.value.TableDescription.value),
+            E("Configured table name does not conform to expected Key Store construction.")
+          );
+          //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
+          //# If the operation successfully creates a table, the operation MUST return the AWS DDB Table Arn
+          //# back to the caller.
+          res := Success(maybeCreateTableResponse.value.TableDescription.value.TableArn.value);
         }
       } else {
-        //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
-        //# If the response is successful, this operation validates that the table has the expected
-        //# [KeySchema](#keyschema) as defined below.
-        //# If the [KeySchema](#keyschema) does not match
-        //# this operation MUST yield an error.
-        :- Need(
-          && maybeDescribeTableResponse.value.Table.Some?
-          && keyStoreHasExpectedConstruction?(maybeDescribeTableResponse.value.Table.value),
-          E("Configured table name does not conform to expected Key Store construction.")
-        );
-        res := Success(maybeDescribeTableResponse.value.Table.value.TableArn.value);
+        res := Failure(Types.ComAmazonawsDynamodb(error));
       }
+    } else {
+      //= aws-encryption-sdk-specification/framework/key-store.md#createkeystore
+      //# If the response is successful, this operation validates that the table has the expected
+      //# [KeySchema](#keyschema) as defined below.
+      //# If the [KeySchema](#keyschema) does not match
+      //# this operation MUST yield an error.
+      :- Need(
+        && maybeDescribeTableResponse.value.Table.Some?
+        && keyStoreHasExpectedConstruction?(maybeDescribeTableResponse.value.Table.value),
+        E("Configured table name does not conform to expected Key Store construction.")
+      );
+      res := Success(maybeDescribeTableResponse.value.Table.value.TableArn.value);
     }
+  }
 
   function method E(s : string) : Types.Error {
     Types.KeyStoreException(message := s)

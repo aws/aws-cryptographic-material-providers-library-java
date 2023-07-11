@@ -103,7 +103,7 @@ structure KeyStoreConfig {
 }
 
 union KMSConfiguration {
-  kmsKeyArn: KmsKeyArn
+  kmsKeyArn: com.amazonaws.kms#KeyIdType
 }
 
 @javadoc("Returns the configuration information for a Key Store.")
@@ -258,8 +258,6 @@ structure BranchKeyStatusResolutionInput {
   @javadoc("The identifier for the Branch Key which has more than one ACTIVE version")
   branchKeyIdentifier: String
 }
-
-string KmsKeyArn
 
 list GrantTokenList {
   member: String

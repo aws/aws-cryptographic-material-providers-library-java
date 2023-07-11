@@ -101,8 +101,8 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
       ddbClient := config.ddbClient.value;
     }
 
-    //= aws-encryption-sdk-specification/framework/key-store.md#initialization
-    //# The following inputs MUST be specified to create a KeyStore:
+      //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+      //# The following inputs MUST be specified to create a KeyStore:
     :- Need(
       DDB.IsValid_TableName(config.ddbTableName),
       Types.KeyStoreException(
