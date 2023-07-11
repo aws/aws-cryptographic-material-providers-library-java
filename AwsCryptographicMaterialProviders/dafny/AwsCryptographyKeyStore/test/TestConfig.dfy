@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../src/Index.dfy"
+include "Fixtures.dfy"
 
 module TestConfig {
   import Types = AwsCryptographyKeyStoreTypes
@@ -10,12 +11,7 @@ module TestConfig {
   import DDB = Com.Amazonaws.Dynamodb
   import KeyStore
   import opened Wrappers
-
-  const branchKeyStoreName := "KeyStoreTestTable";
-  const logicalKeyStoreName := "KeyStoreTestTable";
-  // THIS IS A TESTING RESOURCE DO NOT USE IN A PRODUCTION ENVIRONMENT
-  const keyArn := "arn:aws:kms:us-west-2:370957321024:key/9d989aa2-2f9c-438c-a745-cc57d3ad0126";
-  const keyId := "9d989aa2-2f9c-438c-a745-cc57d3ad0126";
+  import opened Fixtures
 
   method {:test} TestInvalidKmsKeyArnConfig() {
     var kmsClient :- expect KMS.KMSClient();

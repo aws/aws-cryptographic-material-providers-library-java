@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../src/Index.dfy"
+include "Fixtures.dfy"
 
 module TestGetKeys {
   import Types = AwsCryptographyKeyStoreTypes
@@ -10,14 +11,9 @@ module TestGetKeys {
   import DDB = Com.Amazonaws.Dynamodb
   import KeyStore
   import opened Wrappers
+  import opened Fixtures
 
-  const branchKeyStoreName := "KeyStoreTestTable";
-  const logicalKeyStoreName := branchKeyStoreName;
   const incorrectLogicalName := "MySuperAwesomeTableName";
-  const branchKeyId := "71c83ce3-aad6-4aab-a4c4-d02bb9273305";
-  // THESE ARE TESTING RESOURCES DO NOT USE IN A PRODUCTION ENVIRONMENT
-  const keyArn := "arn:aws:kms:us-west-2:370957321024:key/9d989aa2-2f9c-438c-a745-cc57d3ad0126";
-  const mkrKeyArn := "arn:aws:kms:us-west-2:370957321024:key/mrk-63d386cb70614ea59b32ad65c9315297";
 
   method {:test} TestGetBeaconKey()
   {
