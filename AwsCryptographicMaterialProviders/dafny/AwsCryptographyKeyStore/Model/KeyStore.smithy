@@ -57,8 +57,7 @@ service KeyStore {
     VersionKey,
     GetActiveBranchKey,
     GetBranchKeyVersion,
-    GetBeaconKey,
-    BranchKeyStatusResolution
+    GetBeaconKey
   ],
   errors: [KeyStoreException]
 }
@@ -245,18 +244,6 @@ structure GetBeaconKeyOutput {
   @required
   @javadoc("The materials for the Beacon Key.")
   beaconKeyMaterials: BeaconKeyMaterials,
-}
-
-@javadoc("In the case that the Key Store contains two ACTIVE Branch Key versions (this should not be possible in normal operation), attempt to resolve to one by making one ACTIVE version DECRYPT_ONLY.")
-operation BranchKeyStatusResolution {
-  input: BranchKeyStatusResolutionInput
-}
-
-@javadoc("Inputs for resolving a multiple ACTIVE versions state.")
-structure BranchKeyStatusResolutionInput {
-  @required
-  @javadoc("The identifier for the Branch Key which has more than one ACTIVE version")
-  branchKeyIdentifier: String
 }
 
 list GrantTokenList {

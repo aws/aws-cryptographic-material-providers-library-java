@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import software.amazon.cryptography.keystore.internaldafny.types.BeaconKeyMaterials;
 import software.amazon.cryptography.keystore.internaldafny.types.BranchKeyMaterials;
-import software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput;
 import software.amazon.cryptography.keystore.internaldafny.types.CreateKeyInput;
 import software.amazon.cryptography.keystore.internaldafny.types.CreateKeyOutput;
 import software.amazon.cryptography.keystore.internaldafny.types.CreateKeyStoreInput;
@@ -93,13 +92,6 @@ public class ToDafny {
     DafnySequence<? extends Byte> branchKey;
     branchKey = software.amazon.smithy.dafny.conversion.ToDafny.Simple.ByteSequence(nativeValue.branchKey());
     return new BranchKeyMaterials(branchKeyIdentifier, branchKeyVersion, branchKey);
-  }
-
-  public static BranchKeyStatusResolutionInput BranchKeyStatusResolutionInput(
-      software.amazon.cryptography.keystore.model.BranchKeyStatusResolutionInput nativeValue) {
-    DafnySequence<? extends Character> branchKeyIdentifier;
-    branchKeyIdentifier = software.amazon.smithy.dafny.conversion.ToDafny.Simple.CharacterSequence(nativeValue.branchKeyIdentifier());
-    return new BranchKeyStatusResolutionInput(branchKeyIdentifier);
   }
 
   public static CreateKeyInput CreateKeyInput(

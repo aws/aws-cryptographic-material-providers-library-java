@@ -26,9 +26,6 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
     nameonly branchKeyVersion: Utf8Bytes ,
     nameonly branchKey: Secret
   )
-  datatype BranchKeyStatusResolutionInput = | BranchKeyStatusResolutionInput (
-    nameonly branchKeyIdentifier: string
-  )
   datatype CreateKeyInput = | CreateKeyInput (
 
                             )
@@ -78,7 +75,6 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
       GetActiveBranchKey := [];
       GetBranchKeyVersion := [];
       GetBeaconKey := [];
-      BranchKeyStatusResolution := [];
     }
     ghost var GetKeyStoreInfo: seq<DafnyCallEvent<(), Result<GetKeyStoreInfoOutput, Error>>>
     ghost var CreateKeyStore: seq<DafnyCallEvent<CreateKeyStoreInput, Result<CreateKeyStoreOutput, Error>>>
@@ -87,7 +83,6 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
     ghost var GetActiveBranchKey: seq<DafnyCallEvent<GetActiveBranchKeyInput, Result<GetActiveBranchKeyOutput, Error>>>
     ghost var GetBranchKeyVersion: seq<DafnyCallEvent<GetBranchKeyVersionInput, Result<GetBranchKeyVersionOutput, Error>>>
     ghost var GetBeaconKey: seq<DafnyCallEvent<GetBeaconKeyInput, Result<GetBeaconKeyOutput, Error>>>
-    ghost var BranchKeyStatusResolution: seq<DafnyCallEvent<BranchKeyStatusResolutionInput, Result<(), Error>>>
   }
   trait {:termination false} IKeyStoreClient
   {
@@ -220,21 +215,6 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
         && ValidState()
       ensures GetBeaconKeyEnsuresPublicly(input, output)
       ensures History.GetBeaconKey == old(History.GetBeaconKey) + [DafnyCallEvent(input, output)]
-
-    predicate BranchKeyStatusResolutionEnsuresPublicly(input: BranchKeyStatusResolutionInput , output: Result<(), Error>)
-    // The public method to be called by library consumers
-    method BranchKeyStatusResolution ( input: BranchKeyStatusResolutionInput )
-      returns (output: Result<(), Error>)
-      requires
-        && ValidState()
-      modifies Modifies - {History} ,
-               History`BranchKeyStatusResolution
-      // Dafny will skip type parameters when generating a default decreases clause.
-      decreases Modifies - {History}
-      ensures
-        && ValidState()
-      ensures BranchKeyStatusResolutionEnsuresPublicly(input, output)
-      ensures History.BranchKeyStatusResolution == old(History.BranchKeyStatusResolution) + [DafnyCallEvent(input, output)]
 
   }
   datatype KeyStoreConfig = | KeyStoreConfig (
@@ -480,26 +460,6 @@ abstract module AbstractAwsCryptographyKeyStoreService
       History.GetBeaconKey := History.GetBeaconKey + [DafnyCallEvent(input, output)];
     }
 
-    predicate BranchKeyStatusResolutionEnsuresPublicly(input: BranchKeyStatusResolutionInput , output: Result<(), Error>)
-    {Operations.BranchKeyStatusResolutionEnsuresPublicly(input, output)}
-    // The public method to be called by library consumers
-    method BranchKeyStatusResolution ( input: BranchKeyStatusResolutionInput )
-      returns (output: Result<(), Error>)
-      requires
-        && ValidState()
-      modifies Modifies - {History} ,
-               History`BranchKeyStatusResolution
-      // Dafny will skip type parameters when generating a default decreases clause.
-      decreases Modifies - {History}
-      ensures
-        && ValidState()
-      ensures BranchKeyStatusResolutionEnsuresPublicly(input, output)
-      ensures History.BranchKeyStatusResolution == old(History.BranchKeyStatusResolution) + [DafnyCallEvent(input, output)]
-    {
-      output := Operations.BranchKeyStatusResolution(config, input);
-      History.BranchKeyStatusResolution := History.BranchKeyStatusResolution + [DafnyCallEvent(input, output)];
-    }
-
   }
 }
 abstract module AbstractAwsCryptographyKeyStoreOperations {
@@ -620,20 +580,4 @@ abstract module AbstractAwsCryptographyKeyStoreOperations {
     ensures
       && ValidInternalConfig?(config)
     ensures GetBeaconKeyEnsuresPublicly(input, output)
-
-
-  predicate BranchKeyStatusResolutionEnsuresPublicly(input: BranchKeyStatusResolutionInput , output: Result<(), Error>)
-  // The private method to be refined by the library developer
-
-
-  method BranchKeyStatusResolution ( config: InternalConfig , input: BranchKeyStatusResolutionInput )
-    returns (output: Result<(), Error>)
-    requires
-      && ValidInternalConfig?(config)
-    modifies ModifiesInternalConfig(config)
-    // Dafny will skip type parameters when generating a default decreases clause.
-    decreases ModifiesInternalConfig(config)
-    ensures
-      && ValidInternalConfig?(config)
-    ensures BranchKeyStatusResolutionEnsuresPublicly(input, output)
 }

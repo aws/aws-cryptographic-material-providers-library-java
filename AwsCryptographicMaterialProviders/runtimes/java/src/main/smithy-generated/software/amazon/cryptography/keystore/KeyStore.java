@@ -11,7 +11,6 @@ import software.amazon.cryptography.keystore.internaldafny.KeyStoreClient;
 import software.amazon.cryptography.keystore.internaldafny.__default;
 import software.amazon.cryptography.keystore.internaldafny.types.Error;
 import software.amazon.cryptography.keystore.internaldafny.types.IKeyStoreClient;
-import software.amazon.cryptography.keystore.model.BranchKeyStatusResolutionInput;
 import software.amazon.cryptography.keystore.model.CreateKeyInput;
 import software.amazon.cryptography.keystore.model.CreateKeyOutput;
 import software.amazon.cryptography.keystore.model.CreateKeyStoreInput;
@@ -45,20 +44,6 @@ public class KeyStore {
 
   public static Builder builder() {
     return new BuilderImpl();
-  }
-
-  /**
-   * In the case that the Key Store contains two ACTIVE Branch Key versions (this should not be possible in normal operation), attempt to resolve to one by making one ACTIVE version DECRYPT_ONLY.
-   *
-   * @param input Inputs for resolving a multiple ACTIVE versions state.
-   *
-   */
-  public void BranchKeyStatusResolution(BranchKeyStatusResolutionInput input) {
-    software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput dafnyValue = ToDafny.BranchKeyStatusResolutionInput(input);
-    Result<Tuple0, Error> result = this._impl.BranchKeyStatusResolution(dafnyValue);
-    if (result.is_Failure()) {
-      throw ToNative.Error(result.dtor_error());
-    }
   }
 
   /**

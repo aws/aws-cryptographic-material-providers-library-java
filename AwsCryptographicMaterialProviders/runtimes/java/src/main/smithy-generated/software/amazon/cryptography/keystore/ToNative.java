@@ -19,7 +19,6 @@ import software.amazon.cryptography.keystore.internaldafny.types.Error_Opaque;
 import software.amazon.cryptography.keystore.internaldafny.types.IKeyStoreClient;
 import software.amazon.cryptography.keystore.model.BeaconKeyMaterials;
 import software.amazon.cryptography.keystore.model.BranchKeyMaterials;
-import software.amazon.cryptography.keystore.model.BranchKeyStatusResolutionInput;
 import software.amazon.cryptography.keystore.model.CollectionOfErrors;
 import software.amazon.cryptography.keystore.model.CreateKeyInput;
 import software.amazon.cryptography.keystore.model.CreateKeyOutput;
@@ -101,13 +100,6 @@ public class ToNative {
     nativeBuilder.branchKeyIdentifier(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_branchKeyIdentifier()));
     nativeBuilder.branchKeyVersion(software.amazon.smithy.dafny.conversion.ToNative.Simple.DafnyUtf8Bytes(dafnyValue.dtor_branchKeyVersion()));
     nativeBuilder.branchKey(software.amazon.smithy.dafny.conversion.ToNative.Simple.ByteBuffer(dafnyValue.dtor_branchKey()));
-    return nativeBuilder.build();
-  }
-
-  public static BranchKeyStatusResolutionInput BranchKeyStatusResolutionInput(
-      software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput dafnyValue) {
-    BranchKeyStatusResolutionInput.Builder nativeBuilder = BranchKeyStatusResolutionInput.builder();
-    nativeBuilder.branchKeyIdentifier(software.amazon.smithy.dafny.conversion.ToNative.Simple.String(dafnyValue.dtor_branchKeyIdentifier()));
     return nativeBuilder.build();
   }
 

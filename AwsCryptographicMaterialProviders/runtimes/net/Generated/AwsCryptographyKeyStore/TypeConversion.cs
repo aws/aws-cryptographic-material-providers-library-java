@@ -3,13 +3,6 @@
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
 using System.Linq; using System; namespace AWS.Cryptography.KeyStore {
  public static class TypeConversion {
- internal static AWS.Cryptography.KeyStore.BranchKeyStatusResolutionInput FromDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput (software.amazon.cryptography.keystore.internaldafny.types._IBranchKeyStatusResolutionInput value) {
- software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput concrete = (software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput)value; AWS.Cryptography.KeyStore.BranchKeyStatusResolutionInput converted = new AWS.Cryptography.KeyStore.BranchKeyStatusResolutionInput();  converted.BranchKeyIdentifier = (string) FromDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput__M19_branchKeyIdentifier(concrete._branchKeyIdentifier); return converted;
-}
- internal static software.amazon.cryptography.keystore.internaldafny.types._IBranchKeyStatusResolutionInput ToDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput (AWS.Cryptography.KeyStore.BranchKeyStatusResolutionInput value) {
-
- return new software.amazon.cryptography.keystore.internaldafny.types.BranchKeyStatusResolutionInput ( ToDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput__M19_branchKeyIdentifier(value.BranchKeyIdentifier) ) ;
-}
  internal static AWS.Cryptography.KeyStore.CreateKeyInput FromDafny_N3_aws__N12_cryptography__N8_keyStore__S14_CreateKeyInput (software.amazon.cryptography.keystore.internaldafny.types._ICreateKeyInput value) {
  software.amazon.cryptography.keystore.internaldafny.types.CreateKeyInput concrete = (software.amazon.cryptography.keystore.internaldafny.types.CreateKeyInput)value; AWS.Cryptography.KeyStore.CreateKeyInput converted = new AWS.Cryptography.KeyStore.CreateKeyInput();  return converted;
 }
@@ -139,12 +132,6 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.KeyStore.KMSConfigu
  internal static software.amazon.cryptography.keystore.internaldafny.types._IVersionKeyInput ToDafny_N3_aws__N12_cryptography__N8_keyStore__S15_VersionKeyInput (AWS.Cryptography.KeyStore.VersionKeyInput value) {
 
  return new software.amazon.cryptography.keystore.internaldafny.types.VersionKeyInput ( ToDafny_N3_aws__N12_cryptography__N8_keyStore__S15_VersionKeyInput__M19_branchKeyIdentifier(value.BranchKeyIdentifier) ) ;
-}
- internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput__M19_branchKeyIdentifier (Dafny.ISequence<char> value) {
- return FromDafny_N6_smithy__N3_api__S6_String(value);
-}
- internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput__M19_branchKeyIdentifier (string value) {
- return ToDafny_N6_smithy__N3_api__S6_String(value);
 }
  internal static string FromDafny_N3_aws__N12_cryptography__N8_keyStore__S15_CreateKeyOutput__M19_branchKeyIdentifier (Dafny.ISequence<char> value) {
  return FromDafny_N6_smithy__N3_api__S6_String(value);

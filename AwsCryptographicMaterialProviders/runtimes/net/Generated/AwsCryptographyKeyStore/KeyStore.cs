@@ -63,11 +63,5 @@ using System;
  if (result.is_Failure) throw TypeConversion.FromDafny_CommonError(result.dtor_error);
  return TypeConversion.FromDafny_N3_aws__N12_cryptography__N8_keyStore__S18_GetBeaconKeyOutput(result.dtor_value);
 }
- public void BranchKeyStatusResolution(AWS.Cryptography.KeyStore.BranchKeyStatusResolutionInput input) {
- software.amazon.cryptography.keystore.internaldafny.types._IBranchKeyStatusResolutionInput internalInput = TypeConversion.ToDafny_N3_aws__N12_cryptography__N8_keyStore__S30_BranchKeyStatusResolutionInput(input);
- Wrappers_Compile._IResult<_System._ITuple0, software.amazon.cryptography.keystore.internaldafny.types._IError> result = _impl.BranchKeyStatusResolution(internalInput);
- if (result.is_Failure) throw TypeConversion.FromDafny_CommonError(result.dtor_error);
- 
-}
 }
 }
