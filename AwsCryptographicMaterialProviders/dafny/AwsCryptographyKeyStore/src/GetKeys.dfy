@@ -35,7 +35,6 @@ module GetKeys {
 
     ensures output.Success? ==>
               input.branchKeyIdentifier == output.value.branchKeyMaterials.branchKeyIdentifier
-
   {
 
     var branchKeyItem :- DDBKeystoreOperations.GetActiveBranchKeyItem(
@@ -53,7 +52,7 @@ module GetKeys {
 
     var branchKey :- KMSKeystoreOperations.DecryptKey(
       encryptionContext,
-      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      branchKeyItem,
       kmsConfiguration,
       grantTokens,
       kmsClient
@@ -104,7 +103,7 @@ module GetKeys {
 
     var branchKey :- KMSKeystoreOperations.DecryptKey(
       encryptionContext,
-      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      branchKeyItem,
       kmsConfiguration,
       grantTokens,
       kmsClient
@@ -151,7 +150,7 @@ module GetKeys {
 
     var branchKey :- KMSKeystoreOperations.DecryptKey(
       encryptionContext,
-      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      branchKeyItem,
       kmsConfiguration,
       grantTokens,
       kmsClient

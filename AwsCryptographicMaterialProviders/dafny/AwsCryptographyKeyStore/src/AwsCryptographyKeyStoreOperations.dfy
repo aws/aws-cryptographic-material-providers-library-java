@@ -82,9 +82,9 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
               && AwsArnParsing.ParseAmazonDynamodbTableName(output.value.tableArn).value == config.ddbTableName
   {
     var ddbTableArn :- CreateKeyStoreTable.CreateKeyStoreTable(config.ddbTableName, config.ddbClient);
+    var tableName := AwsArnParsing.ParseAmazonDynamodbTableName(ddbTableArn);
     :- Need(
-      && AwsArnParsing.ParseAmazonDynamodbTableName(ddbTableArn).Success?
-      && var tableName := AwsArnParsing.ParseAmazonDynamodbTableName(ddbTableArn);
+      && tableName.Success?
       && tableName.value == config.ddbTableName,
       Types.KeyStoreException(message := "Configured DDB Table Name does not match parsed Table Name from DDB Table Arn.")
     );

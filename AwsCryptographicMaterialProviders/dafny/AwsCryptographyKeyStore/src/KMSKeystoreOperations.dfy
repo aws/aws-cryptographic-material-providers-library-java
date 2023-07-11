@@ -18,13 +18,6 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
     case kmsKeyArn(arn) => arn == encryptionContext[Structure.KMS_FIELD]
   }
 
-  // function awsKmsArn(
-  //   awsKmsConfig: Types.KMSConfiguration,
-  //   encryptionContext: Structure.BranchKeyContext
-  // ): (arn: KMS.KmsKeyArn)
-
-
-
   method GenerateKey(
     encryptionContext: Structure.BranchKeyContext,
     awsKmsConfig: Types.KMSConfiguration,
@@ -178,18 +171,23 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
 
   method DecryptKey(
     encryptionContext: Structure.BranchKeyContext,
-    wrappedBranchKey: KMS.CiphertextType,
+    item: Structure.BranchKeyItem,
     awsKmsConfig: Types.KMSConfiguration,
     grantTokens: KMS.GrantTokenList,
     kmsClient: KMS.IKMSClient
   )
     returns (output: Result<KMS.DecryptResponse, Types.Error>)
     requires AttemptKmsOperation?(awsKmsConfig, encryptionContext)
-    requires KMS.IsValid_CiphertextType(wrappedBranchKey)
+    requires item == Structure.ToAttributeMap(encryptionContext, item[Structure.BRANCH_KEY_FIELD].B)
+
+    requires kmsClient.ValidState()
+    modifies kmsClient.Modifies
+    ensures kmsClient.ValidState()
+
     ensures
       && |kmsClient.History.Decrypt| == |old(kmsClient.History.Decrypt)| + 1
       && KMS.DecryptRequest(
-           CiphertextBlob := wrappedBranchKey,
+           CiphertextBlob := item[Structure.BRANCH_KEY_FIELD].B,
            EncryptionContext := Some(encryptionContext),
            GrantTokens := Some(grantTokens),
            KeyId := Some(awsKmsConfig.kmsKeyArn),
@@ -201,7 +199,28 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
               && Seq.Last(kmsClient.History.Decrypt).output.Success?
               && output.value.Plaintext.Some?
               && 32 == |output.value.Plaintext.value|
+  {
 
+    var maybeDecryptResponse := kmsClient.Decrypt(
+      KMS.DecryptRequest(
+        CiphertextBlob := item[Structure.BRANCH_KEY_FIELD].B,
+        EncryptionContext := Some(encryptionContext),
+        GrantTokens := Some(grantTokens),
+        KeyId := Some(awsKmsConfig.kmsKeyArn),
+        EncryptionAlgorithm := None
+      )
+    );
+    var decryptResponse :- maybeDecryptResponse.MapFailure(e => Types.ComAmazonawsKms(e));
 
+    :- Need(
+      && decryptResponse.Plaintext.Some?
+      && 32 == |decryptResponse.Plaintext.value|,
+      Types.KeyStoreException(
+        message := "Invalid response from AWS KMS Decrypt: Key is not 32 bytes.")
+    );
+
+    output := Success(decryptResponse);
+
+  }
 
 }

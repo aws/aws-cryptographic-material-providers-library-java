@@ -65,7 +65,9 @@ module CreateKeys {
       grantTokens,
       kmsClient
     );
-    var wrappedActiveBranchKey :- KMSKeystoreOperations.GenerateKey(
+    var wrappedActiveBranchKey :- KMSKeystoreOperations.ReEncryptKey(
+      wrappedDecryptOnlyBranchKey.CiphertextBlob.value,
+      decryptOnlyEncryptionContext,
       activeEncryptionContext,
       kmsConfiguration,
       grantTokens,
@@ -142,7 +144,9 @@ module CreateKeys {
       grantTokens,
       kmsClient
     );
-    var wrappedActiveBranchKey :- KMSKeystoreOperations.GenerateKey(
+    var wrappedActiveBranchKey :- KMSKeystoreOperations.ReEncryptKey(
+      wrappedDecryptOnlyBranchKey.CiphertextBlob.value,
+      decryptOnlyEncryptionContext,
       activeEncryptionContext,
       kmsConfiguration,
       grantTokens,

@@ -3,7 +3,7 @@
 
 include "../Model/AwsCryptographyKeyStoreTypes.dfy"
 
-module Structure {
+module {:options "/functionSyntax:4" } Structure {
   import opened Wrappers
   import opened UInt = StandardLibrary.UInt
   import Types = AwsCryptographyKeyStoreTypes
@@ -28,32 +28,37 @@ module Structure {
   const KMS_GEN_KEY_NO_PLAINTEXT_LENGTH_32 := 184
 
   type BranchKeyContext = m: map<string, string> | BranchKeyContext?(m) witness *
-  predicate method BranchKeyContext?(m: map<string, string>) {
+  predicate BranchKeyContext?(m: map<string, string>) {
     && BRANCH_KEY_IDENTIFIER_FIELD in m
     && TYPE_FIELD in m
     && KEY_CREATE_TIME in m
     && HIERARCHY_VERSION in m
     && TABLE_FIELD in m
     && KMS_FIELD in m
-    && (forall k <- m.Keys :: DDB.IsValid_AttributeName(k))
+    && BRANCH_KEY_FIELD !in m.Keys
+
     && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD]|
+
+    && (forall k <- m.Keys :: DDB.IsValid_AttributeName(k))
+
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
           && m[TYPE_FIELD] == BRANCH_KEY_ACTIVE_TYPE
           && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD])
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m ==>
           || m[TYPE_FIELD] == BEACON_KEY_TYPE_VALUE
           || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD])
-    && BRANCH_KEY_FIELD !in m.Keys
+
   }
 
   // We specify that every item on the encryption context to KMS is stored in the branch/beacon key item.
   // This method allows us to convert from a BranchKeyContext map to a DDB.AttributeMap easily.
-  function method ToAttributeMap(
+  function ToAttributeMap(
     encryptionContext: BranchKeyContext,
     encryptedKey: seq<uint8>
   ): (output: DDB.AttributeMap)
     requires KMS.IsValid_CiphertextType(encryptedKey)
     ensures BranchKeyItem?(output)
+    ensures ToBranchKeyContext(output, encryptionContext[TABLE_FIELD]) == encryptionContext
   {
     map k <- encryptionContext.Keys + {BRANCH_KEY_FIELD} - {TABLE_FIELD}
       :: k := match k
@@ -62,20 +67,20 @@ module Structure {
       case _ => DDB.AttributeValue.S(encryptionContext[k])
   }
 
-  function method ToBranchKeyContext(
+  function ToBranchKeyContext(
     item: DDB.AttributeMap,
     logicalKeyStoreName: string
   ): (output: BranchKeyContext)
     requires BranchKeyItem?(item)
   {
-    map k <- item.Keys + {TABLE_FIELD} - {BRANCH_KEY_FIELD}
+    map k <- item.Keys - {BRANCH_KEY_FIELD} + {TABLE_FIELD}
       :: k := match k
       case HIERARCHY_VERSION => item[k].N
       case TABLE_FIELD => logicalKeyStoreName
       case _ => item[k].S
   }
 
-  function method ToBranchKeyMaterials(
+  function ToBranchKeyMaterials(
     encryptionContext: BranchKeyContext,
     plaintextKey: seq<uint8>
   ): (output: Result<Types.BranchKeyMaterials, Types.Error>)
@@ -96,7 +101,7 @@ module Structure {
             ))
   }
 
-  function method ToBeaconKeyMaterials(
+  function ToBeaconKeyMaterials(
     encryptionContext: BranchKeyContext,
     plaintextKey: seq<uint8>
   ): (output: Result<Types.BeaconKeyMaterials, Types.Error>)
@@ -110,7 +115,7 @@ module Structure {
             ))
   }
 
-  function method DecryptOnlyBranchKeyEncryptionContext(
+  function DecryptOnlyBranchKeyEncryptionContext(
     branchKeyId: string,
     branchKeyVersion: string,
     timestamp: string,
@@ -133,7 +138,7 @@ module Structure {
     ]
   }
 
-  function method ActiveBranchKeyEncryptionContext(
+  function ActiveBranchKeyEncryptionContext(
     decryptOnlyEncryptionContext: map<string, string>
   ): (output: map<string, string>)
     requires BranchKeyContext?(decryptOnlyEncryptionContext)
@@ -149,7 +154,7 @@ module Structure {
     ]
   }
 
-  function method BeaconKeyEncryptionContext(
+  function BeaconKeyEncryptionContext(
     decryptOnlyEncryptionContext: map<string, string>
   ): (output: map<string, string>)
     requires BranchKeyContext?(decryptOnlyEncryptionContext)
@@ -164,34 +169,32 @@ module Structure {
     ]
   }
 
-  // function method GetBranchKeyVersion(
-  //   encryptionContext: BranchKeyContext,
-  // ): (version: Result<string, Types.Error>)
-  //   requires BranchKeyContext?(decryptOnlyEncryptionContext)
-
-  predicate method BranchKeyItem?(m: DDB.AttributeMap) {
+  type BranchKeyItem = m: DDB.AttributeMap | BranchKeyItem?(m) witness *
+  predicate BranchKeyItem?(m: DDB.AttributeMap) {
     && BRANCH_KEY_IDENTIFIER_FIELD in m && m[BRANCH_KEY_IDENTIFIER_FIELD].S?
-    && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD].S|
     && TYPE_FIELD in m && m[TYPE_FIELD].S?
     && KEY_CREATE_TIME in m && m[KEY_CREATE_TIME].S?
     && HIERARCHY_VERSION in m && m[HIERARCHY_VERSION].N?
+    && TABLE_FIELD !in m
     && KMS_FIELD in m && m[KMS_FIELD].S?
-    && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
-          && m[TYPE_FIELD].S? && m[BRANCH_KEY_ACTIVE_VERSION_FIELD].S?
-          && m[TYPE_FIELD].S == BRANCH_KEY_ACTIVE_TYPE
-          && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD].S
-       )
-    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m ==>
-          && m[TYPE_FIELD].S?
-          && (m[TYPE_FIELD].S == BEACON_KEY_TYPE_VALUE || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD].S)
-       )
     && BRANCH_KEY_FIELD in m && m[BRANCH_KEY_FIELD].B?
-    && KMS.IsValid_CiphertextType(m[BRANCH_KEY_FIELD].B)
+
+    && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD].S|
+
     && (forall k <- m.Keys - {BRANCH_KEY_FIELD, HIERARCHY_VERSION} :: m[k].S?)
+
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
+          && m[TYPE_FIELD].S == BRANCH_KEY_ACTIVE_TYPE
+          && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD].S)
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m ==>
+          || m[TYPE_FIELD].S == BEACON_KEY_TYPE_VALUE
+          || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD].S)
+
+    && KMS.IsValid_CiphertextType(m[BRANCH_KEY_FIELD].B)
   }
 
   type ActiveBranchKeyItem = m: DDB.AttributeMap | ActiveBranchKeyItem?(m) witness *
-  predicate method ActiveBranchKeyItem?(m: DDB.AttributeMap) {
+  predicate ActiveBranchKeyItem?(m: DDB.AttributeMap) {
     && BranchKeyItem?(m)
     && m[TYPE_FIELD].S == BRANCH_KEY_ACTIVE_TYPE
     && BRANCH_KEY_ACTIVE_VERSION_FIELD in m && m[BRANCH_KEY_ACTIVE_VERSION_FIELD].S?
@@ -199,14 +202,14 @@ module Structure {
   }
 
   type VersionBranchKeyItem = m: DDB.AttributeMap | VersionBranchKeyItem?(m) witness *
-  predicate method VersionBranchKeyItem?(m: DDB.AttributeMap) {
+  predicate VersionBranchKeyItem?(m: DDB.AttributeMap) {
     && BranchKeyItem?(m)
     && BRANCH_KEY_ACTIVE_VERSION_FIELD !in m
     && BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD].S
   }
 
   type BeaconKeyItem = m: DDB.AttributeMap | BeaconKeyItem?(m) witness *
-  predicate method BeaconKeyItem?(m: DDB.AttributeMap) {
+  predicate BeaconKeyItem?(m: DDB.AttributeMap) {
     && BranchKeyItem?(m)
     && BRANCH_KEY_ACTIVE_VERSION_FIELD !in m
     && m[TYPE_FIELD].S == BEACON_KEY_TYPE_VALUE
@@ -261,13 +264,14 @@ module Structure {
   {}
 
   lemma ToAttributeMapAndToBranchKeyContextAreInverse(
-    encryptionContext: BranchKeyContext,
-    encryptedKey: seq<uint8>,
+    encryptionContext: map<string, string>,
     item: DDB.AttributeMap
   )
-    requires KMS.IsValid_CiphertextType(encryptedKey)
-    requires item == ToAttributeMap(encryptionContext, encryptedKey)
-    ensures ToBranchKeyContext(item, encryptionContext[TABLE_FIELD]) == encryptionContext
+    requires BranchKeyItem?(item) && BranchKeyContext?(encryptionContext)
+    ensures
+      item == ToAttributeMap(encryptionContext, item[BRANCH_KEY_FIELD].B)
+      <==>
+      ToBranchKeyContext(item, encryptionContext[TABLE_FIELD]) == encryptionContext
   {}
 
 }

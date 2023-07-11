@@ -22,7 +22,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
   {
     KeyStoreConfig(
       ddbTableName := "None",
-      kmsConfiguration := KMSConfiguration.kmsKeyArn(""),
+      kmsConfiguration := KMSConfiguration.kmsKeyArn("1234abcd-12ab-34cd-56ef-1234567890ab"),
       logicalKeyStoreName := "None",
       id := None,
       grantTokens := None,
