@@ -87,7 +87,7 @@ module Structure {
                                 encryptionContext[TYPE_FIELD];
     var branchKeyVersion := versionInformation[|BRANCH_KEY_TYPE_PREFIX|..];
     var branchKeyVersionUtf8 :- UTF8.Encode(branchKeyVersion)
-    .MapFailure(e => Types.KeyStoreException( message := e ));
+                                .MapFailure(e => Types.KeyStoreException( message := e ));
 
     Success(Types.BranchKeyMaterials(
               branchKeyIdentifier := encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD],
@@ -230,10 +230,10 @@ module Structure {
     ensures item[BRANCH_KEY_FIELD].B == encryptedKey
     ensures
       && (forall k <- item.Keys - {BRANCH_KEY_FIELD, HIERARCHY_VERSION}
-      ::
-        && item[k].S?
-        && encryptionContext[k] == item[k].S
-      )
+            ::
+              && item[k].S?
+              && encryptionContext[k] == item[k].S
+         )
       && encryptionContext[HIERARCHY_VERSION] == item[HIERARCHY_VERSION].N
   {}
 
@@ -243,7 +243,7 @@ module Structure {
     timestamp: string,
     logicalKeyStoreName: string,
     kmsKeyArn: string
-    )
+  )
     requires 0 < |branchKeyId|
     requires 0 < |branchKeyVersion|
 
@@ -255,8 +255,8 @@ module Structure {
       && decryptOnly[TYPE_FIELD] != beacon[TYPE_FIELD]
       && active[TYPE_FIELD] != beacon[TYPE_FIELD]
       && (forall k <- decryptOnly.Keys - {TYPE_FIELD} ::
-        && decryptOnly[k] == active[k] == beacon[k]
-        )
+            && decryptOnly[k] == active[k] == beacon[k]
+         )
       && active[BRANCH_KEY_ACTIVE_VERSION_FIELD] == decryptOnly[TYPE_FIELD]
   {}
 

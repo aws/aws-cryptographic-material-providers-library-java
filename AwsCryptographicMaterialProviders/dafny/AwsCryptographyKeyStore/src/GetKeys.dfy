@@ -36,39 +36,39 @@ module GetKeys {
     ensures output.Success? ==>
               input.branchKeyIdentifier == output.value.branchKeyMaterials.branchKeyIdentifier
 
-    {
+  {
 
-      var branchKeyItem :- DDBKeystoreOperations.GetActiveBranchKeyItem(
-        input.branchKeyIdentifier,
-        tableName,
-        ddbClient
-      );
+    var branchKeyItem :- DDBKeystoreOperations.GetActiveBranchKeyItem(
+      input.branchKeyIdentifier,
+      tableName,
+      ddbClient
+    );
 
-      var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
+    var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
 
-      :- Need(
-        KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
-        Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
-      );
+    :- Need(
+      KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
+      Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
+    );
 
-      var branchKey :- KMSKeystoreOperations.DecryptKey(
-        encryptionContext,
-        branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
-        kmsConfiguration,
-        grantTokens,
-        kmsClient
-      );
+    var branchKey :- KMSKeystoreOperations.DecryptKey(
+      encryptionContext,
+      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      kmsConfiguration,
+      grantTokens,
+      kmsClient
+    );
 
-      var branchKeyMaterials :- Structure.ToBranchKeyMaterials(
-        encryptionContext,
-        branchKey.Plaintext.value
-      );
+    var branchKeyMaterials :- Structure.ToBranchKeyMaterials(
+      encryptionContext,
+      branchKey.Plaintext.value
+    );
 
-      return Success(Types.GetActiveBranchKeyOutput(
-                       branchKeyMaterials := branchKeyMaterials
-                     ));
+    return Success(Types.GetActiveBranchKeyOutput(
+                     branchKeyMaterials := branchKeyMaterials
+                   ));
 
-    }
+  }
 
   method GetBranchKeyVersion(
     input: Types.GetBranchKeyVersionInput,
@@ -86,39 +86,39 @@ module GetKeys {
     ensures output.Success? ==>
               && input.branchKeyIdentifier == output.value.branchKeyMaterials.branchKeyIdentifier
     // && TODO add version info
-    {
+  {
 
-      var branchKeyItem :- DDBKeystoreOperations.GetVersionBranchKeyItem(
-        input.branchKeyIdentifier,
-        input.branchKeyVersion,
-        tableName,
-        ddbClient
-      );
+    var branchKeyItem :- DDBKeystoreOperations.GetVersionBranchKeyItem(
+      input.branchKeyIdentifier,
+      input.branchKeyVersion,
+      tableName,
+      ddbClient
+    );
 
-      var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
+    var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
 
-      :- Need(
-        KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
-        Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
-      );
+    :- Need(
+      KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
+      Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
+    );
 
-      var branchKey :- KMSKeystoreOperations.DecryptKey(
-        encryptionContext,
-        branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
-        kmsConfiguration,
-        grantTokens,
-        kmsClient
-      );
+    var branchKey :- KMSKeystoreOperations.DecryptKey(
+      encryptionContext,
+      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      kmsConfiguration,
+      grantTokens,
+      kmsClient
+    );
 
-      var branchKeyMaterials :- Structure.ToBranchKeyMaterials(
-        encryptionContext,
-        branchKey.Plaintext.value
-      );
+    var branchKeyMaterials :- Structure.ToBranchKeyMaterials(
+      encryptionContext,
+      branchKey.Plaintext.value
+    );
 
-      return Success(Types.GetBranchKeyVersionOutput(
-                       branchKeyMaterials := branchKeyMaterials
-                     ));
-    }
+    return Success(Types.GetBranchKeyVersionOutput(
+                     branchKeyMaterials := branchKeyMaterials
+                   ));
+  }
 
   method GetBeaconKeyAndUnwrap(
     input: Types.GetBeaconKeyInput,
@@ -135,36 +135,36 @@ module GetKeys {
     ensures ddbClient.ValidState() && kmsClient.ValidState()
     ensures output.Success? ==>
               && input.branchKeyIdentifier == output.value.beaconKeyMaterials.beaconKeyIdentifier
-    {
-      var branchKeyItem :- DDBKeystoreOperations.GetBeaconKeyItem(
-        input.branchKeyIdentifier,
-        tableName,
-        ddbClient
-      );
+  {
+    var branchKeyItem :- DDBKeystoreOperations.GetBeaconKeyItem(
+      input.branchKeyIdentifier,
+      tableName,
+      ddbClient
+    );
 
-      var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
+    var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
 
-      :- Need(
-        KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
-        Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
-      );
+    :- Need(
+      KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, encryptionContext),
+      Types.KeyStoreException( message := "AWS KMS Key ARN does not match configured value")
+    );
 
-      var branchKey :- KMSKeystoreOperations.DecryptKey(
-        encryptionContext,
-        branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
-        kmsConfiguration,
-        grantTokens,
-        kmsClient
-      );
+    var branchKey :- KMSKeystoreOperations.DecryptKey(
+      encryptionContext,
+      branchKeyItem[Structure.BRANCH_KEY_FIELD].B,
+      kmsConfiguration,
+      grantTokens,
+      kmsClient
+    );
 
-      var branchKeyMaterials :- Structure.ToBeaconKeyMaterials(
-        encryptionContext,
-        branchKey.Plaintext.value
-      );
+    var branchKeyMaterials :- Structure.ToBeaconKeyMaterials(
+      encryptionContext,
+      branchKey.Plaintext.value
+    );
 
-      return Success(Types.GetBeaconKeyOutput(
-                       beaconKeyMaterials := branchKeyMaterials
-                     ));
-    }
+    return Success(Types.GetBeaconKeyOutput(
+                     beaconKeyMaterials := branchKeyMaterials
+                   ));
+  }
 
 }
