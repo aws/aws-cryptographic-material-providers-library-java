@@ -121,6 +121,8 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   method VersionKey(config: InternalConfig, input: VersionKeyInput)
     returns (output: Result<(), Error>)
   {
+    :- Need(0 < |input.branchKeyIdentifier|, Types.KeyStoreException(message := "Empty string not supported for identifier."));
+
     output := CreateKeys.VersionActiveBranchKey(
       input,
       config.ddbTableName,
