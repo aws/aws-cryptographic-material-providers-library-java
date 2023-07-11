@@ -122,7 +122,7 @@ module {:options "-functionSyntax:4"} KeyringFromKeyDescription {
         maxCacheSize := Some(10)
       );
       print("About to CreateAwsKmsHierarchicalKeyring\n");
-      print input.fanOut, " ", input.gracePeriod, "\n";
+      print input.gracePeriod, "\n", input.graceInterval, "\n";
       var keyring := mpl.CreateAwsKmsHierarchicalKeyring(input);
       return keyring.MapFailure(e => AwsCryptographyMaterialProviders(e));
     }
