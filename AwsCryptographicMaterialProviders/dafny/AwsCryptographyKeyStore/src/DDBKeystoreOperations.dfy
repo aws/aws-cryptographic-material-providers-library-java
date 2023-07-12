@@ -74,8 +74,8 @@ module DDBKeystoreOperations {
     ensures ddbClient.ValidState()
   {
     var items: DDB.TransactWriteItemList := [
-      CreateTransactWritePutItem(versionBranchKeyItem, tableName, BRANCH_KEY_EXISTS),
-      CreateTransactWritePutItem(activeBranchKeyItem, tableName, BRANCH_KEY_NOT_EXIST)
+      CreateTransactWritePutItem(versionBranchKeyItem, tableName,  BRANCH_KEY_NOT_EXIST),
+      CreateTransactWritePutItem(activeBranchKeyItem, tableName, BRANCH_KEY_EXISTS)
     ];
 
     var transactRequest := DDB.TransactWriteItemsInput(

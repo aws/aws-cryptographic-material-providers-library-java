@@ -4,6 +4,7 @@
 include "../src/Index.dfy"
 include "Fixtures.dfy"
 include "../src/Structure.dfy"
+include "CleanupItems.dfy"
 
 module TestCreateKeys {
   import Types = AwsCryptographyKeyStoreTypes
@@ -15,6 +16,8 @@ module TestCreateKeys {
   import opened Fixtures
   import Structure
   import UTF8
+  import CleanupItems
+  import DDBKeystoreOperations
 
   method {:test} TestCreateBranchAndBeaconKeys()
   {
@@ -56,8 +59,8 @@ module TestCreateKeys {
     // Since this process uses a read DDB table,
     // the number of records will forever increase.
     // To avoid this, remove the items.
-
-    DeleteItem(branchKeyId.branchKeyIdentifier, branchKeyVersion, ddbClient);
+    CleanupItems.DeleteVersion(branchKeyId.branchKeyIdentifier, branchKeyVersion, ddbClient);
+    CleanupItems.DeleteActive(branchKeyId.branchKeyIdentifier, ddbClient);
 
     expect beaconKeyResult.beaconKeyMaterials.beaconKey.Some?;
     expect |beaconKeyResult.beaconKeyMaterials.beaconKey.value| == 32;
@@ -66,74 +69,49 @@ module TestCreateKeys {
     expect versionResult.branchKeyMaterials.branchKeyVersion == activeResult.branchKeyMaterials.branchKeyVersion;
   }
 
-  method DeleteItem(
-    branchKeyIdentifier: string,
-    branchKeyVersion: string,
-    ddbClient: DDB.Types.IDynamoDBClient
-  )
-    requires ddbClient.ValidState()
-    modifies ddbClient.Modifies
-    ensures ddbClient.ValidState()
+  method {:test} InsertingADuplicateWillFail()
   {
+    var ddbClient :- expect DDB.DynamoDBClient();
 
-    // This is a best effort to remove these items.
-    var _ := ddbClient.DeleteItem(
-      DDB.Types.DeleteItemInput(
-        TableName := branchKeyStoreName,
-        Key := map[
-          Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.Types.AttributeValue.S(branchKeyIdentifier),
-          Structure.TYPE_FIELD := DDB.Types.AttributeValue.S(Structure.BRANCH_KEY_TYPE_PREFIX + branchKeyVersion)
-        ],
-        Expected := None,
-        ConditionalOperator := None,
-        ReturnValues := None,
-        ReturnConsumedCapacity := None,
-        ReturnItemCollectionMetrics := None,
-        ConditionExpression := None,
-        ExpressionAttributeNames := None,
-        ExpressionAttributeValues := None
-
-      )
+    var encryptionContext := Structure.DecryptOnlyBranchKeyEncryptionContext(
+      branchKeyId,
+      branchKeyIdActiveVersion,
+      "",
+      "",
+      keyArn
     );
 
-    var _ := ddbClient.DeleteItem(
-      DDB.Types.DeleteItemInput(
-        TableName := branchKeyStoreName,
-        Key := map[
-          Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.Types.AttributeValue.S(branchKeyIdentifier),
-          Structure.TYPE_FIELD := DDB.Types.AttributeValue.S(Structure.BRANCH_KEY_ACTIVE_TYPE)
-        ],
-        Expected := None,
-        ConditionalOperator := None,
-        ReturnValues := None,
-        ReturnConsumedCapacity := None,
-        ReturnItemCollectionMetrics := None,
-        ConditionExpression := None,
-        ExpressionAttributeNames := None,
-        ExpressionAttributeValues := None
-
-      )
+    var output := DDBKeystoreOperations.WriteNewKeyToStore(
+      Structure.ToAttributeMap(encryptionContext, [1]),
+      Structure.ToAttributeMap(Structure.ActiveBranchKeyEncryptionContext(encryptionContext), [2]),
+      Structure.ToAttributeMap(Structure.BeaconKeyEncryptionContext(encryptionContext), [3]),
+      branchKeyStoreName,
+      ddbClient
     );
 
-    var _ := ddbClient.DeleteItem(
-      DDB.Types.DeleteItemInput(
-        TableName := branchKeyStoreName,
-        Key := map[
-          Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.Types.AttributeValue.S(branchKeyIdentifier),
-          Structure.TYPE_FIELD := DDB.Types.AttributeValue.S(Structure.BEACON_KEY_TYPE_VALUE)
-        ],
-        Expected := None,
-        ConditionalOperator := None,
-        ReturnValues := None,
-        ReturnConsumedCapacity := None,
-        ReturnItemCollectionMetrics := None,
-        ConditionExpression := None,
-        ExpressionAttributeNames := None,
-        ExpressionAttributeValues := None
-
-      )
-    );
-
+    expect output.Failure?;
   }
 
+  method {:test} InsertingADuplicateWillWithADifferentVersionFail()
+  {
+    var ddbClient :- expect DDB.DynamoDBClient();
+
+    var encryptionContext := Structure.DecryptOnlyBranchKeyEncryptionContext(
+      branchKeyId,
+      "!= branchKeyIdActiveVersion",
+      "",
+      "",
+      keyArn
+    );
+
+    var output := DDBKeystoreOperations.WriteNewKeyToStore(
+      Structure.ToAttributeMap(encryptionContext, [1]),
+      Structure.ToAttributeMap(Structure.ActiveBranchKeyEncryptionContext(encryptionContext), [2]),
+      Structure.ToAttributeMap(Structure.BeaconKeyEncryptionContext(encryptionContext), [3]),
+      branchKeyStoreName,
+      ddbClient
+    );
+
+    expect output.Failure?;
+  }
 }
