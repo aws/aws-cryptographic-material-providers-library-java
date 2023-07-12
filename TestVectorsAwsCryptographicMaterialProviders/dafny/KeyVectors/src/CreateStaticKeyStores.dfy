@@ -47,7 +47,7 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures ValidState() ==> History in Modifies
     {
       && History in Modifies
-      && staticKeyMaterial.StaticKeyStoreInformation?  
+      && staticKeyMaterial.StaticKeyStoreInformation?
     }
 
     // These are the supported Static information
@@ -68,10 +68,15 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures GetActiveBranchKeyEnsuresPublicly(input, output)
       ensures History.GetActiveBranchKey == old(History.GetActiveBranchKey) + [DafnyCallEvent(input, output)]
     {
+
       output := Success(GetActiveBranchKeyOutput(
-                          branchKeyVersion :=  staticKeyMaterial.branchKeyVersion,
-                          branchKey := staticKeyMaterial.branchKey
+                          branchKeyMaterials := BranchKeyMaterials(
+                            branchKeyIdentifier := input.branchKeyIdentifier,
+                            branchKeyVersion := staticKeyMaterial.branchKeyVersion,
+                            branchKey := staticKeyMaterial.branchKey
+                          )
                         ));
+
       History.GetActiveBranchKey := History.GetActiveBranchKey + [DafnyCallEvent(input, output)];
     }
 
@@ -92,8 +97,11 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures History.GetBranchKeyVersion == old(History.GetBranchKeyVersion) + [DafnyCallEvent(input, output)]
     {
       output := Success(GetBranchKeyVersionOutput(
-                          branchKeyVersion := staticKeyMaterial.branchKeyVersion,
-                          branchKey := staticKeyMaterial.branchKey
+                          branchKeyMaterials := BranchKeyMaterials(
+                            branchKeyIdentifier := input.branchKeyIdentifier,
+                            branchKeyVersion := staticKeyMaterial.branchKeyVersion,
+                            branchKey := staticKeyMaterial.branchKey
+                          )
                         ));
       History.GetBranchKeyVersion := History.GetBranchKeyVersion + [DafnyCallEvent(input, output)];
     }
@@ -114,14 +122,17 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       ensures GetBeaconKeyEnsuresPublicly(input, output)
       ensures History.GetBeaconKey == old(History.GetBeaconKey) + [DafnyCallEvent(input, output)]
     {
+
       output := Success(GetBeaconKeyOutput(
-                          beaconKeyIdentifier := staticKeyMaterial.keyIdentifier,
-                          beaconKey := staticKeyMaterial.beaconKey
-                        ));
+                          beaconKeyMaterials := BeaconKeyMaterials(
+                            beaconKeyIdentifier := input.branchKeyIdentifier,
+                            beaconKey := Some(staticKeyMaterial.beaconKey),
+                            hmacKeys := None
+                          )));
       History.GetBeaconKey := History.GetBeaconKey + [DafnyCallEvent(input, output)];
     }
 
-    // Thise are all not supported operations in a static context
+    // These are all not supported operations in a static context
 
     ghost predicate GetKeyStoreInfoEnsuresPublicly(output: Result<GetKeyStoreInfoOutput, Error>)
     {true}
@@ -163,10 +174,10 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       History.CreateKeyStore := History.CreateKeyStore + [DafnyCallEvent(input, output)];
     }
 
-    ghost predicate CreateKeyEnsuresPublicly( output: Result<CreateKeyOutput, Error>)
+    ghost predicate CreateKeyEnsuresPublicly(input: CreateKeyInput, output: Result<CreateKeyOutput, Error>)
     {true}
     // The public method to be called by library consumers
-    method CreateKey ()
+    method CreateKey ( input: CreateKeyInput )
       returns (output: Result<CreateKeyOutput, Error>)
       requires
         && ValidState()
@@ -176,11 +187,11 @@ module {:options "-functionSyntax:4"} CreateStaticKeyStores {
       decreases Modifies - {History}
       ensures
         && ValidState()
-      ensures CreateKeyEnsuresPublicly( output)
-      ensures History.CreateKey == old(History.CreateKey) + [DafnyCallEvent((), output)]
+      ensures CreateKeyEnsuresPublicly(input, output)
+      ensures History.CreateKey == old(History.CreateKey) + [DafnyCallEvent(input, output)]
     {
       output := Failure(KeyStoreException( message := "Not Supported"));
-      History.CreateKey := History.CreateKey + [DafnyCallEvent((), output)];
+      History.CreateKey := History.CreateKey + [DafnyCallEvent(input, output)];
     }
 
     ghost predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<(), Error>)

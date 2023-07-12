@@ -40,7 +40,6 @@ jobs:
         with:
           dafny-version: ${{ inputs.dafny }}
 
-
       - name: Verify ${{ matrix.library }} Dafny code
         shell: bash
         working-directory: ./${{ matrix.library }}

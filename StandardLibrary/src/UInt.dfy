@@ -4,14 +4,13 @@
 include "../../libraries/src/BoundedInts.dfy"
 module StandardLibrary.UInt {
   import BoundedInts
-  
+
   type uint8 = BoundedInts.uint8
   type uint16 = BoundedInts.uint16
   type uint32 = BoundedInts.uint32
   type uint64 = BoundedInts.uint64
   type int32 = BoundedInts.int32
   type int64 = BoundedInts.int64
-
   const UINT16_LIMIT := BoundedInts.UINT16_MAX as int
   const UINT32_LIMIT := BoundedInts.UINT32_MAX as int
   const UINT64_LIMIT := BoundedInts.UINT64_MAX as int
@@ -21,21 +20,21 @@ module StandardLibrary.UInt {
   predicate method UInt8Less(a: uint8, b: uint8) { a < b }
 
   predicate method HasUint16Len<T>(s: seq<T>) {
-    |s| < UINT16_LIMIT
+    |s| <= UINT16_LIMIT
   }
 
   type seq16<T> = s: seq<T> | HasUint16Len(s)
   type Uint8Seq16 = seq16<uint8>
 
   predicate method HasUint32Len<T>(s: seq<T>) {
-    |s| < UINT32_LIMIT
+    |s| <= UINT32_LIMIT
   }
 
   type seq32<T> = s: seq<T> | HasUint32Len(s)
   type Uint8Seq32 = seq32<uint8>
 
   predicate method HasUint64Len<T>(s: seq<T>) {
-    |s| < UINT64_LIMIT
+    |s| <= UINT64_LIMIT
   }
 
   type seq64<T> = s: seq<T> | HasUint64Len(s)
@@ -105,8 +104,8 @@ module StandardLibrary.UInt {
   function method UInt64ToSeq(x: uint64): (ret: seq<uint8>)
     ensures |ret| == 8
     ensures 0x100_0000_0000_0000 * ret[0] as uint64 + 0x1_0000_0000_0000 * ret[1] as uint64 +
-      0x100_0000_0000 * ret[2] as uint64 + 0x1_0000_0000 * ret[3] as uint64 + 0x100_0000 * ret[4] as uint64 +
-      0x1_0000 * ret[5] as uint64 + 0x100 * ret[6] as uint64 + ret[7] as uint64 == x
+            0x100_0000_0000 * ret[2] as uint64 + 0x1_0000_0000 * ret[3] as uint64 + 0x100_0000 * ret[4] as uint64 +
+            0x1_0000 * ret[5] as uint64 + 0x100 * ret[6] as uint64 + ret[7] as uint64 == x
   {
     var b0 := (x / 0x100_0000_0000_0000) as uint8;
     var x0 := x - (b0 as uint64 * 0x100_0000_0000_0000);
@@ -150,85 +149,85 @@ module StandardLibrary.UInt {
   lemma UInt64SeqSerialize(x: uint64, s: seq<uint8>)
     requires |s| == 8
     requires 0x100_0000_0000_0000 * s[0] as uint64
-      + 0x1_0000_0000_0000 * s[1] as uint64
-      + 0x100_0000_0000 * s[2] as uint64
-      + 0x1_0000_0000 * s[3] as uint64
-      + 0x100_0000 * s[4] as uint64
-      + 0x1_0000 * s[5] as uint64
-      + 0x100 * s[6] as uint64
-      + s[7] as uint64 == x
+             + 0x1_0000_0000_0000 * s[1] as uint64
+             + 0x100_0000_0000 * s[2] as uint64
+             + 0x1_0000_0000 * s[3] as uint64
+             + 0x100_0000 * s[4] as uint64
+             + 0x1_0000 * s[5] as uint64
+             + 0x100 * s[6] as uint64
+             + s[7] as uint64 == x
     ensures UInt64ToSeq(x) == s
   {
     calc {
       UInt64ToSeq(x);
     ==
       UInt64ToSeq(s[0] as uint64 * 0x100_0000_0000_0000
-      + s[1] as uint64 * 0x1_0000_0000_0000
-      + s[2] as uint64 * 0x100_0000_0000
-      + s[3] as uint64 * 0x1_0000_0000
-      + s[4] as uint64 * 0x100_0000
-      + s[5] as uint64 * 0x1_0000
-      + s[6] as uint64 * 0x100
-      + s[7] as uint64);
+                  + s[1] as uint64 * 0x1_0000_0000_0000
+                  + s[2] as uint64 * 0x100_0000_0000
+                  + s[3] as uint64 * 0x1_0000_0000
+                  + s[4] as uint64 * 0x100_0000
+                  + s[5] as uint64 * 0x1_0000
+                  + s[6] as uint64 * 0x100
+                  + s[7] as uint64);
     ==
       var b0 := ((s[0] as uint64 * 0x100_0000_0000_0000
-        + s[1] as uint64 * 0x1_0000_0000_0000
-        + s[2] as uint64 * 0x100_0000_0000
-        + s[3] as uint64 * 0x1_0000_0000
-        + s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64) / 0x100_0000_0000_0000) as uint8;
+                + s[1] as uint64 * 0x1_0000_0000_0000
+                + s[2] as uint64 * 0x100_0000_0000
+                + s[3] as uint64 * 0x1_0000_0000
+                + s[4] as uint64 * 0x100_0000
+                + s[5] as uint64 * 0x1_0000
+                + s[6] as uint64 * 0x100
+                + s[7] as uint64) / 0x100_0000_0000_0000) as uint8;
       assert b0 == s[0];
       var x0 := (s[0] as uint64 * 0x100_0000_0000_0000
-        + s[1] as uint64 * 0x1_0000_0000_0000
-        + s[2] as uint64 * 0x100_0000_0000
-        + s[3] as uint64 * 0x1_0000_0000
-        + s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64) - (b0 as uint64 * 0x100_0000_0000_0000);
+                + s[1] as uint64 * 0x1_0000_0000_0000
+                + s[2] as uint64 * 0x100_0000_0000
+                + s[3] as uint64 * 0x1_0000_0000
+                + s[4] as uint64 * 0x100_0000
+                + s[5] as uint64 * 0x1_0000
+                + s[6] as uint64 * 0x100
+                + s[7] as uint64) - (b0 as uint64 * 0x100_0000_0000_0000);
       assert x0 == (s[1] as uint64 * 0x1_0000_0000_0000
-        + s[2] as uint64 * 0x100_0000_0000
-        + s[3] as uint64 * 0x1_0000_0000
-        + s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64);
+                    + s[2] as uint64 * 0x100_0000_0000
+                    + s[3] as uint64 * 0x1_0000_0000
+                    + s[4] as uint64 * 0x100_0000
+                    + s[5] as uint64 * 0x1_0000
+                    + s[6] as uint64 * 0x100
+                    + s[7] as uint64);
 
       var b1 := (x0 / 0x1_0000_0000_0000) as uint8;
       assert b1 == s[1];
       var x1 := x0 - (b1 as uint64 * 0x1_0000_0000_0000);
       assert x1 == (s[2] as uint64 * 0x100_0000_0000
-        + s[3] as uint64 * 0x1_0000_0000
-        + s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64);
+                    + s[3] as uint64 * 0x1_0000_0000
+                    + s[4] as uint64 * 0x100_0000
+                    + s[5] as uint64 * 0x1_0000
+                    + s[6] as uint64 * 0x100
+                    + s[7] as uint64);
 
       var b2 := (x1 / 0x100_0000_0000) as uint8;
       assert b2 == s[2];
       var x2 := x1 - (b2 as uint64 * 0x100_0000_0000);
       assert x2 == (s[3] as uint64 * 0x1_0000_0000
-        + s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64);
+                    + s[4] as uint64 * 0x100_0000
+                    + s[5] as uint64 * 0x1_0000
+                    + s[6] as uint64 * 0x100
+                    + s[7] as uint64);
 
       var b3 := (x2 / 0x1_0000_0000) as uint8;
       assert b3 == s[3];
       var x3 := x2 - (b3 as uint64 * 0x1_0000_0000);
       assert x3 == (s[4] as uint64 * 0x100_0000
-        + s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64);
+                    + s[5] as uint64 * 0x1_0000
+                    + s[6] as uint64 * 0x100
+                    + s[7] as uint64);
 
       var b4 := (x3 / 0x100_0000) as uint8;
       assert b4 == s[4];
       var x4 := x3 - (b4 as uint64 * 0x100_0000);
       assert x4 == (s[5] as uint64 * 0x1_0000
-        + s[6] as uint64 * 0x100
-        + s[7] as uint64);
+                    + s[6] as uint64 * 0x100
+                    + s[7] as uint64);
 
       var b5 := (x4 / 0x1_0000) as uint8;
       assert b5 == s[5];
@@ -294,8 +293,8 @@ module StandardLibrary.UInt {
     requires n < UINT32_LIMIT
     requires 4 <= |s|
     requires var suffixStartIndex := |s| - 4;
-      (s[suffixStartIndex..] == UInt32ToSeq(n as uint32)) &&
-      (forall i :: 0 <= i < suffixStartIndex ==> s[i] == 0)
+             (s[suffixStartIndex..] == UInt32ToSeq(n as uint32)) &&
+             (forall i :: 0 <= i < suffixStartIndex ==> s[i] == 0)
     ensures SeqToNat(s) == n
   {
     if |s| == 4 {
@@ -303,22 +302,22 @@ module StandardLibrary.UInt {
         SeqToNat(s);
       ==
         SeqToNat(s[..3])
-          * 0x100 + s[3] as nat;
+        * 0x100 + s[3] as nat;
       ==  { assert s[..3][..2] == s[..2] && s[..3][2] == s[2]; }
         (SeqToNat(s[..2])
-          * 0x100 + s[2] as nat)
-          * 0x100 + s[3] as nat;
+        * 0x100 + s[2] as nat)
+        * 0x100 + s[3] as nat;
       ==  { assert s[..2][..1] == s[..1] && s[..2][1] == s[1]; }
         ((SeqToNat(s[..1])
-          * 0x100 + s[1] as nat)
-          * 0x100 + s[2] as nat)
-          * 0x100 + s[3] as nat;
+        * 0x100 + s[1] as nat)
+        * 0x100 + s[2] as nat)
+        * 0x100 + s[3] as nat;
       ==  { assert s[..1][..0] == s[..0] && s[..1][0] == s[0]; }
         (((SeqToNat(s[..0])
-          * 0x100 + s[0] as nat)
-          * 0x100 + s[1] as nat)
-          * 0x100 + s[2] as nat)
-          * 0x100 + s[3] as nat;
+        * 0x100 + s[0] as nat)
+        * 0x100 + s[1] as nat)
+        * 0x100 + s[2] as nat)
+        * 0x100 + s[3] as nat;
       ==
         n;
       }
