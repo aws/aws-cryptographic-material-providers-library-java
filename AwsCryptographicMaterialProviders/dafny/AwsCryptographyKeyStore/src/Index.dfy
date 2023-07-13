@@ -55,7 +55,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
         message := "Invalid AWS KMS Key Arn")
     );
 
-    //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#initialization
     //# The following inputs MAY be specified to create a KeyStore:
     var grantTokens := GetValidGrantTokens(config.grantTokens);
     :- Need(
@@ -69,7 +69,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
     if config.id.Some? {
       keyStoreId := config.id.value;
     } else {
-      //= aws-encryption-sdk-specification/framework/key-store.md#keystore-id
+      //= aws-encryption-sdk-specification/framework/branch-key-store.md#keystore-id
       //# If one is not supplied, then a [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt) MUST be used.
       var maybeUuid := UUID.GenerateUUID();
       var uuid :- maybeUuid
@@ -101,7 +101,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
       ddbClient := config.ddbClient.value;
     }
 
-      //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+      //= aws-encryption-sdk-specification/framework/branch-key-store.md#initialization
       //# The following inputs MUST be specified to create a KeyStore:
     :- Need(
       DDB.IsValid_TableName(config.ddbTableName),

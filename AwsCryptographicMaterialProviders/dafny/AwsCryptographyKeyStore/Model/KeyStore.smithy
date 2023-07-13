@@ -39,7 +39,7 @@ structure DdbClientReference {}
 service KeyStore {
   version: "2023-04-01",
 
-  //= aws-encryption-sdk-specification/framework/key-store.md#operations
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#operations
   //= type=implication
   //# The Keystore MUST support the following operations:
   //#
@@ -64,7 +64,7 @@ service KeyStore {
 
 structure KeyStoreConfig {
 
-  //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#initialization
   //= type=implication
   //# The following inputs MUST be specified to create a KeyStore:
   //# 
@@ -82,7 +82,7 @@ structure KeyStoreConfig {
   @javadoc("The logical name for this Key Store, which is cryptographically bound to the keys it holds.")
   logicalKeyStoreName: String,
 
-  //= aws-encryption-sdk-specification/framework/key-store.md#initialization
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#initialization
   //= type=implication
   //# The following inputs MAY be specified to create a KeyStore:
   //# 

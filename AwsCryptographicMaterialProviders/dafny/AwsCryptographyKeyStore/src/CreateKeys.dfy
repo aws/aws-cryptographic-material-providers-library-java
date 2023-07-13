@@ -37,14 +37,14 @@ module CreateKeys {
     modifies ddbClient.Modifies, kmsClient.Modifies
     ensures ddbClient.ValidState() && kmsClient.ValidState()
   {
-    //= aws-encryption-sdk-specification/framework/key-store.md#wrapped-branch-key-creation
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#wrapped-branch-key-creation
     //# - `timestamp`: a timestamp for the current time.
     //# This timestamp MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
     var timestamp :- Time.GetCurrentTimeStamp()
     .MapFailure(e => Types.KeyStoreException(message := e));
 
     var maybeBranchKeyVersion := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/key-store.md#wrapped-branch-key-creation
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#wrapped-branch-key-creation
     //# - `version`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));

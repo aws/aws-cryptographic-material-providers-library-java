@@ -48,11 +48,11 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
 
   method GetKeyStoreInfo(config: InternalConfig)
     returns (output: Result<GetKeyStoreInfoOutput, Error>)
-    //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#getkeystoreinfo
     //= type=implication
     //# This operation MUST return the keystore information in this keystore configuration.
     ensures output.Success? ==>
-              //= aws-encryption-sdk-specification/framework/key-store.md#getkeystoreinfo
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#getkeystoreinfo
               //= type=implication
               //# This MUST include:
               && output.value.keyStoreId == config.id
@@ -99,7 +99,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     returns (output: Result<CreateKeyOutput, Error>)
   {
     var maybeBranchKeyId := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/key-store.md#branch-key-and-beacon-key-creation
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
     //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
     var branchKeyId :- maybeBranchKeyId
     .MapFailure(e => Types.KeyStoreException(message := e));
