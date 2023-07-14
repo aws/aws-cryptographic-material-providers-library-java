@@ -35,6 +35,9 @@ module {:options "/functionSyntax:4" } Structure {
     && HIERARCHY_VERSION in m
     && TABLE_FIELD in m
     && KMS_FIELD in m
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
+    //# The key `enc` MUST NOT exist in the constructed [encryption context](#encryption-context).
     && BRANCH_KEY_FIELD !in m.Keys
 
     && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD]|
@@ -50,8 +53,6 @@ module {:options "/functionSyntax:4" } Structure {
 
   }
 
-  // We specify that every item on the encryption context to KMS is stored in the branch/beacon key item.
-  // This method allows us to convert from a BranchKeyContext map to a DDB.AttributeMap easily.
   function ToAttributeMap(
     encryptionContext: BranchKeyContext,
     encryptedKey: seq<uint8>
@@ -97,7 +98,8 @@ module {:options "/functionSyntax:4" } Structure {
     Success(Types.BranchKeyMaterials(
               branchKeyIdentifier := encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD],
               branchKeyVersion := branchKeyVersionUtf8,
-              branchKey := plaintextKey
+              branchKey := plaintextKey,
+              encryptionContext := map[]
             ))
   }
 
@@ -111,7 +113,8 @@ module {:options "/functionSyntax:4" } Structure {
     Success(Types.BeaconKeyMaterials(
               beaconKeyIdentifier := encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD],
               beaconKey := Some(plaintextKey),
-              hmacKeys := None
+              hmacKeys := None,
+              encryptionContext := map[]
             ))
   }
 
@@ -168,6 +171,29 @@ module {:options "/functionSyntax:4" } Structure {
       TYPE_FIELD := BEACON_KEY_TYPE_VALUE
     ]
   }
+
+  function NewVersionFromActiveBranchKeyEncryptionContext(
+    activeBranchKeyEncryptionContext: map<string, string>,
+    branchKeyVersion: string,
+    timestamp: string
+  ): (output: map<string, string>)
+    requires BranchKeyContext?(activeBranchKeyEncryptionContext)
+    requires BRANCH_KEY_ACTIVE_VERSION_FIELD in activeBranchKeyEncryptionContext
+    requires 0 < |branchKeyVersion|
+
+    ensures BranchKeyContext?(output)
+    ensures BRANCH_KEY_TYPE_PREFIX < output[TYPE_FIELD]
+    ensures BRANCH_KEY_ACTIVE_VERSION_FIELD !in output
+  {
+    activeBranchKeyEncryptionContext
+    + map[
+      TYPE_FIELD := BRANCH_KEY_TYPE_PREFIX + branchKeyVersion,
+      KEY_CREATE_TIME := timestamp
+    ]
+    - {BRANCH_KEY_ACTIVE_VERSION_FIELD}
+  }
+
+
 
   type BranchKeyItem = m: DDB.AttributeMap | BranchKeyItem?(m) witness *
   predicate BranchKeyItem?(m: DDB.AttributeMap) {
@@ -229,6 +255,7 @@ module {:options "/functionSyntax:4" } Structure {
   )
     requires KMS.IsValid_CiphertextType(encryptedKey)
     requires item == ToAttributeMap(encryptionContext, encryptedKey)
+
     ensures item.Keys == encryptionContext.Keys + {BRANCH_KEY_FIELD} - {TABLE_FIELD}
     ensures item[BRANCH_KEY_FIELD].B == encryptedKey
     ensures
@@ -239,6 +266,41 @@ module {:options "/functionSyntax:4" } Structure {
          )
       && encryptionContext[HIERARCHY_VERSION] == item[HIERARCHY_VERSION].N
   {}
+
+  lemma ToBranchKeyContextIsCorrect(
+    encryptionContext: map<string, string>,
+    logicalKeyStoreName: string,
+    item: DDB.AttributeMap
+  )
+    requires BranchKeyItem?(item)
+    requires encryptionContext == ToBranchKeyContext(item, logicalKeyStoreName)
+
+    ensures encryptionContext.Keys == item.Keys - {BRANCH_KEY_FIELD} + {TABLE_FIELD}
+    ensures encryptionContext[TABLE_FIELD] == logicalKeyStoreName
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
+    //= type=implication
+    //# Every key in the constructed [encryption context](#encryption-context)
+    //# except `tableName`
+    //# MUST exist as a string attribute in the AWS DDB response item.
+    ensures
+      forall k <- encryptionContext.Keys - {BRANCH_KEY_FIELD, TABLE_FIELD}
+        ::
+          //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
+          //= type=implication
+          //# Every value in the constructed [encryption context](#encryption-context)
+          //# except the logical table name
+          //# MUST equal the value with the same key in the AWS DDB response item.
+          match k
+          case HIERARCHY_VERSION => encryptionContext[k] == item[k].N
+          case _ => encryptionContext[k] == item[k].S
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
+    //= type=implication
+    //# The key `enc` MUST NOT exist in the constructed [encryption context](#encryption-context).
+    ensures BRANCH_KEY_FIELD !in encryptionContext
+  {}
+
 
   lemma EncryptionContextConstructorsAreCorrect(
     branchKeyId: string,

@@ -18,17 +18,20 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
 
   datatype BeaconKeyMaterials = | BeaconKeyMaterials (
     nameonly beaconKeyIdentifier: string ,
+    nameonly encryptionContext: EncryptionContext ,
     nameonly beaconKey: Option<Secret> ,
     nameonly hmacKeys: Option<HmacKeyMap>
   )
   datatype BranchKeyMaterials = | BranchKeyMaterials (
     nameonly branchKeyIdentifier: string ,
     nameonly branchKeyVersion: Utf8Bytes ,
+    nameonly encryptionContext: EncryptionContext ,
     nameonly branchKey: Secret
   )
   datatype CreateKeyInput = | CreateKeyInput (
-
-                            )
+    nameonly branchKeyIdentifier: Option<string> ,
+    nameonly encryptionContext: Option<EncryptionContext>
+  )
   datatype CreateKeyOutput = | CreateKeyOutput (
     nameonly branchKeyIdentifier: string
   )
@@ -38,6 +41,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
   datatype CreateKeyStoreOutput = | CreateKeyStoreOutput (
     nameonly tableArn: ComAmazonawsDynamodbTypes.TableArn
   )
+  type EncryptionContext = map<Utf8Bytes, Utf8Bytes>
   datatype GetActiveBranchKeyInput = | GetActiveBranchKeyInput (
     nameonly branchKeyIdentifier: string
   )
@@ -79,7 +83,7 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
     ghost var GetKeyStoreInfo: seq<DafnyCallEvent<(), Result<GetKeyStoreInfoOutput, Error>>>
     ghost var CreateKeyStore: seq<DafnyCallEvent<CreateKeyStoreInput, Result<CreateKeyStoreOutput, Error>>>
     ghost var CreateKey: seq<DafnyCallEvent<CreateKeyInput, Result<CreateKeyOutput, Error>>>
-    ghost var VersionKey: seq<DafnyCallEvent<VersionKeyInput, Result<(), Error>>>
+    ghost var VersionKey: seq<DafnyCallEvent<VersionKeyInput, Result<VersionKeyOutput, Error>>>
     ghost var GetActiveBranchKey: seq<DafnyCallEvent<GetActiveBranchKeyInput, Result<GetActiveBranchKeyOutput, Error>>>
     ghost var GetBranchKeyVersion: seq<DafnyCallEvent<GetBranchKeyVersionInput, Result<GetBranchKeyVersionOutput, Error>>>
     ghost var GetBeaconKey: seq<DafnyCallEvent<GetBeaconKeyInput, Result<GetBeaconKeyOutput, Error>>>
@@ -156,10 +160,10 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
       ensures CreateKeyEnsuresPublicly(input, output)
       ensures History.CreateKey == old(History.CreateKey) + [DafnyCallEvent(input, output)]
 
-    predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<(), Error>)
+    predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<VersionKeyOutput, Error>)
     // The public method to be called by library consumers
     method VersionKey ( input: VersionKeyInput )
-      returns (output: Result<(), Error>)
+      returns (output: Result<VersionKeyOutput, Error>)
       requires
         && ValidState()
       modifies Modifies - {History} ,
@@ -233,6 +237,9 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny.types" } Aw
   datatype VersionKeyInput = | VersionKeyInput (
     nameonly branchKeyIdentifier: string
   )
+  datatype VersionKeyOutput = | VersionKeyOutput (
+
+                              )
   datatype Error =
       // Local Error structures are listed here
     | KeyStoreException (
@@ -380,11 +387,11 @@ abstract module AbstractAwsCryptographyKeyStoreService
       History.CreateKey := History.CreateKey + [DafnyCallEvent(input, output)];
     }
 
-    predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<(), Error>)
+    predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<VersionKeyOutput, Error>)
     {Operations.VersionKeyEnsuresPublicly(input, output)}
     // The public method to be called by library consumers
     method VersionKey ( input: VersionKeyInput )
-      returns (output: Result<(), Error>)
+      returns (output: Result<VersionKeyOutput, Error>)
       requires
         && ValidState()
       modifies Modifies - {History} ,
@@ -518,12 +525,12 @@ abstract module AbstractAwsCryptographyKeyStoreOperations {
     ensures CreateKeyEnsuresPublicly(input, output)
 
 
-  predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<(), Error>)
+  predicate VersionKeyEnsuresPublicly(input: VersionKeyInput , output: Result<VersionKeyOutput, Error>)
   // The private method to be refined by the library developer
 
 
   method VersionKey ( config: InternalConfig , input: VersionKeyInput )
-    returns (output: Result<(), Error>)
+    returns (output: Result<VersionKeyOutput, Error>)
     requires
       && ValidInternalConfig?(config)
     modifies ModifiesInternalConfig(config)

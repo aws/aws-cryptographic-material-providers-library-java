@@ -38,6 +38,31 @@ module DDBKeystoreOperations {
     requires ddbClient.ValidState()
     modifies ddbClient.Modifies
     ensures ddbClient.ValidState()
+
+    ensures
+      && |ddbClient.History.TransactWriteItems| == |old(ddbClient.History.TransactWriteItems)| + 1
+      && DDB.TransactWriteItemsInput(
+           TransactItems := [
+             CreateTransactWritePutItem(versionBranchKeyItem, tableName, BRANCH_KEY_NOT_EXIST),
+             CreateTransactWritePutItem(activeBranchKeyItem, tableName, BRANCH_KEY_NOT_EXIST),
+             CreateTransactWritePutItem(beaconKeyItem, tableName, BRANCH_KEY_NOT_EXIST)
+           ],
+           ReturnConsumedCapacity := None,
+           ReturnItemCollectionMetrics := None,
+           ClientRequestToken := None
+         )
+         == Seq.Last(ddbClient.History.TransactWriteItems).input
+      && old(ddbClient.History.TransactWriteItems) < ddbClient.History.TransactWriteItems
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#writing-branch-key-and-beacon-key-to-keystore
+    //= type=implication
+    //# If DDB TransactWriteItems is successful, this operation MUST return a successful response containing no additional data.
+    ensures output.Success? ==> Seq.Last(ddbClient.History.TransactWriteItems).output.Success?
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#writing-branch-key-and-beacon-key-to-keystore
+    //= type=implication
+    //# Otherwise, this operation MUST yield an error.
+    ensures Seq.Last(ddbClient.History.TransactWriteItems).output.Failure? ==> output.Failure?
+
   {
     var items: DDB.TransactWriteItemList := [
       CreateTransactWritePutItem(versionBranchKeyItem, tableName, BRANCH_KEY_NOT_EXIST),
@@ -72,6 +97,26 @@ module DDBKeystoreOperations {
     requires ddbClient.ValidState()
     modifies ddbClient.Modifies
     ensures ddbClient.ValidState()
+
+    ensures
+      && |ddbClient.History.TransactWriteItems| == |old(ddbClient.History.TransactWriteItems)| + 1
+      && DDB.TransactWriteItemsInput(
+           TransactItems := [
+             CreateTransactWritePutItem(versionBranchKeyItem, tableName, BRANCH_KEY_NOT_EXIST),
+             CreateTransactWritePutItem(activeBranchKeyItem, tableName, BRANCH_KEY_EXISTS)
+           ],
+           ReturnConsumedCapacity := None,
+           ReturnItemCollectionMetrics := None,
+           ClientRequestToken := None
+         )
+         == Seq.Last(ddbClient.History.TransactWriteItems).input
+
+    ensures output.Success? ==> Seq.Last(ddbClient.History.TransactWriteItems).output.Success?
+    ensures Seq.Last(ddbClient.History.TransactWriteItems).output.Failure? ==> output.Failure?
+
+    ensures
+      && old(ddbClient.History.TransactWriteItems) < ddbClient.History.TransactWriteItems
+      && old(ddbClient.History.GetItem) == ddbClient.History.GetItem
   {
     var items: DDB.TransactWriteItemList := [
       CreateTransactWritePutItem(versionBranchKeyItem, tableName,  BRANCH_KEY_NOT_EXIST),
@@ -103,9 +148,25 @@ module DDBKeystoreOperations {
     requires ddbClient.ValidState()
     modifies ddbClient.Modifies
     ensures ddbClient.ValidState()
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).input.Key
+         == map[
+              Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),
+              Structure.TYPE_FIELD := DDB.AttributeValue.S(Structure.BRANCH_KEY_ACTIVE_TYPE)
+            ]
     ensures output.Success?
             ==>
               && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
+              && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
+              && Seq.Last(ddbClient.History.GetItem).output.Success?
+              && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+              && output == Success(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+
+    ensures
+      && old(ddbClient.History.GetItem) < ddbClient.History.GetItem
+      && old(ddbClient.History.TransactWriteItems) == ddbClient.History.TransactWriteItems
   {
     var dynamoDbKey: DDB.Key := map[
       Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),

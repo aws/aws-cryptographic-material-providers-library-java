@@ -18,6 +18,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   import CreateKeyStoreTable
   import GetKeys
   import UUID
+  import Time
 
   datatype Config = Config(
     nameonly id: string,
@@ -37,6 +38,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     && KMS.IsValid_KeyIdType(config.kmsConfiguration.kmsKeyArn)
     && config.kmsClient.ValidState()
     && config.ddbClient.ValidState()
+    && config.ddbClient.Modifies !! config.kmsClient.Modifies
   }
 
   function ModifiesInternalConfig(config: InternalConfig) : set<object>
@@ -97,15 +99,54 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
 
   method CreateKey ( config: InternalConfig , input: CreateKeyInput )
     returns (output: Result<CreateKeyOutput, Error>)
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
+    //= type=implication
+    //# If an optional branch key id is provided
+    //# and no encryption context keys are provided this operation MUST fail.
+    ensures
+      && input.branchKeyIdentifier.Some?
+      && input.encryptionContext.None?
+      ==> output.Failure?
   {
-    var maybeBranchKeyId := UUID.GenerateUUID();
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
-    //# - `branchKeyId`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
-    var branchKeyId :- maybeBranchKeyId
+
+    :- Need(input.branchKeyIdentifier.Some? ==>
+              && input.encryptionContext.Some?
+              && 0 < |input.encryptionContext.value|,
+            Types.KeyStoreException(message := "Custom branch key id requires custom encryption context."));
+
+    var createInput;
+
+    if input.branchKeyIdentifier.None? {
+      //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
+      //# If no branch key id is provided,
+      //# then this operation MUST create a [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
+      //# to be used as the branch key id.
+      var maybeBranchKeyId := UUID.GenerateUUID();
+      var branchKeyId :- maybeBranchKeyId
+      .MapFailure(e => Types.KeyStoreException(message := e));
+      createInput := input.( branchKeyIdentifier := Some(branchKeyId) );
+    } else {
+      :- Need(0 < |input.branchKeyIdentifier.value|, Types.KeyStoreException(message := "Custom branch key id can not be an empty string."));
+      createInput := input;
+    }
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#wrapped-branch-key-creation
+    //# - `timestamp`: a timestamp for the current time.
+    //# This timestamp MUST be in ISO8601 format in UTC, to microsecond precision (e.g. “YYYY-MM-DDTHH:mm:ss.ssssssZ“)
+    var timestamp :- Time.GetCurrentTimeStamp()
+    .MapFailure(e => Types.KeyStoreException(message := e));
+
+    var maybeBranchKeyVersion := UUID.GenerateUUID();
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#wrapped-branch-key-creation
+    //# - `version`: a new guid. This guid MUST be [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
+    var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
 
     output := CreateKeys.CreateBranchAndBeaconKeys(
-      branchKeyId,
+      createInput,
+      timestamp,
+      branchKeyVersion,
       config.ddbTableName,
       config.logicalKeyStoreName,
       config.kmsConfiguration,
@@ -123,8 +164,18 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   {
     :- Need(0 < |input.branchKeyIdentifier|, Types.KeyStoreException(message := "Empty string not supported for identifier."));
 
+
+    var timestamp :- Time.GetCurrentTimeStamp()
+    .MapFailure(e => Types.KeyStoreException(message := e));
+
+    var maybeBranchKeyVersion := UUID.GenerateUUID();
+    var branchKeyVersion :- maybeBranchKeyVersion
+    .MapFailure(e => Types.KeyStoreException(message := e));
+
     output := CreateKeys.VersionActiveBranchKey(
       input,
+      timestamp,
+      branchKeyVersion,
       config.ddbTableName,
       config.logicalKeyStoreName,
       config.kmsConfiguration,

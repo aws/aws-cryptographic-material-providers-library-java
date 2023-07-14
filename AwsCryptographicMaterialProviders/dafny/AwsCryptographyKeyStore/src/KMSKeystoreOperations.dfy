@@ -39,19 +39,17 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
            GrantTokens := Some(grantTokens)
          )
          == Seq.Last(kmsClient.History.GenerateDataKeyWithoutPlaintext).input
+      && old(kmsClient.History.GenerateDataKeyWithoutPlaintext) < kmsClient.History.GenerateDataKeyWithoutPlaintext
+      && old(kmsClient.History.ReEncrypt) == kmsClient.History.ReEncrypt
 
     ensures res.Success? ==>
               && res.value.KeyId.Some?
               && res.value.CiphertextBlob.Some?
               && |res.value.CiphertextBlob.value| == Structure.KMS_GEN_KEY_NO_PLAINTEXT_LENGTH_32
-              && |kmsClient.History.GenerateDataKeyWithoutPlaintext| > 0
               && KMS.IsValid_CiphertextType(res.value.CiphertextBlob.value)
               && var kmsOperationOutput := Seq.Last(kmsClient.History.GenerateDataKeyWithoutPlaintext).output;
               && kmsOperationOutput.Success?
-              && kmsOperationOutput.value.CiphertextBlob.Some?
-              && kmsOperationOutput.value.CiphertextBlob == res.value.CiphertextBlob
-              && kmsOperationOutput.value.KeyId.Some?
-              && kmsOperationOutput.value.KeyId == res.value.KeyId
+              && kmsOperationOutput.value == res.value
   {
     var generatorRequest := KMS.GenerateDataKeyWithoutPlaintextRequest(
       KeyId := awsKmsConfig.kmsKeyArn,
@@ -105,33 +103,33 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
     requires kmsClient.ValidState()
     modifies kmsClient.Modifies
     ensures kmsClient.ValidState()
+
+    ensures
+      && |kmsClient.History.ReEncrypt| == |old(kmsClient.History.ReEncrypt)| + 1
+      && KMS.ReEncryptRequest(
+           CiphertextBlob := ciphertext,
+           SourceEncryptionContext := Some(sourceEncryptionContext),
+           SourceKeyId := Some(awsKmsConfig.kmsKeyArn),
+           DestinationKeyId := awsKmsConfig.kmsKeyArn,
+           DestinationEncryptionContext := Some(destinationEncryptionContext),
+           SourceEncryptionAlgorithm := None,
+           DestinationEncryptionAlgorithm := None,
+           GrantTokens := Some(grantTokens)
+         )
+         == Seq.Last(kmsClient.History.ReEncrypt).input
+      && old(kmsClient.History.ReEncrypt) < kmsClient.History.ReEncrypt
+      && old(kmsClient.History.GenerateDataKeyWithoutPlaintext) == kmsClient.History.GenerateDataKeyWithoutPlaintext
+
     ensures res.Success? ==>
               && res.value.CiphertextBlob.Some?
               && res.value.SourceKeyId.Some?
               && res.value.KeyId.Some?
               && res.value.SourceKeyId.value == awsKmsConfig.kmsKeyArn
               && res.value.KeyId.value == awsKmsConfig.kmsKeyArn
-              && |kmsClient.History.ReEncrypt| > 0
               && KMS.IsValid_CiphertextType(res.value.CiphertextBlob.value)
-              && var kmsOperationInput := Seq.Last(kmsClient.History.ReEncrypt).input;
               && var kmsOperationOutput := Seq.Last(kmsClient.History.ReEncrypt).output;
               && kmsOperationOutput.Success?
-              && KMS.ReEncryptRequest(
-                   CiphertextBlob := ciphertext,
-                   SourceEncryptionContext := Some(sourceEncryptionContext),
-                   SourceKeyId := Some(awsKmsConfig.kmsKeyArn),
-                   DestinationKeyId := awsKmsConfig.kmsKeyArn,
-                   DestinationEncryptionContext := Some(destinationEncryptionContext),
-                   SourceEncryptionAlgorithm := None,
-                   DestinationEncryptionAlgorithm := None,
-                   GrantTokens := Some(grantTokens)
-                 ) == kmsOperationInput
-              && kmsOperationOutput.value.CiphertextBlob.Some?
-              && kmsOperationOutput.value.SourceKeyId.Some?
-              && kmsOperationOutput.value.KeyId.Some?
-              && kmsOperationOutput.value.CiphertextBlob.value == res.value.CiphertextBlob.value
-              && kmsOperationOutput.value.SourceKeyId.value == res.value.SourceKeyId.value
-              && kmsOperationOutput.value.KeyId.value == res.value.KeyId.value
+              && kmsOperationOutput.value == res.value
   {
     var reEncryptRequest := KMS.ReEncryptRequest(
       CiphertextBlob := ciphertext,

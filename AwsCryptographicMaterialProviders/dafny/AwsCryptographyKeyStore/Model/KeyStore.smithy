@@ -135,6 +135,7 @@ operation CreateKeyStore {
   output: CreateKeyStoreOutput
 }
 
+
 structure CreateKeyStoreInput {
 }
 
@@ -155,8 +156,17 @@ operation CreateKey {
   output: CreateKeyOutput
 }
 
+//= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
+//= type=implication
+//# The CreateKey caller MUST provide:
+//# - An optional branch key id
+//# - An optional encryption context
 structure CreateKeyInput {
+  @javadoc("The identifier for the created Branch Key.")
+  branchKeyIdentifier: String
 
+  @javadoc("Custom encryption context for the Branch Key.")
+  encryptionContext: EncryptionContext
 }
 
 @javadoc("Outputs for Branch Key creation.")
@@ -172,14 +182,23 @@ structure CreateKeyOutput {
 // rotate the beacon key under the branchKeyIdentifier.
 @javadoc("Create a new ACTIVE version of an existing Branch Key in the Key Store, and set the previously ACTIVE version to DECRYPT_ONLY.")
 operation VersionKey {
-  input: VersionKeyInput
+  input: VersionKeyInput,
+  output: VersionKeyOutput
 }
 
 @javadoc("Inputs for versioning a Branch Key.")
 structure VersionKeyInput {
+
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
+  //= type=implication
+  //# - MUST supply a `branch-key-id`
   @required
   @javadoc("The identifier for the Branch Key to be versioned.")
   branchKeyIdentifier: String
+}
+
+@javadoc("Outputs for versioning a Branch Key.")
+structure VersionKeyOutput {
 }
 
 @javadoc("Get the ACTIVE version for a particular Branch Key from the Key Store.")
@@ -250,12 +269,23 @@ list GrantTokenList {
   member: String
 }
 
+//= aws-encryption-sdk-specification/framework/structures.md#structure-3
+//= type=implication
+//# This structure MUST include all of the following fields:
+//# 
+//# - [Branch Key](#branch-key)
+//# - [Branch Key Id](#branch-key-id)
+//# - [Branch Key Version](#branch-key-version)
+//# - [Encryption Context](#encryption-context-3)
 structure BranchKeyMaterials {
     @required
     branchKeyIdentifier: String,
 
     @required
     branchKeyVersion: Utf8Bytes,
+
+    @required
+    encryptionContext: EncryptionContext
 
     @required
     branchKey: Secret,
@@ -266,8 +296,12 @@ structure BeaconKeyMaterials {
   //= type=implication
   //# This structure MUST include the following fields:
   //# - [Beacon Key Id](#beacon-key-id)
+  //# - [Encryption Context](#encryption-context-4)
   @required
   beaconKeyIdentifier: String,
+
+  @required
+  encryptionContext: EncryptionContext
 
   //= aws-encryption-sdk-specification/framework/structures.md#structure-4
   //= type=implication
@@ -289,6 +323,11 @@ map HmacKeyMap {
 
 @sensitive
 blob Secret
+
+map EncryptionContext {
+  key: Utf8Bytes,
+  value: Utf8Bytes,
+}
 
 ///////////////////
 // Errors

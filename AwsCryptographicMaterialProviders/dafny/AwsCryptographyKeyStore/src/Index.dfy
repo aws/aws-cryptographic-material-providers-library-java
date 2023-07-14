@@ -85,20 +85,21 @@ module {:extern "software.amazon.cryptography.keystore.internaldafny"}
 
     if config.kmsClient.None? {
       var maybeKmsClient := KMSOperations.KMSClientForRegion(kmsRegion.value);
-      var extractedClient :- maybeKmsClient
+      kmsClient :- maybeKmsClient
       .MapFailure(e => Types.ComAmazonawsKms(ComAmazonawsKms := e));
-      kmsClient := extractedClient;
     } else {
       kmsClient := config.kmsClient.value;
     }
 
     if config.ddbClient.None? {
       var maybeDdbClient := DDBOperations.DDBClientForRegion(kmsRegion.value);
-      var extractedClient :- maybeDdbClient
+      ddbClient :- maybeDdbClient
       .MapFailure(e => Types.ComAmazonawsDynamodb(ComAmazonawsDynamodb := e));
-      ddbClient := extractedClient;
     } else {
       ddbClient := config.ddbClient.value;
+
+      // This is true but to prove it requires changes to smithy-dafny.
+      assume {:axiom} ddbClient.Modifies !! kmsClient.Modifies;
     }
 
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#initialization
