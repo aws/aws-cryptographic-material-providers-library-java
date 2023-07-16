@@ -136,7 +136,7 @@ module GetKeys {
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
               //= type=implication
-              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"version:"`.
+              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"branch:version:"`.
               && versionEncryptionContext[Structure.TYPE_FIELD] == Structure.BRANCH_KEY_ACTIVE_TYPE
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
@@ -150,7 +150,7 @@ module GetKeys {
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
               //= type=implication
-              //# If the `type` attribute start with `"version:"` then the version string MUST be equal to this value.
+              //# If the `type` attribute start with `"branch:version:"` then the version string MUST be equal to this value.
               && !(Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD])
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
@@ -256,7 +256,7 @@ module GetKeys {
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
       //= type=implication
       //# To get a branch key from the keystore this operation MUST call AWS DDB `GetItem`
-      //# using the `branch-key-id` as the Partition Key and "version:" + `branchKeyVersion` value as the Sort Key.
+      //# using the `branch-key-id` as the Partition Key and "branch:version:" + `branchKeyVersion` value as the Sort Key.
       && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
       && Seq.Last(ddbClient.History.GetItem).input.Key
          == map[
@@ -352,12 +352,12 @@ module GetKeys {
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
               //= type=implication
-              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"version:"`.
+              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"branch:version:"`.
               && Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD]
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
               //= type=implication
-              //# If the `type` attribute start with `"version:"` then the version string MUST be equal to this value.
+              //# If the `type` attribute start with `"branch:version:"` then the version string MUST be equal to this value.
               && Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD]
               && var versionString := versionEncryptionContext[Structure.TYPE_FIELD];
               && UTF8.Encode(versionString[|Structure.BRANCH_KEY_TYPE_PREFIX|..]).Success?
