@@ -19,10 +19,11 @@ module {:options "/functionSyntax:4" } Structure {
   const TABLE_FIELD := "tablename"
   const KMS_FIELD := "kms-arn"
   const BRANCH_KEY_FIELD := "enc"
-
+  
   const BRANCH_KEY_TYPE_PREFIX := "branch:version:"
   const BRANCH_KEY_ACTIVE_TYPE := "branch:ACTIVE"
   const BEACON_KEY_TYPE_VALUE := "beacon:ACTIVE"
+  const ENCRYPTION_CONTEXT_PREFIX := "aws-crypto-ec:"
 
   // A GenerateDataKeyWithoutPlaintext of request size 32 returns a ciphertext size of 184 bytes.
   const KMS_GEN_KEY_NO_PLAINTEXT_LENGTH_32 := 184
@@ -44,13 +45,13 @@ module {:options "/functionSyntax:4" } Structure {
 
     && (forall k <- m.Keys :: DDB.IsValid_AttributeName(k))
 
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m <==>
+        && m[TYPE_FIELD] == BRANCH_KEY_ACTIVE_TYPE)
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
-          && m[TYPE_FIELD] == BRANCH_KEY_ACTIVE_TYPE
           && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD])
-    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m ==>
-          || m[TYPE_FIELD] == BEACON_KEY_TYPE_VALUE
-          || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD])
-
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m <==>
+        || m[TYPE_FIELD] == BEACON_KEY_TYPE_VALUE
+        || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD])
   }
 
   function ToAttributeMap(
@@ -95,11 +96,13 @@ module {:options "/functionSyntax:4" } Structure {
     var branchKeyVersionUtf8 :- UTF8.Encode(branchKeyVersion)
                                 .MapFailure(e => Types.KeyStoreException( message := e ));
 
+    var customEncryptionContext :- ExtractCustomEncryptionContext(encryptionContext);
+
     Success(Types.BranchKeyMaterials(
               branchKeyIdentifier := encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD],
               branchKeyVersion := branchKeyVersionUtf8,
               branchKey := plaintextKey,
-              encryptionContext := map[]
+              encryptionContext := customEncryptionContext
             ))
   }
 
@@ -109,28 +112,68 @@ module {:options "/functionSyntax:4" } Structure {
   ): (output: Result<Types.BeaconKeyMaterials, Types.Error>)
     requires encryptionContext[TYPE_FIELD] == BEACON_KEY_TYPE_VALUE
   {
+    var customEncryptionContext :- ExtractCustomEncryptionContext(encryptionContext);
 
     Success(Types.BeaconKeyMaterials(
               beaconKeyIdentifier := encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD],
               beaconKey := Some(plaintextKey),
               hmacKeys := None,
-              encryptionContext := map[]
+              encryptionContext := customEncryptionContext
             ))
   }
 
-  function DecryptOnlyBranchKeyEncryptionContext(
+  function ExtractCustomEncryptionContext(
+    encryptionContext: BranchKeyContext
+  ): (output: Result<Types.EncryptionContext, Types.Error>)
+  {
+
+    // Dafny needs some help.
+    // Adding a fixed string
+    // will not make any of the keys collide.
+    assert forall k <- encryptionContext.Keys | ENCRYPTION_CONTEXT_PREFIX < k
+    ::
+      k == ENCRYPTION_CONTEXT_PREFIX + k[|ENCRYPTION_CONTEXT_PREFIX|..];
+
+    var encodedEncryptionContext := set k <- encryptionContext
+    | ENCRYPTION_CONTEXT_PREFIX < k
+    ::
+      (UTF8.Encode(k[|ENCRYPTION_CONTEXT_PREFIX|..]), UTF8.Encode(encryptionContext[k]));
+
+    // This SHOULD be impossible
+    // A Dafny string SHOULD all be encodable
+    :- Need(forall i <- encodedEncryptionContext
+    :: i.0.Success? && i.1.Success?, 
+     Types.KeyStoreException( message :="Unable to encode string"));
+
+     Success(map i <- encodedEncryptionContext :: i.0.value := i.1.value)
+  }
+
+  opaque function DecryptOnlyBranchKeyEncryptionContext(
     branchKeyId: string,
     branchKeyVersion: string,
     timestamp: string,
     logicalKeyStoreName: string,
-    kmsKeyArn: string
+    kmsKeyArn: string,
+    customEncryptionContext: map<string, string>
   ): (output: map<string, string>)
     requires 0 < |branchKeyId|
     requires 0 < |branchKeyVersion|
+    requires forall k <- customEncryptionContext :: DDB.IsValid_AttributeName(ENCRYPTION_CONTEXT_PREFIX + k)
     ensures BranchKeyContext?(output)
     ensures BRANCH_KEY_TYPE_PREFIX < output[TYPE_FIELD]
     ensures BRANCH_KEY_ACTIVE_VERSION_FIELD !in output
+    ensures output[KMS_FIELD] == kmsKeyArn
   {
+    // Dafny needs some help.
+    // Adding a fixed string
+    // will not make any of the keys collide.
+    // However, this leaks a lot of complexity.
+    // This is why the function is now opaque.
+    // Otherwise things timeout
+    assert forall k <- customEncryptionContext.Keys
+    ::
+      k == (ENCRYPTION_CONTEXT_PREFIX + k)[|ENCRYPTION_CONTEXT_PREFIX|..];
+
     map[
       BRANCH_KEY_IDENTIFIER_FIELD := branchKeyId,
       TYPE_FIELD := BRANCH_KEY_TYPE_PREFIX + branchKeyVersion,
@@ -138,7 +181,7 @@ module {:options "/functionSyntax:4" } Structure {
       TABLE_FIELD := logicalKeyStoreName,
       KMS_FIELD := kmsKeyArn,
       HIERARCHY_VERSION := "1"
-    ]
+    ] + map k <- customEncryptionContext :: ENCRYPTION_CONTEXT_PREFIX + k := customEncryptionContext[k]
   }
 
   function ActiveBranchKeyEncryptionContext(
@@ -194,8 +237,14 @@ module {:options "/functionSyntax:4" } Structure {
   }
 
 
-
   type BranchKeyItem = m: DDB.AttributeMap | BranchKeyItem?(m) witness *
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#record-format
+  //= type=implication
+  //# A branch key record MAY include [custom encryption context](#custom-encryption-context) key-value pairs.
+
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#record-format
+  //= type=implication
+  //# A branch key record MUST include the following key-value pairs:
   predicate BranchKeyItem?(m: DDB.AttributeMap) {
     && BRANCH_KEY_IDENTIFIER_FIELD in m && m[BRANCH_KEY_IDENTIFIER_FIELD].S?
     && TYPE_FIELD in m && m[TYPE_FIELD].S?
@@ -209,12 +258,14 @@ module {:options "/functionSyntax:4" } Structure {
 
     && (forall k <- m.Keys - {BRANCH_KEY_FIELD, HIERARCHY_VERSION} :: m[k].S?)
 
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m <==>
+        && m[TYPE_FIELD].S == BRANCH_KEY_ACTIVE_TYPE)
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
-          && m[TYPE_FIELD].S == BRANCH_KEY_ACTIVE_TYPE
           && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD].S)
-    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m ==>
-          || m[TYPE_FIELD].S == BEACON_KEY_TYPE_VALUE
-          || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD].S)
+
+    && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m <==>
+        || m[TYPE_FIELD].S == BEACON_KEY_TYPE_VALUE
+        || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD].S)
 
     && KMS.IsValid_CiphertextType(m[BRANCH_KEY_FIELD].B)
   }
@@ -301,19 +352,21 @@ module {:options "/functionSyntax:4" } Structure {
     ensures BRANCH_KEY_FIELD !in encryptionContext
   {}
 
-
   lemma EncryptionContextConstructorsAreCorrect(
     branchKeyId: string,
     branchKeyVersion: string,
     timestamp: string,
     logicalKeyStoreName: string,
-    kmsKeyArn: string
+    kmsKeyArn: string,
+    encryptionContext: map<string, string>
   )
     requires 0 < |branchKeyId|
     requires 0 < |branchKeyVersion|
+    requires forall k <- encryptionContext :: DDB.IsValid_AttributeName(ENCRYPTION_CONTEXT_PREFIX + k)
 
     ensures
-      var decryptOnly := DecryptOnlyBranchKeyEncryptionContext(branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn);
+      var decryptOnly := DecryptOnlyBranchKeyEncryptionContext(
+        branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn, encryptionContext);
       var active := ActiveBranchKeyEncryptionContext(decryptOnly);
       var beacon := BeaconKeyEncryptionContext(decryptOnly);
       && decryptOnly[TYPE_FIELD] != active[TYPE_FIELD]

@@ -41,7 +41,10 @@ module TestVersionKey {
     // Create a new key
     // We will create a use this new key per run to avoid tripping up
     // when running in different runtimes
-    var branchKeyId :- expect keyStore.CreateKey(Types.CreateKeyInput());
+    var branchKeyId :- expect keyStore.CreateKey(Types.CreateKeyInput(
+      branchKeyIdentifier := None,
+      encryptionContext := None
+    ));
 
     var oldActiveResult :- expect keyStore.GetActiveBranchKey(
       Types.GetActiveBranchKeyInput(
@@ -94,7 +97,8 @@ module TestVersionKey {
       branchKeyIdActiveVersion,
       "",
       "",
-      keyArn
+      keyArn,
+      map[]
     );
 
     var output := DDBKeystoreOperations.WriteNewBranchKeyVersionToKeystore(
@@ -116,7 +120,8 @@ module TestVersionKey {
       branchKeyIdActiveVersion,
       "",
       "",
-      keyArn
+      keyArn,
+      map[]
     );
 
     var output := DDBKeystoreOperations.WriteNewBranchKeyVersionToKeystore(

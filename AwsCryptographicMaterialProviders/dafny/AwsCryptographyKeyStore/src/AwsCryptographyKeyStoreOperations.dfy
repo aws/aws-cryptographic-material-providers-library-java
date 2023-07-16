@@ -115,7 +115,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
               && 0 < |input.encryptionContext.value|,
             Types.KeyStoreException(message := "Custom branch key id requires custom encryption context."));
 
-    var createInput;
+    var branchKeyIdentifier;
 
     if input.branchKeyIdentifier.None? {
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
@@ -123,12 +123,11 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
       //# then this operation MUST create a [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
       //# to be used as the branch key id.
       var maybeBranchKeyId := UUID.GenerateUUID();
-      var branchKeyId :- maybeBranchKeyId
+      var branchKeyIdentifier :- maybeBranchKeyId
       .MapFailure(e => Types.KeyStoreException(message := e));
-      createInput := input.( branchKeyIdentifier := Some(branchKeyId) );
     } else {
       :- Need(0 < |input.branchKeyIdentifier.value|, Types.KeyStoreException(message := "Custom branch key id can not be an empty string."));
-      createInput := input;
+      branchKeyIdentifier := input.branchKeyIdentifier.value;
     }
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
@@ -144,7 +143,8 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     .MapFailure(e => Types.KeyStoreException(message := e));
 
     output := CreateKeys.CreateBranchAndBeaconKeys(
-      createInput,
+      branchKeyIdentifier,
+      map[],
       timestamp,
       branchKeyVersion,
       config.ddbTableName,
