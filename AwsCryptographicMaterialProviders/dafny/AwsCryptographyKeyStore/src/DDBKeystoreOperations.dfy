@@ -159,7 +159,6 @@ module DDBKeystoreOperations {
     ensures output.Success?
             ==>
               && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
-              && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
               && Seq.Last(ddbClient.History.GetItem).output.Success?
               && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
               && output == Success(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
@@ -167,6 +166,13 @@ module DDBKeystoreOperations {
     ensures
       && old(ddbClient.History.GetItem) < ddbClient.History.GetItem
       && old(ddbClient.History.TransactWriteItems) == ddbClient.History.TransactWriteItems
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).output.Success?
+      && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+      && !Structure.ActiveBranchKeyItem?(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+      ==> output.Failure?
   {
     var dynamoDbKey: DDB.Key := map[
       Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),
@@ -211,10 +217,29 @@ module DDBKeystoreOperations {
     requires ddbClient.ValidState()
     modifies ddbClient.Modifies
     ensures ddbClient.ValidState()
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).input.Key
+         == map[
+              Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),
+              Structure.TYPE_FIELD := DDB.AttributeValue.S(Structure.BRANCH_KEY_TYPE_PREFIX + branchKeyVersion)
+            ]
+
     ensures output.Success?
             ==>
               && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
               && output.value[Structure.TYPE_FIELD].S == Structure.BRANCH_KEY_TYPE_PREFIX + branchKeyVersion
+              && Seq.Last(ddbClient.History.GetItem).output.Success?
+              && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+              && output == Success(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).output.Success?
+      && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+      && !Structure.VersionBranchKeyItem?(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+      ==> output.Failure?
   {
     var dynamoDbKey: DDB.Key := map[
       Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),

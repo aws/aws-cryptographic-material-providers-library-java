@@ -345,7 +345,6 @@ module CreateKeys {
     modifies ddbClient.Modifies, kmsClient.Modifies
     ensures ddbClient.ValidState() && kmsClient.ValidState()
 
-
     ensures output.Success?
             ==>
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey

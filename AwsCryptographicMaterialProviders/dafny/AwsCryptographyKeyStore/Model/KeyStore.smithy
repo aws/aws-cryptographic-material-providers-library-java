@@ -216,6 +216,10 @@ structure GetActiveBranchKeyInput {
 
 @javadoc("Outputs for getting a Branch Key's ACTIVE version.")
 structure GetActiveBranchKeyOutput {
+
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
+  //= type=implication
+  //# - MUST supply a `branch-key-id`
   @required
   @javadoc("The materials for the Branch Key.")
   branchKeyMaterials: BranchKeyMaterials,
@@ -229,10 +233,16 @@ operation GetBranchKeyVersion {
 
 @javadoc("Inputs for getting a version of a Branch Key.")
 structure GetBranchKeyVersionInput {
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
+  //= type=implication
+  //# - MUST supply a `branch-key-id`
   @required
   @javadoc("The identifier for the Branch Key to get a particular version for.")
   branchKeyIdentifier: String,
 
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
+  //= type=implication
+  //# - MUST supply a `branchKeyVersion`
   @required
   @javadoc("The version to get.")
   branchKeyVersion: String
