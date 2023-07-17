@@ -7,6 +7,7 @@ include "../../AwsCryptographicMaterialProviders/src/Keyrings/AwsKms/AwsKmsUtils
 include "GetKeys.dfy"
 include "CreateKeyStoreTable.dfy"
 include "CreateKeys.dfy"
+include "Structure.dfy"
 
 module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStoreOperations {
   import opened AwsArnParsing
@@ -19,6 +20,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
   import GetKeys
   import UUID
   import Time
+  import Structure
 
   datatype Config = Config(
     nameonly id: string,
@@ -115,7 +117,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
               && 0 < |input.encryptionContext.value|,
             Types.KeyStoreException(message := "Custom branch key id requires custom encryption context."));
 
-    var branchKeyIdentifier;
+    var branchKeyIdentifier: string;
 
     if input.branchKeyIdentifier.None? {
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#createkey
@@ -123,7 +125,7 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
       //# then this operation MUST create a [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt)
       //# to be used as the branch key id.
       var maybeBranchKeyId := UUID.GenerateUUID();
-      var branchKeyIdentifier :- maybeBranchKeyId
+      branchKeyIdentifier :- maybeBranchKeyId
       .MapFailure(e => Types.KeyStoreException(message := e));
     } else {
       :- Need(0 < |input.branchKeyIdentifier.value|, Types.KeyStoreException(message := "Custom branch key id can not be an empty string."));
@@ -142,9 +144,35 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
 
+
+
+    var unwrapEncryptionContext := input.encryptionContext.UnwrapOr(map[]);
+    var encodedEncryptionContext
+      := set k <- unwrapEncryptionContext
+      ::
+        (UTF8.Decode(k), UTF8.Decode(unwrapEncryptionContext[k]), k);
+
+      // This SHOULD be impossible
+      // A Dafny string SHOULD all be encodable
+    :- Need(forall i <- encodedEncryptionContext
+              ::
+                && i.0.Success?
+                && i.1.Success?
+                && DDB.IsValid_AttributeName(Structure.ENCRYPTION_CONTEXT_PREFIX + i.0.value)
+                // Dafny requires that I *prove* that k == Encode(Decode(k))
+                // Since UTF8 can be lossy in some implementations
+                // this is the simplest...
+                // A prove that ValidUTF8Seq(i) ==> Decode(i).Success? 
+                // would improve the situation
+                && var encoded := UTF8.Encode(i.0.value);
+                && encoded.Success?
+                && i.2 == encoded.value
+           ,
+            Types.KeyStoreException( message :="Unable to encode string"));
+
     output := CreateKeys.CreateBranchAndBeaconKeys(
       branchKeyIdentifier,
-      map[],
+      map i <- encodedEncryptionContext :: i.0.value := i.1.value,
       timestamp,
       branchKeyVersion,
       config.ddbTableName,

@@ -10,9 +10,7 @@ import software.amazon.cryptography.materialproviders.model.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 
@@ -80,6 +78,7 @@ public class LocalCMCTests {
           // The cacheIdentifier is used as the material
           // because we are not testing the cryptography here.
           .beaconKey(cacheIdentifier)
+          .encryptionContext(new HashMap<String, String>())
           .build())
         .build();
 

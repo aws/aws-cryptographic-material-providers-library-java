@@ -385,6 +385,7 @@ module {:options "/functionSyntax:4" } Structure {
     && BRANCH_KEY_FIELD in m && m[BRANCH_KEY_FIELD].B?
 
     && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD].S|
+    && 0 < |m[TYPE_FIELD].S|
 
     && (forall k <- m.Keys - {BRANCH_KEY_FIELD, HIERARCHY_VERSION} :: m[k].S?)
 
