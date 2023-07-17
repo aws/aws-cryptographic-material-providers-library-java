@@ -144,8 +144,6 @@ module AwsCryptographyKeyStoreOperations refines AbstractAwsCryptographyKeyStore
     var branchKeyVersion :- maybeBranchKeyVersion
     .MapFailure(e => Types.KeyStoreException(message := e));
 
-
-
     var unwrapEncryptionContext := input.encryptionContext.UnwrapOr(map[]);
     var encodedEncryptionContext
       := set k <- unwrapEncryptionContext

@@ -12,6 +12,7 @@ module TestConfig {
   import KeyStore
   import opened Wrappers
   import opened Fixtures
+  import UUID
 
   method {:test} TestInvalidKmsKeyArnConfig() {
     var kmsClient :- expect KMS.KMSClient();
@@ -50,6 +51,20 @@ module TestConfig {
 
     var keyStore := KeyStore.KeyStore(keyStoreConfig);
     expect keyStore.Success?;
+
+    var conf :- expect keyStore.value.GetKeyStoreInfo();
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#keystore-id
+    //= type=test
+    //# If one is not supplied, then a [version 4 UUID](https://www.ietf.org/rfc/rfc4122.txt) MUST be used.
+    var idByteUUID :- expect UUID.ToByteArray(conf.keyStoreId);
+    var idRoundTrip :- expect UUID.FromByteArray(idByteUUID);
+    expect idRoundTrip == conf.keyStoreId;
+
+    expect conf.keyStoreName == branchKeyStoreName;
+    expect conf.logicalKeyStoreName == logicalKeyStoreName;
+    expect conf.kmsConfiguration == kmsConfig;
+
   }
 
   method {:test} TestValidConfigNoClients() {
