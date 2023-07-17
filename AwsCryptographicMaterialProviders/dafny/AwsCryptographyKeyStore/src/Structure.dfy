@@ -11,14 +11,16 @@ module {:options "/functionSyntax:4" } Structure {
   import KMS = ComAmazonawsKmsTypes
   import UTF8
 
+
+  const BRANCH_KEY_IDENTIFIER_FIELD := "branch-key-id"
+  const TYPE_FIELD := "type"
   const KEY_CREATE_TIME := "create-time"
   const HIERARCHY_VERSION := "hierarchy-version"
-  const TYPE_FIELD := "type"
-  const BRANCH_KEY_IDENTIFIER_FIELD := "branch-key-id"
-  const BRANCH_KEY_ACTIVE_VERSION_FIELD := "version"
   const TABLE_FIELD := "tablename"
   const KMS_FIELD := "kms-arn"
+
   const BRANCH_KEY_FIELD := "enc"
+  const BRANCH_KEY_ACTIVE_VERSION_FIELD := "version"
 
   const BRANCH_KEY_TYPE_PREFIX := "branch:version:"
   const BRANCH_KEY_ACTIVE_TYPE := "branch:ACTIVE"
@@ -30,27 +32,79 @@ module {:options "/functionSyntax:4" } Structure {
 
   type BranchKeyContext = m: map<string, string> | BranchKeyContext?(m) witness *
   predicate BranchKeyContext?(m: map<string, string>) {
-    && BRANCH_KEY_IDENTIFIER_FIELD in m
-    && TYPE_FIELD in m
-    && KEY_CREATE_TIME in m
-    && HIERARCHY_VERSION in m
-    && TABLE_FIELD in m
-    && KMS_FIELD in m
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+    //= type=implication
+    //# - MUST have a `branch-key-id` attribute
+    && (BRANCH_KEY_IDENTIFIER_FIELD in m)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - MUST have a `type` attribute
+    && (TYPE_FIELD in m)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - MUST have a `create-time` attribute
+    && (KEY_CREATE_TIME in m)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - MUST have a `hierarchy-version`
+    && (HIERARCHY_VERSION in m)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - MUST have a `tablename` attribute to store the logicalKeyStoreName
+    && (TABLE_FIELD in m)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - MUST have a `kms-arn` attribute
+    && (KMS_FIELD in m)
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
     //# The key `enc` MUST NOT exist in the constructed [encryption context](#encryption-context).
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+    //= type=implication
+    //# - MUST NOT have a `enc` attribute
     && BRANCH_KEY_FIELD !in m.Keys
 
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+    //= type=implication
+    //# - The `branch-key-id` field MUST not be an empty string
     && 0 < |m[BRANCH_KEY_IDENTIFIER_FIELD]|
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+       //= type=implication
+       //# - The `type` field MUST not be an empty string
+    && 0 < |m[TYPE_FIELD]|
 
     && (forall k <- m.Keys :: DDB.IsValid_AttributeName(k))
 
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#active-encryption-context
+    //= type=implication
+    //# The ACTIVE encryption context MUST have a `version` attribute.
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m <==>
         && m[TYPE_FIELD] == BRANCH_KEY_ACTIVE_TYPE)
+       //= aws-encryption-sdk-specification/framework/branch-key-store.md#active-encryption-context
+       //= type=implication
+       //# The ACTIVE encryption context value of the `type` attribute MUST equal to `"branch:ACTIVE"`.
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD in m ==>
+          //= aws-encryption-sdk-specification/framework/branch-key-store.md#active-encryption-context
+          //= type=implication
+          //# The `version` attribute MUST store the branch key version formatted like `"branch:version:"` + `version`.
           && BRANCH_KEY_TYPE_PREFIX < m[BRANCH_KEY_ACTIVE_VERSION_FIELD])
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#beacon-key-encryption-context
+    //= type=implication
+    //# The Beacon key encryption context MUST NOT have a `version` attribute.
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#decrypt-only-encryption-context
+    //= type=implication
+    //# The DECRYPT_ONLY encryption context MUST NOT have a `version` attribute.
     && (BRANCH_KEY_ACTIVE_VERSION_FIELD !in m <==>
+        //= aws-encryption-sdk-specification/framework/branch-key-store.md#beacon-key-encryption-context
+        //= type=implication
+        //# The Beacon key encryption context value of the `type` attribute MUST equal to `"beacon:ACTIVE"`.
         || m[TYPE_FIELD] == BEACON_KEY_TYPE_VALUE
+           //= aws-encryption-sdk-specification/framework/branch-key-store.md#decrypt-only-encryption-context
+           //= type=implication
+           //# The `type` attribute MUST stores the branch key version formatted like `"branch:version:"` + `version`.
         || BRANCH_KEY_TYPE_PREFIX < m[TYPE_FIELD])
   }
 
@@ -234,6 +288,11 @@ module {:options "/functionSyntax:4" } Structure {
     ensures BRANCH_KEY_TYPE_PREFIX < output[TYPE_FIELD]
     ensures BRANCH_KEY_ACTIVE_VERSION_FIELD !in output
     ensures output[KMS_FIELD] == kmsKeyArn
+    ensures forall k <- customEncryptionContext
+              ::
+                && ENCRYPTION_CONTEXT_PREFIX + k in output
+                && output[ENCRYPTION_CONTEXT_PREFIX + k] == customEncryptionContext[k]
+
   {
     // Dafny needs some help.
     // Adding a fixed string
@@ -447,13 +506,39 @@ module {:options "/functionSyntax:4" } Structure {
             && decryptOnly[k] == active[k] == beacon[k]
          )
       && active[BRANCH_KEY_ACTIVE_VERSION_FIELD] == decryptOnly[TYPE_FIELD]
-  {}
+         //= aws-encryption-sdk-specification/framework/branch-key-store.md#custom-encryption-context
+         //= type=implication
+         //# If custom [encryption context](./structures.md#encryption-context-3)
+         //# is associated with the branch key these values MUST be added to the AWS KMS encryption context.
+      && (forall k <- encryptionContext ::
+            //= aws-encryption-sdk-specification/framework/branch-key-store.md#custom-encryption-context
+            //= type=implication
+            //# To avoid name collisions each added attribute from the custom [encryption context](./structures.md#encryption-context-3)
+            //# MUST be prefixed with `aws-crypto-ec:`.
+            && (ENCRYPTION_CONTEXT_PREFIX + k in decryptOnly)
+            && (ENCRYPTION_CONTEXT_PREFIX + k in active)
+            && (ENCRYPTION_CONTEXT_PREFIX + k in beacon)
+               //= aws-encryption-sdk-specification/framework/branch-key-store.md#custom-encryption-context
+               //= type=implication
+               //# The added values MUST be equal.
+            && encryptionContext[k]
+            == decryptOnly[ENCRYPTION_CONTEXT_PREFIX + k]
+            == active[ENCRYPTION_CONTEXT_PREFIX + k]
+            == beacon[ENCRYPTION_CONTEXT_PREFIX + k]
+         )
+  {
+    reveal DecryptOnlyBranchKeyEncryptionContext();
+  }
 
   lemma ToAttributeMapAndToBranchKeyContextAreInverse(
     encryptionContext: map<string, string>,
     item: DDB.AttributeMap
   )
     requires BranchKeyItem?(item) && BranchKeyContext?(encryptionContext)
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#encryption-context
+    //= type=implication
+    //# Any additionally attributes on the DynamoDB item
+    //# MUST be added to the encryption context.
     ensures
       item == ToAttributeMap(encryptionContext, item[BRANCH_KEY_FIELD].B)
       <==>
