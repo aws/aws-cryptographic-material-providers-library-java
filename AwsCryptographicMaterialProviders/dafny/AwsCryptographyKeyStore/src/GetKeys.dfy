@@ -133,54 +133,21 @@ module GetKeys {
               && Seq.Last(kmsClient.History.Decrypt).output.value.Plaintext.Some?
               && var decryptResponse := Seq.Last(kmsClient.History.Decrypt).output.value;
 
+              && Structure.ToBranchKeyMaterials(versionEncryptionContext, decryptResponse.Plaintext.value).Success?
 
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
               //= type=implication
-              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"branch:version:"`.
-              && versionEncryptionContext[Structure.TYPE_FIELD] == Structure.BRANCH_KEY_ACTIVE_TYPE
-
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-              //= type=implication
-              //# If the `type` attribute is equal to `"branch:ACTIVE"`
-              //# then the authenticated encryption context MUST have a `version` attribute
-              //# and the version string is this value.
-              && Structure.BRANCH_KEY_ACTIVE_VERSION_FIELD in versionEncryptionContext
-              && var versionString := versionEncryptionContext[Structure.BRANCH_KEY_ACTIVE_VERSION_FIELD];
-              && UTF8.Encode(versionString[|Structure.BRANCH_KEY_TYPE_PREFIX|..]).Success?
-
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-              //= type=implication
-              //# If the `type` attribute start with `"branch:version:"` then the version string MUST be equal to this value.
-              && !(Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD])
+              //# This GetActiveBranchKey MUST construct [beacon key materials](./structures.md#beacon-key-materials)
+              //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
+              && var branchKeyMaterials :=  Structure.ToBranchKeyMaterials(
+                                              versionEncryptionContext,
+                                              decryptResponse.Plaintext.value
+                                            ).value;
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
               //= type=implication
               //# This operation MUST return the constructed [branch key materials](./structures.md#branch-key-materials).
-              && output.value.branchKeyMaterials
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
-                 //= type=implication
-                 //# This GetActiveBranchKey MUST construct [beacon key materials](./structures.md#beacon-key-materials)
-                 //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
-                 == Types.BranchKeyMaterials(
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key](./structures.md#branch-key) MUST be the [decrypted branch key material](#aws-kms-branch-key-decryption)
-                      branchKey := decryptResponse.Plaintext.value,
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key Id](./structures.md#branch-key-id) MUST be the `branch-key-id`
-                      branchKeyIdentifier := versionEncryptionContext[Structure.BRANCH_KEY_IDENTIFIER_FIELD],
-
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key Version](./structures.md#branch-key-version)
-                      //# The version string MUST start with `branch:version:`.
-                      //# The remaining string encoded as UTF8 bytes MUST be the Branch Key version.
-                      branchKeyVersion := UTF8.Encode(versionString[|Structure.BRANCH_KEY_TYPE_PREFIX|..]).value,
-
-                      encryptionContext := map[]
-
-                    )
+              && output.value.branchKeyMaterials == branchKeyMaterials
 
               && output.value.branchKeyMaterials.branchKeyIdentifier == input.branchKeyIdentifier
 
@@ -349,57 +316,23 @@ module GetKeys {
               && Seq.Last(kmsClient.History.Decrypt).output.value.Plaintext.Some?
               && var decryptResponse := Seq.Last(kmsClient.History.Decrypt).output.value;
 
+              && Structure.ToBranchKeyMaterials(versionEncryptionContext, decryptResponse.Plaintext.value).Success?
 
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
               //= type=implication
-              //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"branch:version:"`.
-              && Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD]
-
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-              //= type=implication
-              //# If the `type` attribute start with `"branch:version:"` then the version string MUST be equal to this value.
-              && Structure.BRANCH_KEY_TYPE_PREFIX < versionEncryptionContext[Structure.TYPE_FIELD]
-              && var versionString := versionEncryptionContext[Structure.TYPE_FIELD];
-              && UTF8.Encode(versionString[|Structure.BRANCH_KEY_TYPE_PREFIX|..]).Success?
-
-              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-              //= type=implication
-              //# If the `type` attribute is equal to `"branch:ACTIVE"`
-              //# then the authenticated encryption context MUST have a `version` attribute
-              //# and the version string is this value.
-              && Structure.BRANCH_KEY_ACTIVE_VERSION_FIELD !in versionEncryptionContext
+              //# This GetBranchKeyVersion MUST construct [beacon key materials](./structures.md#beacon-key-materials)
+              //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
+              && var branchKeyMaterials :=  Structure.ToBranchKeyMaterials(
+                                              versionEncryptionContext,
+                                              decryptResponse.Plaintext.value
+                                            ).value;
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
               //= type=implication
               //# This operation MUST return the constructed [branch key materials](./structures.md#branch-key-materials).
-              && output.value.branchKeyMaterials
-                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
-                 //= type=implication
-                 //# This GetBranchKeyVersion MUST construct [beacon key materials](./structures.md#beacon-key-materials)
-                 //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
-                 == Types.BranchKeyMaterials(
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key](./structures.md#branch-key) MUST be the [decrypted branch key material](#aws-kms-branch-key-decryption)
-                      branchKey := decryptResponse.Plaintext.value,
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key Id](./structures.md#branch-key-id) MUST be the `branch-key-id`
-                      branchKeyIdentifier := versionEncryptionContext[Structure.BRANCH_KEY_IDENTIFIER_FIELD],
-
-                      //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
-                      //= type=implication
-                      //# - [Branch Key Version](./structures.md#branch-key-version)
-                      //# The version string MUST start with `branch:version:`.
-                      //# The remaining string encoded as UTF8 bytes MUST be the Branch Key version.
-                      branchKeyVersion := UTF8.Encode(versionString[|Structure.BRANCH_KEY_TYPE_PREFIX|..]).value,
-
-                      encryptionContext := map[]
-
-                    )
+              && output.value.branchKeyMaterials == branchKeyMaterials
 
               && output.value.branchKeyMaterials.branchKeyIdentifier == input.branchKeyIdentifier
-
 
     ensures
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion

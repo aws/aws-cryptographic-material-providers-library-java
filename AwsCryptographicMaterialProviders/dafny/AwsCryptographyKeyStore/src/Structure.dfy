@@ -19,7 +19,7 @@ module {:options "/functionSyntax:4" } Structure {
   const TABLE_FIELD := "tablename"
   const KMS_FIELD := "kms-arn"
   const BRANCH_KEY_FIELD := "enc"
-  
+
   const BRANCH_KEY_TYPE_PREFIX := "branch:version:"
   const BRANCH_KEY_ACTIVE_TYPE := "branch:ACTIVE"
   const BEACON_KEY_TYPE_VALUE := "beacon:ACTIVE"
@@ -86,7 +86,57 @@ module {:options "/functionSyntax:4" } Structure {
     encryptionContext: BranchKeyContext,
     plaintextKey: seq<uint8>
   ): (output: Result<Types.BranchKeyMaterials, Types.Error>)
-    requires encryptionContext[TYPE_FIELD] != BEACON_KEY_TYPE_VALUE
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+    //= type=implication
+    //# The `type` attribute MUST either be equal to `"branch:ACTIVE"` or start with `"branch:version:"`.
+    requires
+      || encryptionContext[TYPE_FIELD] == BRANCH_KEY_ACTIVE_TYPE
+      || BRANCH_KEY_TYPE_PREFIX < encryptionContext[TYPE_FIELD]
+
+    ensures output.Success?
+            ==>
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+              //= type=implication
+              //# - [Branch Key](./structures.md#branch-key) MUST be the [decrypted branch key material](#aws-kms-branch-key-decryption)
+              && output.value.branchKey == plaintextKey
+                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+                 //= type=implication
+                 //# - [Branch Key Id](./structures.md#branch-key-id) MUST be the `branch-key-id`
+              && output.value.branchKeyIdentifier == encryptionContext[BRANCH_KEY_IDENTIFIER_FIELD]
+
+              && var versionInformation
+                   := if BRANCH_KEY_ACTIVE_VERSION_FIELD in encryptionContext then
+                        //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+                        //= type=implication
+                        //# If the `type` attribute is equal to `"branch:ACTIVE"`
+                        //# then the authenticated encryption context MUST have a `version` attribute
+                        //# and the version string is this value.
+                        encryptionContext[BRANCH_KEY_ACTIVE_VERSION_FIELD]
+                      else
+                        //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+                        //= type=implication
+                        //# If the `type` attribute start with `"branch:version:"` then the version string MUST be equal to this value.
+                        encryptionContext[TYPE_FIELD];
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+              //= type=implication
+              //# - [Branch Key Version](./structures.md#branch-key-version)
+              //# The version string MUST start with `branch:version:`.
+              && BRANCH_KEY_TYPE_PREFIX < versionInformation
+              && UTF8.Encode(versionInformation[|BRANCH_KEY_TYPE_PREFIX|..]).Success?
+                 //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+                 //= type=implication
+                 //# The remaining string encoded as UTF8 bytes MUST be the Branch Key version.
+              && output.value.branchKeyVersion == UTF8.Encode(versionInformation[|BRANCH_KEY_TYPE_PREFIX|..]).value
+
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-materials-from-authenticated-encryption-context
+              //= type=implication
+              //# - [Encryption Context](./structures.md#encryption-context-3) MUST be constructed by
+              //# [Custom Encryption Context From Authenticated Encryption Context](#custom-encryption-context-from-authenticated-encryption-context)
+              && ExtractCustomEncryptionContext(encryptionContext).Success?
+              && output.value.encryptionContext == ExtractCustomEncryptionContext(encryptionContext).value
+
+
   {
     var versionInformation := if BRANCH_KEY_ACTIVE_VERSION_FIELD in encryptionContext then
                                 encryptionContext[BRANCH_KEY_ACTIVE_VERSION_FIELD]
@@ -125,27 +175,48 @@ module {:options "/functionSyntax:4" } Structure {
   function ExtractCustomEncryptionContext(
     encryptionContext: BranchKeyContext
   ): (output: Result<Types.EncryptionContext, Types.Error>)
+
+    ensures
+      output.Success?
+      ==>
+        forall k <- output.value
+          ::
+            && UTF8.Decode(k).Success?
+            && UTF8.Decode(output.value[k]).Success?
+               //= aws-encryption-sdk-specification/framework/branch-key-store.md#custom-encryption-context-from-authenticated-encryption-context
+               //= type=implication
+               //# For every key in the [encryption context](./structures.md#encryption-context-3)
+               //# the string `aws-crypto-ec:` + the UTF8 decode of this key
+               //# MUST exist as a key in the authenticated encryption context.
+            && (ENCRYPTION_CONTEXT_PREFIX + UTF8.Decode(k).value in encryptionContext)
+               //= aws-encryption-sdk-specification/framework/branch-key-store.md#custom-encryption-context-from-authenticated-encryption-context
+               //= type=implication
+               //# Also, the value in the [encryption context](./structures.md#encryption-context-3) for this key
+               //# MUST equal the value in the authenticated encryption context
+               //# for the constructed key.
+            && encryptionContext[ENCRYPTION_CONTEXT_PREFIX + UTF8.Decode(k).value] == UTF8.Decode(output.value[k]).value
   {
 
     // Dafny needs some help.
     // Adding a fixed string
     // will not make any of the keys collide.
     assert forall k <- encryptionContext.Keys | ENCRYPTION_CONTEXT_PREFIX < k
-    ::
-      k == ENCRYPTION_CONTEXT_PREFIX + k[|ENCRYPTION_CONTEXT_PREFIX|..];
+        ::
+          k == ENCRYPTION_CONTEXT_PREFIX + k[|ENCRYPTION_CONTEXT_PREFIX|..];
 
-    var encodedEncryptionContext := set k <- encryptionContext
-    | ENCRYPTION_CONTEXT_PREFIX < k
-    ::
-      (UTF8.Encode(k[|ENCRYPTION_CONTEXT_PREFIX|..]), UTF8.Encode(encryptionContext[k]));
+    var encodedEncryptionContext
+      := set k <- encryptionContext
+             | ENCRYPTION_CONTEXT_PREFIX < k
+           ::
+             (UTF8.Encode(k[|ENCRYPTION_CONTEXT_PREFIX|..]), UTF8.Encode(encryptionContext[k]));
 
     // This SHOULD be impossible
     // A Dafny string SHOULD all be encodable
     :- Need(forall i <- encodedEncryptionContext
-    :: i.0.Success? && i.1.Success?, 
-     Types.KeyStoreException( message :="Unable to encode string"));
+              :: i.0.Success? && i.1.Success?,
+            Types.KeyStoreException( message :="Unable to encode string"));
 
-     Success(map i <- encodedEncryptionContext :: i.0.value := i.1.value)
+    Success(map i <- encodedEncryptionContext :: i.0.value := i.1.value)
   }
 
   opaque function DecryptOnlyBranchKeyEncryptionContext(
@@ -171,8 +242,8 @@ module {:options "/functionSyntax:4" } Structure {
     // This is why the function is now opaque.
     // Otherwise things timeout
     assert forall k <- customEncryptionContext.Keys
-    ::
-      k == (ENCRYPTION_CONTEXT_PREFIX + k)[|ENCRYPTION_CONTEXT_PREFIX|..];
+        ::
+          k == (ENCRYPTION_CONTEXT_PREFIX + k)[|ENCRYPTION_CONTEXT_PREFIX|..];
 
     map[
       BRANCH_KEY_IDENTIFIER_FIELD := branchKeyId,
@@ -366,7 +437,7 @@ module {:options "/functionSyntax:4" } Structure {
 
     ensures
       var decryptOnly := DecryptOnlyBranchKeyEncryptionContext(
-        branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn, encryptionContext);
+                           branchKeyId, branchKeyVersion, timestamp, logicalKeyStoreName, kmsKeyArn, encryptionContext);
       var active := ActiveBranchKeyEncryptionContext(decryptOnly);
       var beacon := BeaconKeyEncryptionContext(decryptOnly);
       && decryptOnly[TYPE_FIELD] != active[TYPE_FIELD]
