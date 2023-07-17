@@ -288,6 +288,7 @@ module {:options "/functionSyntax:4" } Structure {
     ensures BRANCH_KEY_TYPE_PREFIX < output[TYPE_FIELD]
     ensures BRANCH_KEY_ACTIVE_VERSION_FIELD !in output
     ensures output[KMS_FIELD] == kmsKeyArn
+    ensures output[TABLE_FIELD] == logicalKeyStoreName
     ensures forall k <- customEncryptionContext
               ::
                 && ENCRYPTION_CONTEXT_PREFIX + k in output

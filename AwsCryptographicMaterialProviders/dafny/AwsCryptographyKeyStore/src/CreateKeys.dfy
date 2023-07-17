@@ -68,6 +68,12 @@ module {:options "/functionSyntax:4" } CreateKeys {
                                                        kmsConfiguration.kmsKeyArn,
                                                        customEncryptionContext
                                                      );
+
+              //= aws-encryption-sdk-specification/framework/branch-key-store.md#logical-keystore-name
+              //= type=implication
+              //# The logical keystore name MUST be bound to every created key.
+              && decryptOnlyEncryptionContext[Structure.TABLE_FIELD] == logicalKeyStoreName
+
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
               //= type=implication
               //# The wrapped Branch Keys, DECRYPT_ONLY and ACTIVE, MUST be created according to [Wrapped Branch Key Creation](#wrapped-branch-key-creation).
