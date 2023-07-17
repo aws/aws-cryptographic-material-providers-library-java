@@ -42,9 +42,9 @@ module TestVersionKey {
     // We will create a use this new key per run to avoid tripping up
     // when running in different runtimes
     var branchKeyId :- expect keyStore.CreateKey(Types.CreateKeyInput(
-      branchKeyIdentifier := None,
-      encryptionContext := None
-    ));
+                                                   branchKeyIdentifier := None,
+                                                   encryptionContext := None
+                                                 ));
 
     var oldActiveResult :- expect keyStore.GetActiveBranchKey(
       Types.GetActiveBranchKeyInput(

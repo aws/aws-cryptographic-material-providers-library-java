@@ -38,9 +38,9 @@ module TestCreateKeys {
     var keyStore :- expect KeyStore.KeyStore(keyStoreConfig);
 
     var branchKeyId :- expect keyStore.CreateKey(Types.CreateKeyInput(
-      branchKeyIdentifier := None,
-      encryptionContext := None
-    ));
+                                                   branchKeyIdentifier := None,
+                                                   encryptionContext := None
+                                                 ));
 
     var beaconKeyResult :- expect keyStore.GetBeaconKey(
       Types.GetBeaconKeyInput(
