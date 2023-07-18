@@ -23,7 +23,7 @@ include "./UInt.dfy"
 
 */
 
-module {:extern "CallMany"} CallMany {
+module {:extern "ConcurrentCall"} ConcurrentCall {
   import opened StandardLibrary
   import opened Wrappers
   import opened StandardLibrary.UInt
@@ -38,7 +38,7 @@ module {:extern "CallMany"} CallMany {
       modifies Modifies
   }
 
-  method {:extern "CallMany"} CallMany(callee : Callee, serialIters : uint32, concurrentIters : uint32)
+  method {:extern "ConcurrentCall"} ConcurrentCall(callee : Callee, serialIters : uint32, concurrentIters : uint32)
 
 
 }

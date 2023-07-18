@@ -1,9 +1,9 @@
-package CallMany;
+package ConcurrentCall;
 
 import Wrappers_Compile.Result;
 import dafny.DafnySequence;
 
-import CallMany.Callee;
+import ConcurrentCall.Callee;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class __default {
     public __default() {
     }
-    public static void CallMany(Callee callee, int serialIters, int concurrentIters)
+    public static void ConcurrentCall(Callee callee, int serialIters, int concurrentIters)
     {
         ExecutorService pool = Executors.newFixedThreadPool(concurrentIters);  
         for(int i = 0; i < concurrentIters; i++) {
@@ -33,7 +33,7 @@ public class __default {
     }
     @Override
     public java.lang.String toString() {
-      return "CallMany_Compile._default";
+      return "ConcurrentCall._default";
     }
   }
 

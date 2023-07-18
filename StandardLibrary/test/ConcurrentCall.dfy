@@ -2,17 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../src/StandardLibrary.dfy"
-include "../src/CallMany.dfy"
+include "../src/ConcurrentCall.dfy"
 
 module TestCallMany {
   import opened StandardLibrary
   import opened Wrappers
   import opened StandardLibrary.UInt
   import opened BoundedInts
-  import CallMany
+  import ConcurrentCall
 
 
-  class MyCallee extends CallMany.Callee {
+  class MyCallee extends ConcurrentCall.Callee {
     var count : uint32
     constructor()
       ensures ValidState()
@@ -39,7 +39,7 @@ module TestCallMany {
 
   method {:test} TestBasic() {
     var c := new MyCallee();
-    CallMany.CallMany(c, 2, 3);
+    ConcurrentCall.ConcurrentCall(c, 2, 3);
     expect c.count == 6;
   }
 

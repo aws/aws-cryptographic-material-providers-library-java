@@ -10,12 +10,12 @@ using byteseq = Dafny.Sequence<byte>;
 using icharseq = Dafny.ISequence<char>;
 using charseq = Dafny.Sequence<char>;
 
-namespace CallMany
+namespace ConcurrentCall
 {
 
   public partial class __default
   {
-    public static void CallMany(CallMany.Callee callee, uint serialIters, uint concurrentIters)
+    public static void ConcurrentCall(ConcurrentCall.Callee callee, uint serialIters, uint concurrentIters)
     {
       Thread[] threadsArray = new Thread[concurrentIters];
       for (uint i = 0; i < concurrentIters; i++)
