@@ -116,10 +116,12 @@ module {:options "/functionSyntax:4" } Structure {
     ensures BranchKeyItem?(output)
     ensures ToBranchKeyContext(output, encryptionContext[TABLE_FIELD]) == encryptionContext
   {
+    var hierarchyVersion := HIERARCHY_VERSION;
+    var branchKeyField := BRANCH_KEY_FIELD;
     map k <- encryptionContext.Keys + {BRANCH_KEY_FIELD} - {TABLE_FIELD}
       :: k := match k
-      case HIERARCHY_VERSION => DDB.AttributeValue.N(encryptionContext[HIERARCHY_VERSION])
-      case BRANCH_KEY_FIELD => DDB.AttributeValue.B(encryptedKey)
+      case hierarchyVersion => DDB.AttributeValue.N(encryptionContext[HIERARCHY_VERSION])
+      case branchKeyField => DDB.AttributeValue.B(encryptedKey)
       case _ => DDB.AttributeValue.S(encryptionContext[k])
   }
 
@@ -129,10 +131,12 @@ module {:options "/functionSyntax:4" } Structure {
   ): (output: BranchKeyContext)
     requires BranchKeyItem?(item)
   {
+    var hierarchyVersion := HIERARCHY_VERSION;
+    var tableField := TABLE_FIELD;
     map k <- item.Keys - {BRANCH_KEY_FIELD} + {TABLE_FIELD}
       :: k := match k
-      case HIERARCHY_VERSION => item[k].N
-      case TABLE_FIELD => logicalKeyStoreName
+      case hierarchyVersion => item[k].N
+      case tableField => logicalKeyStoreName
       case _ => item[k].S
   }
 
@@ -467,6 +471,7 @@ module {:options "/functionSyntax:4" } Structure {
     //# except `tableName`
     //# MUST exist as a string attribute in the AWS DDB response item.
     ensures
+      var hierarchyVersion := HIERARCHY_VERSION;
       forall k <- encryptionContext.Keys - {BRANCH_KEY_FIELD, TABLE_FIELD}
         ::
           //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
@@ -475,7 +480,7 @@ module {:options "/functionSyntax:4" } Structure {
           //# except the logical table name
           //# MUST equal the value with the same key in the AWS DDB response item.
           match k
-          case HIERARCHY_VERSION => encryptionContext[k] == item[k].N
+          case hierarchyVersion => encryptionContext[k] == item[k].N
           case _ => encryptionContext[k] == item[k].S
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
