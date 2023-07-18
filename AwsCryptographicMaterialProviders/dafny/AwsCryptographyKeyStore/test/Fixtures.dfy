@@ -1,6 +1,6 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-include "../src/Index.dfy"
+include "../../../../StandardLibrary/src/Index.dfy"
 
 module Fixtures {
   import opened StandardLibrary.UInt
@@ -10,6 +10,8 @@ module Fixtures {
   const logicalKeyStoreName := branchKeyStoreName
   const branchKeyId := "75789115-1deb-4fe3-a2ec-be9e885d1945"
   const branchKeyIdActiveVersion := "fed7ad33-0774-4f97-aa5e-6c766fc8af9f"
+
+  const branchKeyIdWithEC := "4bb57643-07c1-419e-92ad-0df0df149d7c"
   // This is branchKeyIdActiveVersion above, as utf8bytes
   const branchKeyIdActiveVersionUtf8Bytes: seq<uint8> := [
     102, 101, 100, 55,  97, 100,  51, 51,  45,
