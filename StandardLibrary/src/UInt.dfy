@@ -11,10 +11,9 @@ module StandardLibrary.UInt {
   type uint64 = BoundedInts.uint64
   type int32 = BoundedInts.int32
   type int64 = BoundedInts.int64
-
-  const UINT16_LIMIT := BoundedInts.UINT16_MAX as int
-  const UINT32_LIMIT := BoundedInts.UINT32_MAX as int
-  const UINT64_LIMIT := BoundedInts.UINT64_MAX as int
+  const UINT16_LIMIT := BoundedInts.UINT16_MAX as int + 1
+  const UINT32_LIMIT := BoundedInts.UINT32_MAX as int + 1
+  const UINT64_LIMIT := BoundedInts.UINT64_MAX as int + 1
   const INT32_MAX_LIMIT := BoundedInts.INT32_MAX as int
   const INT64_MAX_LIMIT := BoundedInts.INT64_MAX as int
 
