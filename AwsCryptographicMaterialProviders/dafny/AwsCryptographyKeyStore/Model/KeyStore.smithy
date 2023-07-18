@@ -263,6 +263,9 @@ operation GetBeaconKey {
 
 @javadoc("Inputs for getting a Beacon Key")
 structure GetBeaconKeyInput {
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbeaconkey
+  //= type=implication
+  //# - MUST supply a `branch-key-id`
   @required
   @javadoc("The identifier of the Branch Key the Beacon Key is associated with.")
   branchKeyIdentifier: String

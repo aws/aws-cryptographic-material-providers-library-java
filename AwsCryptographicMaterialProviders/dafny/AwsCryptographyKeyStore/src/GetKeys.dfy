@@ -401,13 +401,80 @@ module GetKeys {
     ensures ddbClient.ValidState() && kmsClient.ValidState()
 
     ensures output.Success? ==>
-              && input.branchKeyIdentifier == output.value.beaconKeyMaterials.beaconKeyIdentifier
+              && Seq.Last(ddbClient.History.GetItem).output.Success?
+              && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+              && var versionItem := Seq.Last(ddbClient.History.GetItem).output.value.Item.value;
+
+
+              && Structure.BranchKeyItem?(versionItem)
+              && versionItem[Structure.HIERARCHY_VERSION].N?
+              && Structure.BRANCH_KEY_ACTIVE_VERSION_FIELD !in versionItem
+              && versionItem[Structure.TYPE_FIELD].S == Structure.BEACON_KEY_TYPE_VALUE
+
+              && KMSKeystoreOperations.AttemptKmsOperation?(kmsConfiguration, Structure.ToBranchKeyContext(versionItem, logicalKeyStoreName))
+
+
+              && var versionEncryptionContext := Structure.ToBranchKeyContext(versionItem, logicalKeyStoreName);
+
+              && versionEncryptionContext.Keys - {Structure.TABLE_FIELD} < versionItem.Keys
+
+              && (forall k <- versionEncryptionContext.Keys - {Structure.TABLE_FIELD}
+                    :: match k
+                       case HIERARCHY_VERSION => versionEncryptionContext[Structure.HIERARCHY_VERSION] == versionItem[Structure.HIERARCHY_VERSION].N
+                       case _ => versionEncryptionContext[k] == versionItem[k].S)
+
+              && Structure.BRANCH_KEY_FIELD !in  versionEncryptionContext
+
+              && |kmsClient.History.Decrypt| == |old(kmsClient.History.Decrypt)| + 1
+
+              && var decryptRequest := Seq.Last(kmsClient.History.Decrypt).input;
+
+
+              && decryptRequest.KeyId == Some(kmsConfiguration.kmsKeyArn)
+
+              && decryptRequest.CiphertextBlob == versionItem[Structure.BRANCH_KEY_FIELD].B
+
+              && decryptRequest.EncryptionContext == Some(versionEncryptionContext)
+
+
+              && decryptRequest.GrantTokens == Some(grantTokens)
+
+              && Seq.Last(kmsClient.History.Decrypt).output.Success?
+              && Seq.Last(kmsClient.History.Decrypt).output.value.Plaintext.Some?
+              && var decryptResponse := Seq.Last(kmsClient.History.Decrypt).output.value;
+
+              && Structure.ToBeaconKeyMaterials(versionEncryptionContext, decryptResponse.Plaintext.value).Success?
+
+
+              && var beaconKeyMaterials :=  Structure.ToBeaconKeyMaterials(
+                                              versionEncryptionContext,
+                                              decryptResponse.Plaintext.value
+                                            ).value;
+
+
+              && output.value.beaconKeyMaterials == beaconKeyMaterials
+
+              && output.value.beaconKeyMaterials.beaconKeyIdentifier == input.branchKeyIdentifier
+
+    ensures
+
+      || (&& |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+          && Seq.Last(ddbClient.History.GetItem).output.Success?
+          && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+          && !Structure.BeaconKeyItem?(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+          ==> output.Failure?)
+
+
+      || (&& |kmsClient.History.Decrypt| == |old(kmsClient.History.Decrypt)| + 1
+          && Seq.Last(kmsClient.History.Decrypt).output.Failure?
+          ==> output.Failure?)
   {
     var branchKeyItem :- DDBKeystoreOperations.GetBeaconKeyItem(
       input.branchKeyIdentifier,
       tableName,
       ddbClient
     );
+    assert Seq.Last(ddbClient.History.GetItem).output.Success?;
 
     var encryptionContext := Structure.ToBranchKeyContext(branchKeyItem, logicalKeyStoreName);
 
@@ -423,6 +490,8 @@ module GetKeys {
       grantTokens,
       kmsClient
     );
+
+    assert Seq.Last(ddbClient.History.GetItem).output.Success?;
 
     var branchKeyMaterials :- Structure.ToBeaconKeyMaterials(
       encryptionContext,

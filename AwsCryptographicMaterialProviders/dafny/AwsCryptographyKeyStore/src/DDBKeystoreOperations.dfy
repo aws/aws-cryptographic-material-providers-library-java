@@ -287,6 +287,29 @@ module DDBKeystoreOperations {
     ensures output.Success?
             ==>
               output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).input.Key
+         == map[
+              Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),
+              Structure.TYPE_FIELD := DDB.AttributeValue.S(Structure.BEACON_KEY_TYPE_VALUE)
+            ]
+
+    ensures output.Success?
+            ==>
+              && output.value[Structure.BRANCH_KEY_IDENTIFIER_FIELD].S == branchKeyIdentifier
+              && output.value[Structure.TYPE_FIELD].S == Structure.BEACON_KEY_TYPE_VALUE
+              && Seq.Last(ddbClient.History.GetItem).output.Success?
+              && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+              && output == Success(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+
+    ensures
+      && |ddbClient.History.GetItem| == |old(ddbClient.History.GetItem)| + 1
+      && Seq.Last(ddbClient.History.GetItem).output.Success?
+      && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
+      && !Structure.BeaconKeyItem?(Seq.Last(ddbClient.History.GetItem).output.value.Item.value)
+      ==> output.Failure?
   {
     var dynamoDbKey: DDB.Key := map[
       Structure.BRANCH_KEY_IDENTIFIER_FIELD := DDB.AttributeValue.S(branchKeyIdentifier),
