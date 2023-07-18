@@ -15,24 +15,23 @@ namespace CallMany
 
   public partial class __default
   {
-    public static void CallMany(CallMany.Callee callee, uint innerIters, uint outerIters, uint threads)
+    public static void CallMany(CallMany.Callee callee, uint serialIters, uint concurrentIters)
     {
-      Thread[] threadsArray = new Thread[outerIters];
-      for (uint i = 0; i < outerIters; i++)
+      Thread[] threadsArray = new Thread[concurrentIters];
+      for (uint i = 0; i < concurrentIters; i++)
       {
         uint localNum = i;
         threadsArray[i] = new Thread(() =>
         {
-          for (uint j = 0; j < innerIters; ++j)
-          {
+          for (uint j = 0; j < serialIters; ++j) {
             (callee).call(j, localNum);
           };
         });
       }
-      for (uint i = 0; i < outerIters; i++)
+      for (uint i = 0; i < concurrentIters; i++)
         threadsArray[i].Start();
 
-      for (uint i = 0; i < outerIters; i++)
+      for (uint i = 0; i < concurrentIters; i++)
         threadsArray[i].Join();
 
     }

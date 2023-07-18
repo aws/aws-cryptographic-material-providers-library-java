@@ -12,19 +12,14 @@ import java.util.concurrent.TimeUnit;
 public class __default {
     public __default() {
     }
-    public static void CallMany(Callee callee, int innerIters, int outerIters, int threads)
+    public static void CallMany(Callee callee, int serialIters, int concurrentIters)
     {
-        // Runnable myThread = (n) -> {
-        //     for(int j = 0; j < innerIters; ++j) {
-        //         callee.call(i, j);
-        //     }
-        // };
-        ExecutorService pool = Executors.newFixedThreadPool(threads);  
-        for(int i = 0; i < outerIters; i++) {
+        ExecutorService pool = Executors.newFixedThreadPool(concurrentIters);  
+        for(int i = 0; i < concurrentIters; i++) {
             final int ii = i;
             pool.execute(() -> {
-                for(int j = 0; j < innerIters; ++j) {
-                    callee.call(ii, j);
+                for(int j = 0; j < serialIters; ++j) {
+                    callee.call(j, ii);
                 }
             }
             );

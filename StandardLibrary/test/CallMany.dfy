@@ -15,11 +15,21 @@ module TestCallMany {
   class MyCallee extends CallMany.Callee {
     var count : uint32
     constructor()
+      ensures ValidState()
     {
       count := 0;
+      Modifies := {this};
     }
-    method call(inner : uint32, outer : uint32)
-      modifies this
+    predicate ValidState()
+      reads this
+    {
+      this in Modifies
+    }
+
+    method call(serialPos : uint32, concurrentPos : uint32)
+      requires ValidState()
+      ensures ValidState()
+      modifies Modifies
     {
       if count < UINT32_MAX {
         count := count + 1; // not technically thread safe, but usually works
@@ -29,7 +39,7 @@ module TestCallMany {
 
   method {:test} TestBasic() {
     var c := new MyCallee();
-    CallMany.CallMany(c, 2, 3, 2);
+    CallMany.CallMany(c, 2, 3);
     expect c.count == 6;
   }
 
