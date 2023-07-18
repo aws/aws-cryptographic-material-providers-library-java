@@ -26,7 +26,7 @@ module TestCallMany {
       this in Modifies
     }
 
-    method call(serialPos : uint32, concurrentPos : uint32)
+    method call(nameonly serialPos : uint32, nameonly concurrentPos : uint32)
       requires ValidState()
       ensures ValidState()
       modifies Modifies
@@ -39,7 +39,7 @@ module TestCallMany {
 
   method {:test} TestBasic() {
     var c := new MyCallee();
-    ConcurrentCall.ConcurrentCall(c, 2, 3);
+    ConcurrentCall.ConcurrentCall(callee := c, serialIters := 2, concurrentIters := 3);
     expect c.count == 6;
   }
 

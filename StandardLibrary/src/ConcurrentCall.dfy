@@ -32,13 +32,13 @@ module {:extern "ConcurrentCall"} ConcurrentCall {
     ghost var Modifies: set<object>
     predicate ValidState() reads this
 
-    method call(serialPos : uint32, concurrentPos : uint32)
+    method call(nameonly serialPos : uint32, nameonly concurrentPos : uint32)
       requires ValidState()
       ensures ValidState()
       modifies Modifies
   }
 
-  method {:extern "ConcurrentCall"} ConcurrentCall(callee : Callee, serialIters : uint32, concurrentIters : uint32)
+  method {:extern "ConcurrentCall"} ConcurrentCall(nameonly callee : Callee, nameonly serialIters : uint32, nameonly concurrentIters : uint32)
 
 
 }
