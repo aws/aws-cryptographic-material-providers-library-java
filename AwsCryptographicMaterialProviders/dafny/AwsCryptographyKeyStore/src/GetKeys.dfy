@@ -86,7 +86,7 @@ module GetKeys {
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#getactivebranchkey
               //= type=implication
-              //# This GetActiveBranchKey MUST construct [beacon key materials](./structures.md#beacon-key-materials)
+              //# This GetActiveBranchKey MUST construct [branch key materials](./structures.md#branch-key-materials)
               //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
               && var branchKeyMaterials :=  Structure.ToBranchKeyMaterials(
                                               versionEncryptionContext,
@@ -216,7 +216,7 @@ module GetKeys {
 
               //= aws-encryption-sdk-specification/framework/branch-key-store.md#getbranchkeyversion
               //= type=implication
-              //# This GetBranchKeyVersion MUST construct [beacon key materials](./structures.md#beacon-key-materials)
+              //# This GetBranchKeyVersion MUST construct [branch key materials](./structures.md#branch-key-materials)
               //# according to [Branch Key Materials From Authenticated Encryption Context](#branch-key-materials-from-authenticated-encryption-context).
               && var branchKeyMaterials := Structure
                                            .ToBranchKeyMaterials(

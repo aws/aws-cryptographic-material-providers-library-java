@@ -87,7 +87,7 @@ structure KeyStoreConfig {
   //# The following inputs MAY be specified to create a KeyStore:
   //# 
   //# - [ID](#keystore-id)
-  //# - [AWS KMS Grant Tokens](#gran-tokens)
+  //# - [AWS KMS Grant Tokens](#aws-kms-grant-tokens)
   //# - [DynamoDb Client](#dynamodb-client)
   //# - [KMS Client](#kms-client)
   

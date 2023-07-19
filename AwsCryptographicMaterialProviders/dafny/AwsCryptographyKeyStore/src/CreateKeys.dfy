@@ -20,6 +20,13 @@ module {:options "/functionSyntax:4" } CreateKeys {
   import DDB = ComAmazonawsDynamodbTypes
   import KMS = ComAmazonawsKmsTypes
 
+
+  //= aws-encryption-sdk-specification/framework/branch-key-store.md#branch-key-and-beacon-key-creation
+  //= type=implication
+  //# To create a branch key, this operation MUST take the following:
+  //#
+  //# - `branchKeyId`: The identifier
+  //# - `encryptionContext`: Additional encryption context to bind to the created keys
   method CreateBranchAndBeaconKeys(
     branchKeyIdentifier: string,
     customEncryptionContext: map<string, string>,
@@ -419,7 +426,7 @@ module {:options "/functionSyntax:4" } CreateKeys {
     ensures
       //= aws-encryption-sdk-specification/framework/branch-key-store.md#versionkey
       //= type=implication
-      //# The the item fails to authenticate this operation MUST fail.
+      //# If the item fails to authenticate this operation MUST fail.
       || (&& |kmsClient.History.ReEncrypt| == |old(kmsClient.History.ReEncrypt)| + 1
           && Seq.Last(kmsClient.History.ReEncrypt).output.Failure?
           ==> output.Failure?)
