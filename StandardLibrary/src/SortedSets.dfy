@@ -4,7 +4,7 @@
 include "./StandardLibrary.dfy"
 include "../../libraries/src/Collections/Sequences/Seq.dfy"
 
-module {:extern "SortedSets"} SortedSets {
+module {:extern} SortedSets {
   import opened StandardLibrary
   import Seq
 

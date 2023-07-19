@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 include "../src/StandardLibrary.dfy"
-include "../src/Sets.dfy"
+include "../src/SortedSets.dfy"
   // Just to make sure we don't conflict with dafny-lang/libraries' Sets.dfy
 include "../../libraries/src/Collections/Sets/Sets.dfy"
 
