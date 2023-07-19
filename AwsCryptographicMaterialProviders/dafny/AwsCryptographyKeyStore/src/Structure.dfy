@@ -117,10 +117,18 @@ module {:options "/functionSyntax:4" } Structure {
     ensures ToBranchKeyContext(output, encryptionContext[TABLE_FIELD]) == encryptionContext
   {
     map k <- encryptionContext.Keys + {BRANCH_KEY_FIELD} - {TABLE_FIELD}
-      :: k := match k
-      case HIERARCHY_VERSION => DDB.AttributeValue.N(encryptionContext[HIERARCHY_VERSION])
-      case BRANCH_KEY_FIELD => DDB.AttributeValue.B(encryptedKey)
-      case _ => DDB.AttributeValue.S(encryptionContext[k])
+             // Working around https://github.com/dafny-lang/dafny/issues/4214
+             //  that will make the following fail to compile
+             // ::  match k
+             // case HIERARCHY_VERSION => DDB.AttributeValue.N(encryptionContext[HIERARCHY_VERSION])
+             // case BRANCH_KEY_FIELD => DDB.AttributeValue.B(encryptedKey)
+             // case _ => DDB.AttributeValue.S(encryptionContext[k])
+      :: k := if k == HIERARCHY_VERSION then
+        DDB.AttributeValue.N(encryptionContext[HIERARCHY_VERSION])
+      else if k == BRANCH_KEY_FIELD then
+        DDB.AttributeValue.B(encryptedKey)
+      else
+        DDB.AttributeValue.S(encryptionContext[k])
   }
 
   function ToBranchKeyContext(
@@ -130,10 +138,18 @@ module {:options "/functionSyntax:4" } Structure {
     requires BranchKeyItem?(item)
   {
     map k <- item.Keys - {BRANCH_KEY_FIELD} + {TABLE_FIELD}
-      :: k := match k
-      case HIERARCHY_VERSION => item[k].N
-      case TABLE_FIELD => logicalKeyStoreName
-      case _ => item[k].S
+             // Working around https://github.com/dafny-lang/dafny/issues/4214
+             //  that will make the following fail to compile
+             // match k
+             // case HIERARCHY_VERSION => item[k].N
+             // case TABLE_FIELD => logicalKeyStoreName
+             // case _ => item[k].S
+      :: k := if k == HIERARCHY_VERSION then
+        item[k].N
+      else if k == TABLE_FIELD then
+        logicalKeyStoreName
+      else
+        item[k].S
   }
 
   function ToBranchKeyMaterials(
@@ -474,9 +490,16 @@ module {:options "/functionSyntax:4" } Structure {
           //# Every value in the constructed [encryption context](#encryption-context)
           //# except the logical table name
           //# MUST equal the value with the same key in the AWS DDB response item.
-          match k
-          case HIERARCHY_VERSION => encryptionContext[k] == item[k].N
-          case _ => encryptionContext[k] == item[k].S
+
+          // Working around https://github.com/dafny-lang/dafny/issues/4214
+          //  that will make the following fail to compile
+          // match k
+          // case HIERARCHY_VERSION => encryptionContext[k] == item[k].N
+          // case _ => encryptionContext[k] == item[k].S
+          if k == HIERARCHY_VERSION then
+            encryptionContext[k] == item[k].N
+          else
+            encryptionContext[k] == item[k].S
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#authenticating-a-keystore-item
     //= type=implication

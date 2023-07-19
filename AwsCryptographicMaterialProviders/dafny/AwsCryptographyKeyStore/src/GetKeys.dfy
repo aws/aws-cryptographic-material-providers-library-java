@@ -448,9 +448,15 @@ module GetKeys {
     //# except the logical table name
     //# MUST equal the value with the same key in the AWS DDB response item.
     && (forall k <- versionEncryptionContext.Keys - {Structure.TABLE_FIELD}
-          :: match k
-             case HIERARCHY_VERSION => versionEncryptionContext[Structure.HIERARCHY_VERSION] == versionItem[Structure.HIERARCHY_VERSION].N
-             case _ => versionEncryptionContext[k] == versionItem[k].S)
+                    // Working around https://github.com/dafny-lang/dafny/issues/4214
+                    //  that will make the following fail to compile
+                    // :: match k
+                    //    case HIERARCHY_VERSION => versionEncryptionContext[Structure.HIERARCHY_VERSION] == versionItem[Structure.HIERARCHY_VERSION].N
+                    //    case _ => versionEncryptionContext[k] == versionItem[k].S)
+          :: if k == Structure.HIERARCHY_VERSION then
+               versionEncryptionContext[Structure.HIERARCHY_VERSION] == versionItem[Structure.HIERARCHY_VERSION].N
+             else
+               versionEncryptionContext[k] == versionItem[k].S)
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
     //= type=implication

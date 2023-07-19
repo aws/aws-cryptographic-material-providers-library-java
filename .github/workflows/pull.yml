@@ -8,12 +8,12 @@ jobs:
   pr-ci-verification:
     uses: ./.github/workflows/library_dafny_verification.yml
     with:
-      dafny: 'nightly-2023-07-18-8657ef9'
+      dafny: '4.1.0'
   pr-ci-java:
     uses: ./.github/workflows/library_java_tests.yml
     with:
-      dafny: 'nightly-2023-07-18-8657ef9'
+      dafny: '4.1.0'
   pr-ci-net:
     uses: ./.github/workflows/library_net_tests.yml
     with:
-      dafny: 'nightly-2023-07-18-8657ef9'
+      dafny: '4.1.0'
