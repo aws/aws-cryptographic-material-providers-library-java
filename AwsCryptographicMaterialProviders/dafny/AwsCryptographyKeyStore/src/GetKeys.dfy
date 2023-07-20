@@ -424,8 +424,6 @@ module GetKeys {
       && getItemHistory.output.Success?
       && getItemHistory.output.value.Item.Some?
       && Structure.BranchKeyItem?(getItemHistory.output.value.Item.value)
-         // && Structure.BRANCH_KEY_ACTIVE_VERSION_FIELD !in getItemHistory.output.value.Item.value
-         // // && Structure.BRANCH_KEY_TYPE_PREFIX < getItemHistory.output.value.Item.value[Structure.TYPE_FIELD].S
       && getItemHistory.output.Success?
       && getItemHistory.output.value.Item.Some?
   {
