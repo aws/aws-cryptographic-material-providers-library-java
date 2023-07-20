@@ -432,7 +432,7 @@ module GetKeys {
     //# The operation MUST use the configured `KMS SDK Client` to decrypt the value of the branch key field.
     requires decryptHistory in kmsClient.History.Decrypt
     requires getItemHistory in ddbClient.History.GetItem
-    
+
   {
 
     var versionItem := getItemHistory.output.value.Item.value;
