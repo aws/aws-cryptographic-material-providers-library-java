@@ -28,7 +28,7 @@
   - The Key Store's `CreateKeyInput` now takes:  
     - An Optional `String branchKeyIdentifier`  
     - An Optional `EncryptionContext encryptionContext`  
-      - This `encryptionContext` will be added to the Encryption Context sent to KMS prefixed with `aws-crypto-ec`  
+      - This `encryptionContext` will be added to the Encryption Context sent to KMS prefixed with `aws-crypto-ec:`  
   - Creating a Key now also calls KMS:ReEncrypt  
   - `CreateKeyStore` no longer creates a GSI  
   - The Encryption Context used with KMS' `GenerateDataKeyWithoutPlaintext` no longer include's the discarded GSI's `status`.  
