@@ -18,7 +18,7 @@ jobs:
           ComAmazonawsDynamodb,
           AwsCryptographicMaterialProviders, 
           TestVectorsAwsCryptographicMaterialProviders,
-          StandardLibrary,
+          # StandardLibrary, Just for this test
         ]
         os: [ macos-latest ]
     runs-on: ${{ matrix.os }}
