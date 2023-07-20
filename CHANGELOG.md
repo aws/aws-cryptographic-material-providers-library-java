@@ -16,7 +16,7 @@
 - CMCs:  
   - Original Cryptographic Materials Cache has been renamed to Single Threaded Cache  
   - `CreateCryptographicMaterialsCacheInput` now ONLY accepts `CacheType`,  
-    which determines which of the three implemented CMCs will be returned.  
+    which determines which, if any, of the three implemented CMCs will be returned.  
   - The `DefaultCache` is `StormTrackingCache`  
 - `CreateAwsKmsHierarchicalKeyringInput`:  
   - no longer has a `maxCacheSize` field   
