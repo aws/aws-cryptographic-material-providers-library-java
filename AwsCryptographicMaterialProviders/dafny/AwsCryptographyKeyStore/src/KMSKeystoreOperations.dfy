@@ -153,8 +153,6 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
       && reEncryptResponse.KeyId.Some?
       && reEncryptResponse.SourceKeyId.value == kmsConfiguration.kmsKeyArn
       && reEncryptResponse.KeyId.value == kmsConfiguration.kmsKeyArn,
-      // && ParseAwsKmsIdentifier(reEncryptResponse.SourceKeyId.value).Success?
-      // && ParseAwsKmsIdentifier(reEncryptResponse.KeyId.value).Success?,
       Types.KeyStoreException(
         message := "Invalid response from KMS GenerateDataKey:: Invalid Key Id")
     );
