@@ -51,7 +51,6 @@ module GetKeys {
 
     ensures output.Success?
             ==>
-
               && Seq.Last(ddbClient.History.GetItem).output.Success?
               && Seq.Last(ddbClient.History.GetItem).output.value.Item.Some?
               && var activeItem := Seq.Last(ddbClient.History.GetItem).output.value.Item.value;
