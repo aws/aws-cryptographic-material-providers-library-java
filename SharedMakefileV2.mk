@@ -61,7 +61,7 @@ endif
 ########################## Dafny targets
 
 # Verify the entire project
-verify:
+old_verify:
 	dafny \
 		-vcsCores:$(CORES) \
 		-compile:0 \
@@ -73,6 +73,18 @@ verify:
 		-timeLimit:100 \
 		-trace \
 		`find . -name *.dfy`
+
+verify:
+	find . -name '*.dfy' | xargs -n 1 -P $(CORES) -I % dafny \
+		-compile:0 \
+		-definiteAssignment:3 \
+		-quantifierSyntax:3 \
+		-unicodeChar:0 \
+		-functionSyntax:3 \
+		-verificationLogger:csv \
+		-timeLimit:100 \
+		-trace \
+		%
 
 # Verify single file FILE with text logger.
 # This is useful for debugging resource count usage within a file.
