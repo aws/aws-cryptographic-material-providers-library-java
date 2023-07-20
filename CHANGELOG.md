@@ -24,7 +24,6 @@
 - Hierarchical Keyring's Key Store:  
   - The Hierarchical Keyring's Key Store's Data Structure has changed.  
     As such, entries persisted in the Key Store with prior versions of this library are NOT compatibale.  
-    Regretably, we do not have a migration path for these entries.  
     Instead, we recommend Creating a new DynamoDB Table for this version of the Key Store.  
   - The Key Store's `CreateKeyInput` now takes:  
     - An Optional `String branchKeyIdentifier`  
