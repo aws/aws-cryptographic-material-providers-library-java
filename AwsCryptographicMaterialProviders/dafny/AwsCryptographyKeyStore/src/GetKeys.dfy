@@ -426,6 +426,13 @@ module GetKeys {
       && Structure.BranchKeyItem?(getItemHistory.output.value.Item.value)
       && getItemHistory.output.Success?
       && getItemHistory.output.value.Item.Some?
+
+    //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
+    //= type=implication
+    //# The operation MUST use the configured `KMS SDK Client` to decrypt the value of the branch key field.
+    requires decryptHistory in kmsClient.History.Decrypt
+    requires getItemHistory in ddbClient.History.GetItem
+    
   {
 
     var versionItem := getItemHistory.output.value.Item.value;
@@ -458,11 +465,6 @@ module GetKeys {
     //= type=implication
     //# The key `enc` MUST NOT exist in the constructed [encryption context](#encryption-context).
     && Structure.BRANCH_KEY_FIELD !in  versionEncryptionContext
-
-    //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
-    //= type=implication
-    //# The operation MUST use the configured `KMS SDK Client` to decrypt the value of the branch key field.
-    // && |kmsClient.History.Decrypt| == |old(kmsClient.History.Decrypt)| + 1
 
     //= aws-encryption-sdk-specification/framework/branch-key-store.md#aws-kms-branch-key-decryption
     //= type=implication
