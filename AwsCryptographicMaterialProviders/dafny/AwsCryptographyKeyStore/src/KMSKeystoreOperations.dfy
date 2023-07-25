@@ -158,10 +158,9 @@ module {:options "/functionSyntax:4" } KMSKeystoreOperations {
     );
 
     :- Need(
-      && reEncryptResponse.CiphertextBlob.Some?
-      && KMS.IsValid_CiphertextType(reEncryptResponse.CiphertextBlob.value),
+      && reEncryptResponse.CiphertextBlob.Some?,
       Types.KeyStoreException(
-        message := "Invalid response from AWS KMS GeneratedDataKey: Invalid ciphertext")
+        message := "Invalid response from AWS KMS ReEncrypt: No Ciphertext included in the response.")
     );
 
     return Success(reEncryptResponse);
