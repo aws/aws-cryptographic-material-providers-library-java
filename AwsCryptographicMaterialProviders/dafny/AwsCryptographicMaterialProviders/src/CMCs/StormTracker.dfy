@@ -53,7 +53,7 @@ module {:options "/functionSyntax:4" }  StormTracker {
       && inFlight !in wrapped.Modifies
       && wrapped.ValidState()
     }
-    var wrapped : LocalCMC.LocalCMC; // the actual cache
+    var wrapped : LocalCMC.LocalCMC // the actual cache
     var inFlight: MutableMap<seq<uint8>, Types.PositiveLong> // the time at which this key became in flight
     var gracePeriod : Types.PositiveLong // seconds before expiration that we start putting things in flight
     var graceInterval : Types.PositiveLong // minimum seconds before putting the same key in flight again
@@ -71,6 +71,9 @@ module {:options "/functionSyntax:4" }  StormTracker {
         && fresh(this.wrapped.Modifies)
         && fresh(this.inFlight)
     {
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#initialization
+      //# The implementation MUST instantiate a [Local CMC](local-cryptographic-materials-cache.md)
+      //# to do the actual cacheing.
       this.wrapped := new LocalCMC.LocalCMC(cache.entryCapacity as nat, cache.entryPruningTailSize.UnwrapOr(1) as nat);
       this.inFlight := new MutableMap();
       this.gracePeriod := cache.gracePeriod as Types.PositiveLong;
@@ -108,26 +111,55 @@ module {:options "/functionSyntax:4" }  StormTracker {
         INT64_MAX_LIMIT as Types.PositiveLong
     }
 
+    predicate WithinGracePeriod(nameonly now : Types.PositiveLong, nameonly expiry : Types.PositiveLong)
+      reads this
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#within-grace-period
+      //= type=implication
+      //# A time `now` MUST be considered within the grace period for an entry that expires
+      //# at a time `expiry` if `now >= (expiry - gracePeriod)`
+    {
+      now >= (expiry - gracePeriod)
+    }
+
     // If entry is within `grace time` of expiration, then return EmptyFetch once per `grace interval`,
     // and return cached value otherwise
     method CheckInFlight(identifier: seq<uint8>, result: Types.GetCacheEntryOutput, now : Types.PositiveLong)
       returns (output: CacheState)
+      requires now <= result.expiryTime
       modifies this`lastPrune, inFlight
     {
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# * If the number of things inflight is greater than or equal to the [FanOut](#fanout)
+      //# GetCacheEntry MUST return the cache entry.
       var fanOutReached := FanOutReached(now);
       if fanOutReached {
         return Full(result);
-      } else if result.expiryTime <= now { // expired? should be impossible
-        output := CheckNewEntry(identifier, now);
-      } else if now < result.expiryTime - gracePeriod { // lots of time left
+
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# * If the key's expiration is not within the [Grace Period](#grace-period),
+      //# GetCacheEntry MUST return the cache entry.
+      } else if !WithinGracePeriod(now := now, expiry := result.expiryTime) { // lots of time left
         return Full(result);
+
       } else { // in grace time
         if inFlight.HasKey(identifier) {
           var entry := inFlight.Select(identifier);
+          //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+          //# * If the key is in flight
+          //# and the current time is within the [the grace interval](#grace-interval)
+          //# GetCacheEntry MUST return the cache entry.
           if AddLong(entry, graceInterval) > now {  // already returned an EmptyFetch for this interval
             return Full(result);
           }
         }
+        //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#in-flight
+        //# For each in flight key, the storm tracking CMC MUST keep track of the most recent time
+        //# that NoSuchEntry was returned, with accuracy to the second.
+
+        //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+        //# If the key is in flight
+        //# and the current time is not within the [the grace interval](#grace-interval)
+        //# GetCacheEntry MUST return NoSuchEntry and mark that key as inflight at the current time.
         inFlight.Put(identifier, now);
         return EmptyFetch;
       }
@@ -170,14 +202,33 @@ module {:options "/functionSyntax:4" }  StormTracker {
       modifies this`lastPrune, inFlight
     {
       var fanOutReached := FanOutReached(now);
+
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# * If the number of things inflight is greater than or equal to the [FanOut](#fanout)
+      //# GetCacheEntry MUST block until a [FanOut](#fanout) slot is available, or the key appears in the cache.
       if fanOutReached {
         return EmptyWait;
+
       } else if inFlight.HasKey(identifier) {
         var entry := inFlight.Select(identifier);
+        //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+        //# * If the key is in flight AND the current time is within the [the grace interval](#grace-interval)
+        //# GetCacheEntry MUST block until a [FanOut](#fanout) slot is available, or the key appears in the cache.
         if AddLong(entry, graceInterval) > now {  // already returned an EmptyFetch for this interval
           return EmptyWait;
         }
       }
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#in-flight
+      //# For each in flight key, the storm tracking CMC MUST keep track of the most recent time
+      //# that NoSuchEntry was returned, with accuracy to the second.
+
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# If the key is in flight AND the current time is not within the [the grace interval](#grace-interval)
+      //# GetCacheEntry MUST return NoSuchEntry and mark the inflight key with the current time.
+
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# * If the key is not in flight
+      //# GetCacheEntry MUST return NoSuchEntry and mark that key as inflight at the current time.
       inFlight.Put(identifier, now);
       return EmptyFetch;
     }
@@ -192,6 +243,9 @@ module {:options "/functionSyntax:4" }  StormTracker {
       ensures wrapped == old(wrapped)
       ensures wrapped.Modifies <= old(wrapped.Modifies)
     {
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+      //# The implementation MUST call the [Local CMC](local-cryptographic-materials-cache.md)
+      //# to find the cached materials for the key, if any.
       var result := wrapped.GetCacheEntryWithTime(input, now);
       if result.Success? {
         var newResult := CheckInFlight(input.identifier, result.value, now);
@@ -247,6 +301,11 @@ module {:options "/functionSyntax:4" }  StormTracker {
       ensures inFlight == old(inFlight)
       ensures wrapped == old(wrapped)
       ensures fresh(wrapped.Modifies - old(wrapped.Modifies))
+
+      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#putcacheentry
+      //= type=implication
+      //# PutCacheEntry MUST mark the key as not in flight.
+      ensures input.identifier !in inFlight.content()
     {
       inFlight.Remove(input.identifier);
       output := wrapped.PutCacheEntry'(input);
