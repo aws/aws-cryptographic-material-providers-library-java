@@ -135,9 +135,9 @@ module {:options "/functionSyntax:4" }  StormTracker {
       if fanOutReached {
         return Full(result);
 
-      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-      //# * If the key's expiration is not within the [Grace Period](#grace-period),
-      //# GetCacheEntry MUST return the cache entry.
+        //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+        //# * If the key's expiration is not within the [Grace Period](#grace-period),
+        //# GetCacheEntry MUST return the cache entry.
       } else if !WithinGracePeriod(now := now, expiry := result.expiryTime) { // lots of time left
         return Full(result);
 
