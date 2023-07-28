@@ -3,7 +3,7 @@
 
 // array of Auto-initializable type that auto-sizes
 module {:options "-functionSyntax:4"} ZVector {
-  
+
   class ZVector<T(0)> {
     var data : array<T>
     var currSize : nat
