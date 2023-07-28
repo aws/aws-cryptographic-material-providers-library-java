@@ -111,14 +111,27 @@ module {:options "/functionSyntax:4" }  StormTracker {
         INT64_MAX_LIMIT as Types.PositiveLong
     }
 
+    //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#within-grace-period
+    //= type=implication
+    //# A time `now` MUST be considered within the [grace period](#grace-period) for an entry that expires
+    //# at a time `expiry` if `(expiry - gracePeriod) <= now`
     predicate WithinGracePeriod(nameonly now : Types.PositiveLong, nameonly expiry : Types.PositiveLong)
       reads this
-      //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#within-grace-period
-      //= type=implication
-      //# A time `now` MUST be considered within the grace period for an entry that expires
-      //# at a time `expiry` if `now >= (expiry - gracePeriod)`
+      ensures WithinGracePeriod(now := now, expiry := expiry) == (now >= (expiry - gracePeriod))
     {
       now >= (expiry - gracePeriod)
+    }
+
+    //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#within-grace-interval
+    //= type=implication
+    //# A time `now` MUST be considered within the [grace interval](#grace-interval)
+    //# of an inflight entry at `inflight` time
+    //# if `now < (inflight + graceInterval)`
+    predicate WithinGraceInterval(nameonly now : Types.PositiveLong, nameonly inFlight : Types.PositiveLong)
+      reads this
+      ensures WithinGraceInterval(now := now, inFlight := inFlight) == (now < AddLong(inFlight, graceInterval))
+    {
+      now < AddLong(inFlight, graceInterval)
     }
 
     // If entry is within `grace time` of expiration, then return EmptyFetch once per `grace interval`,
@@ -136,7 +149,7 @@ module {:options "/functionSyntax:4" }  StormTracker {
         return Full(result);
 
         //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-        //# * If the key's expiration is not within the [Grace Period](#grace-period),
+        //# - If the key's expiration _is not_ [within the grace period](#within-grace-period),
         //# GetCacheEntry MUST return the cache entry.
       } else if !WithinGracePeriod(now := now, expiry := result.expiryTime) { // lots of time left
         return Full(result);
@@ -145,10 +158,11 @@ module {:options "/functionSyntax:4" }  StormTracker {
         if inFlight.HasKey(identifier) {
           var entry := inFlight.Select(identifier);
           //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-          //# * If the key is in flight
-          //# and the current time is within the [the grace interval](#grace-interval)
+          //# - If the key's expiration _is_ [within the grace period](#within-grace-period),
+          //# and the key _is_ inflight
+          //# and the inflight time _is_ [within the grace interval](#within-grace-interval)
           //# GetCacheEntry MUST return the cache entry.
-          if AddLong(entry, graceInterval) > now {  // already returned an EmptyFetch for this interval
+          if WithinGraceInterval(now := now, inFlight := entry) {  // already returned an EmptyFetch for this interval
             return Full(result);
           }
         }
@@ -157,9 +171,16 @@ module {:options "/functionSyntax:4" }  StormTracker {
         //# that NoSuchEntry was returned, with accuracy to the second.
 
         //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-        //# If the key is in flight
-        //# and the current time is not within the [the grace interval](#grace-interval)
+        //# - If the key's expiration _is_ [within the grace period](#within-grace-period),
+        //# and the key _is not_ inflight
         //# GetCacheEntry MUST return NoSuchEntry and mark that key as inflight at the current time.
+
+        //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
+        //# - If the key's expiration _is_ [within the grace period](#within-grace-period),
+        //# and the key _is_ inflight
+        //# and the inflight time _is not_ [within the grace interval](#within-grace-interval)
+        //# GetCacheEntry MUST return NoSuchEntry and update the key as inflight at the current time.
+
         inFlight.Put(identifier, now);
         return EmptyFetch;
       }
@@ -212,9 +233,10 @@ module {:options "/functionSyntax:4" }  StormTracker {
       } else if inFlight.HasKey(identifier) {
         var entry := inFlight.Select(identifier);
         //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-        //# * If the key is in flight AND the current time is within the [the grace interval](#grace-interval)
+        //# - If the key _is_ inflight
+        //# and the current time _is_ [within the grace interval](#within-grace-interval)
         //# GetCacheEntry MUST block until a [FanOut](#fanout) slot is available, or the key appears in the cache.
-        if AddLong(entry, graceInterval) > now {  // already returned an EmptyFetch for this interval
+        if WithinGraceInterval(now := now, inFlight := entry) {  // already returned an EmptyFetch for this interval
           return EmptyWait;
         }
       }
@@ -223,12 +245,14 @@ module {:options "/functionSyntax:4" }  StormTracker {
       //# that NoSuchEntry was returned, with accuracy to the second.
 
       //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-      //# If the key is in flight AND the current time is not within the [the grace interval](#grace-interval)
-      //# GetCacheEntry MUST return NoSuchEntry and mark the inflight key with the current time.
+      //# - If the key _is not_ inflight
+      //# GetCacheEntry MUST return NoSuchEntry and mark that key as inflight at the current time.
 
       //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#getcacheentry
-      //# * If the key is not in flight
-      //# GetCacheEntry MUST return NoSuchEntry and mark that key as inflight at the current time.
+      //# - If the key _is_ inflight
+      //# and the current time _is not_ [within the grace interval](#within-grace-interval)
+      //# GetCacheEntry MUST return NoSuchEntry and update the key as inflight at the current time.
+
       inFlight.Put(identifier, now);
       return EmptyFetch;
     }
