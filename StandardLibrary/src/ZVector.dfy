@@ -7,6 +7,7 @@ module {:options "-functionSyntax:4"} ZVector {
   class ZVector<T(0)> {
     var data : array<T>
     var currSize : nat
+    static const Default : T
 
     constructor(startSize : nat := 0)
       ensures Invariant()
@@ -14,7 +15,7 @@ module {:options "-functionSyntax:4"} ZVector {
       ensures currSize == 0
       ensures data.Length == startSize
     {
-      this.data := new T[startSize];
+      this.data := new T[startSize](i => Default);
       this.currSize := 0;
     }
 
@@ -100,7 +101,7 @@ module {:options "-functionSyntax:4"} ZVector {
       ensures data.Length == newLength
       modifies this`data
     {
-      var newData := new T[newLength];
+      var newData := new T[newLength](i => Default);
       for i := 0 to currSize
         invariant currSize <= data.Length
         invariant newData[..i] == data[..i]
@@ -382,6 +383,7 @@ module {:options "-functionSyntax:4"} ZVector {
       currSize := newSize;
       SeqIsDataPos(pos, pos+|newData|);
       SeqIsDataPos(pos+|newData|, currSize);
+      assert AsSeq()[pos+|newData|..currSize] == old(AsSeq()[pos..currSize]);
     }
 
     // insert item before pos
