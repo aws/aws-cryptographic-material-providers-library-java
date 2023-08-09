@@ -379,6 +379,7 @@ module {:options "/functionSyntax:4" } LocalCMC {
       ensures GetCacheEntryEnsuresPublicly(input, output)
       ensures unchanged(History)
       ensures Modifies <= old(Modifies)
+      ensures output.Success? ==> now <= output.value.expiryTime
     {
       if cache.HasKey(input.identifier) {
         var entry := cache.Select(input.identifier);
