@@ -1,6 +1,8 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+val accpLocalJar: String by project
+
 plugins {
     `java-library`
     `maven-publish`
@@ -45,9 +47,18 @@ dependencies {
     implementation("software.amazon.smithy.dafny:conversion:0.1")
     implementation("software.amazon.cryptography:StandardLibrary:1.0-SNAPSHOT")
     implementation("org.bouncycastle:bcprov-jdk18on:1.75")
-    // "amazonCorrettoCryptoProviderImplementation"(
-    implementation(
-            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${determineClassifier()}")
+    // ACCP ONLY supports Linux, otherwise you have to build it from source and provide it
+    // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
+    if (project.hasProperty("accpLocalJar")) {
+        // "amazonCorrettoCryptoProviderImplementation"(
+        implementation(files(accpLocalJar))
+    } else if (osdetector.os.contains("linux")) {
+        // "amazonCorrettoCryptoProviderImplementation"(
+        implementation("software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
+    } else { // REMOVE THIS
+        implementation(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+    }
 }
 
 publishing {
@@ -70,11 +81,7 @@ tasks {
     }
 }
 
-// ACCP ONLY supports Linux and Mac
-// https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
-// But, they DO NOT release a Mac Version,
-// they just call it linux.
-fun determineClassifier(): String {
+fun overrideClassifier(): String {
     if (osdetector.os.contains("osx")) {
         return "linux-" + osdetector.arch
     }
