@@ -65,50 +65,42 @@ public class __default {
   }
   public static dafny.DafnySequence<? extends java.lang.Byte> Hkdf(software.amazon.cryptography.primitives.internaldafny.types.DigestAlgorithm digest, Wrappers_Compile.Option<dafny.DafnySequence<? extends java.lang.Byte>> salt, dafny.DafnySequence<? extends java.lang.Byte> ikm, dafny.DafnySequence<? extends java.lang.Byte> info, java.math.BigInteger L)
   {
-    try {
-      if (
-          Cipher.getInstance("AES/GCM/NoPadding", "AmazonCorrettoCryptoProvider")
-              .getProvider().getName()
-              .equals("AmazonCorrettoCryptoProvider")
-      ) {
-        return ACCP_HKDF.ACCP_HKDF.Hkdf(digest, salt, ikm, info, L);
-      }
-    } catch (GeneralSecurityException ignored) {}
-      dafny.DafnySequence<? extends java.lang.Byte> okm = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
-    if(true) {
-      if ((L).signum() == 0) {
-        okm = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
-        return okm;
-      }
-      HMAC.HMac _39_hmac;
-      Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error> _40_valueOrError0 = (Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error>)null;
-      Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error> _out6;
-      _out6 = HMAC.HMac.Build(digest);
-      _40_valueOrError0 = _out6;
-      if (!(!((_40_valueOrError0).IsFailure(HMAC.HMac._typeDescriptor(), software.amazon.cryptography.primitives.internaldafny.types.Error._typeDescriptor())))) {
-        throw new dafny.DafnyHaltException("/Volumes/workplace/aws-cryptographic-material-providers-library-java/AwsCryptographyPrimitives/src/HKDF/HKDF.dfy(222,13): " + java.lang.String.valueOf(_40_valueOrError0));
-      }
-      _39_hmac = (_40_valueOrError0).Extract(HMAC.HMac._typeDescriptor(), software.amazon.cryptography.primitives.internaldafny.types.Error._typeDescriptor());
-      java.math.BigInteger _41_hashLength = java.math.BigInteger.ZERO;
-      _41_hashLength = Digest_Compile.__default.Length(digest);
-      dafny.DafnySequence<? extends java.lang.Byte> _42_nonEmptySalt = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
-      Wrappers_Compile.Option<dafny.DafnySequence<? extends java.lang.Byte>> _source1 = salt;
-      if (_source1.is_None()) {
-        _42_nonEmptySalt = StandardLibrary_Compile.__default.<java.lang.Byte>Fill(BoundedInts_Compile.uint8._typeDescriptor(), (byte) 0, _41_hashLength);
-      } else {
-        dafny.DafnySequence<? extends java.lang.Byte> _43___mcc_h0 = ((Wrappers_Compile.Option_Some<dafny.DafnySequence<? extends java.lang.Byte>>)_source1)._value;
-        dafny.DafnySequence<? extends java.lang.Byte> _44_s = _43___mcc_h0;
-        _42_nonEmptySalt = _44_s;
-      }
-      dafny.DafnySequence<? extends java.lang.Byte> _45_prk;
-      dafny.DafnySequence<? extends java.lang.Byte> _out7;
-      _out7 = __default.Extract(_39_hmac, _42_nonEmptySalt, ikm);
-      _45_prk = _out7;
-      dafny.DafnySequence<? extends java.lang.Byte> _out8;
-      _out8 = __default.Expand(_39_hmac, _45_prk, info, L, digest);
-      okm = _out8;
-    }
-    return okm;
+      return ACCP_HKDF.ACCP_HKDF.Hkdf(digest, salt, ikm, info, L);
+    //   dafny.DafnySequence<? extends java.lang.Byte> okm = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
+    // if(true) {
+    //   if ((L).signum() == 0) {
+    //     okm = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
+    //     return okm;
+    //   }
+    //   HMAC.HMac _39_hmac;
+    //   Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error> _40_valueOrError0 = (Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error>)null;
+    //   Wrappers_Compile.Result<HMAC.HMac, software.amazon.cryptography.primitives.internaldafny.types.Error> _out6;
+    //   _out6 = HMAC.HMac.Build(digest);
+    //   _40_valueOrError0 = _out6;
+    //   if (!(!((_40_valueOrError0).IsFailure(HMAC.HMac._typeDescriptor(), software.amazon.cryptography.primitives.internaldafny.types.Error._typeDescriptor())))) {
+    //     throw new dafny.DafnyHaltException("/Volumes/workplace/aws-cryptographic-material-providers-library-java/AwsCryptographyPrimitives/src/HKDF/HKDF.dfy(222,13): " + java.lang.String.valueOf(_40_valueOrError0));
+    //   }
+    //   _39_hmac = (_40_valueOrError0).Extract(HMAC.HMac._typeDescriptor(), software.amazon.cryptography.primitives.internaldafny.types.Error._typeDescriptor());
+    //   java.math.BigInteger _41_hashLength = java.math.BigInteger.ZERO;
+    //   _41_hashLength = Digest_Compile.__default.Length(digest);
+    //   dafny.DafnySequence<? extends java.lang.Byte> _42_nonEmptySalt = dafny.DafnySequence.<java.lang.Byte> empty(BoundedInts_Compile.uint8._typeDescriptor());
+    //   Wrappers_Compile.Option<dafny.DafnySequence<? extends java.lang.Byte>> _source1 = salt;
+    //   if (_source1.is_None()) {
+    //     _42_nonEmptySalt = StandardLibrary_Compile.__default.<java.lang.Byte>Fill(BoundedInts_Compile.uint8._typeDescriptor(), (byte) 0, _41_hashLength);
+    //   } else {
+    //     dafny.DafnySequence<? extends java.lang.Byte> _43___mcc_h0 = ((Wrappers_Compile.Option_Some<dafny.DafnySequence<? extends java.lang.Byte>>)_source1)._value;
+    //     dafny.DafnySequence<? extends java.lang.Byte> _44_s = _43___mcc_h0;
+    //     _42_nonEmptySalt = _44_s;
+    //   }
+    //   dafny.DafnySequence<? extends java.lang.Byte> _45_prk;
+    //   dafny.DafnySequence<? extends java.lang.Byte> _out7;
+    //   _out7 = __default.Extract(_39_hmac, _42_nonEmptySalt, ikm);
+    //   _45_prk = _out7;
+    //   dafny.DafnySequence<? extends java.lang.Byte> _out8;
+    //   _out8 = __default.Expand(_39_hmac, _45_prk, info, L, digest);
+    //   okm = _out8;
+    // }
+    // return okm;
   }
   private static final dafny.TypeDescriptor<__default> _TYPE = dafny.TypeDescriptor.<__default>referenceWithInitializer(__default.class, () -> (__default) null);
   public static dafny.TypeDescriptor<__default> _typeDescriptor() {
