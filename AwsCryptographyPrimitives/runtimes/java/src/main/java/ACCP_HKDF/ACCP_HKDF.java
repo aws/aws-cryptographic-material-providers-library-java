@@ -55,6 +55,10 @@ public class ACCP_HKDF {
         Objects.requireNonNull(AmazonCorrettoCryptoProvider.INSTANCE, "AmazonCorrettoCryptoProvider is not available");
         assert Objects.isNull(AmazonCorrettoCryptoProvider.INSTANCE.getLoadingError());
         assert AmazonCorrettoCryptoProvider.INSTANCE.runSelfTests().equals(SelfTestStatus.PASSED);
+        if (AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3) {
+            throw new RuntimeException(String.format("ACCP is less than 2.3: %s",
+                                                     AmazonCorrettoCryptoProvider.INSTANCE.getVersion()));
+        }
         //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
         // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
         final String nativeDigest = "HkdfWithHmacSHA256"; //"HkdfWithHmac" + ToNative.DigestAlgorithm(digest).toString().replace("_", "");
