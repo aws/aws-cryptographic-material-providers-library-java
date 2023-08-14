@@ -51,13 +51,17 @@ dependencies {
     // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
     if (project.hasProperty("accpLocalJar")) {
         // "amazonCorrettoCryptoProviderImplementation"(
+        logger.warn("Using ACCP Local Jar.")
         implementation(files(accpLocalJar))
     } else if (osdetector.os.contains("linux")) {
+        logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         // "amazonCorrettoCryptoProviderImplementation"(
         implementation("software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
-    } else { // REMOVE THIS
-        implementation(
-            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+    } else {
+        logger.warn("NOT using ACCP.")
+        // logger.warn("Using un-supported ACCP.")
+        // implementation(
+        //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
 }
 
@@ -83,7 +87,8 @@ tasks {
 
 fun overrideClassifier(): String {
     if (osdetector.os.contains("osx")) {
-        return "linux-" + osdetector.arch
+       logger.warn("Overriding detected os `osx` to be `linux`.")
+       return "linux-" + osdetector.arch
     }
     return osdetector.classifier
 }
