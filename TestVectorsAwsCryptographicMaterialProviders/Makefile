@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 CORES=2
+PUBLISHED_VERSION="1.0-SNAPSHOT"
 
 include ../SharedMakefileV2.mk
 
@@ -58,3 +59,6 @@ SERVICE_DEPS_KeyVectors := \
 
 format_net:
 	pushd runtimes/net && dotnet format && popd
+
+test_java:
+	./runtimes/java/gradlew -p runtimes/java runTests -PpublishedVersion=$(PUBLISHED_VERSION)
