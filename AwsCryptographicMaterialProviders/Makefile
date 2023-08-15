@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 CORES=2
+# Default to SNAPSHOT
+PUBLISHED_VERSION="1.0-SNAPSHOT"
 
 include ../SharedMakefileV2.mk
 
@@ -49,8 +51,8 @@ format_net:
 
 maven_ca_deploy:
 	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository \
-	-PpublishedVersion="1.0.1"
+	-PpublishedVersion=$(PUBLISHED_VERSION)
 
 mvn_staging_deploy:
 	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository \
-	-PpublishedVersion="1.0.1"
+	-PpublishedVersion=$(PUBLISHED_VERSION)

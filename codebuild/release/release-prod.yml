@@ -52,7 +52,7 @@ phases:
     commands:
       - cd AwsCryptographicMaterialProviders/
       # Build and deploy to maven local
-      - make build_java && make mvn_local_deploy
+      - make build_java && make PUBLISHED_VERSION=$VERSION mvn_local_deploy
       # Before publishing, test local jar
       # Since we just deployed to mvn local we will not pull down from CA
       - cd ../TestVectorsAwsCryptographicMaterialProviders/
@@ -63,7 +63,7 @@ phases:
       - cd ../AwsCryptographicMaterialProviders/
 
       # Publish to Sonatype
-      - gradle -p runtimes/java publishMavenPublicationToSonatypeRepository closeSonatypeStagingRepository
-      - gradle -p runtimes/java findSonatypeStagingRepository releaseSonatypeStagingRepository
+      - gradle -p runtimes/java publishMavenPublicationToSonatypeRepository -PpublishedVersion=$VERSION closeSonatypeStagingRepository -PpublishedVersion=$VERSION
+      - gradle -p runtimes/java findSonatypeStagingRepository -PpublishedVersion=$VERSION releaseSonatypeStagingRepository -PpublishedVersion=$VERSION
 
 

@@ -18,7 +18,7 @@ env:
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: $JAVA_ENV_VERSION
     commands:
       - cd ..
       # Get Dafny
@@ -51,7 +51,7 @@ phases:
     commands:
       - cd AwsCryptographicMaterialProviders/
       # Build and deploy to maven local
-      - make build_java && make mvn_local_deploy
+      - make build_java && make PUBLISHED_VERSION=$VERSION mvn_local_deploy
       # Since we just deployed to mvn local we will not pull down from CA
       - cd ../TestVectorsAwsCryptographicMaterialProviders/
       # transpile the code only for this project
@@ -60,4 +60,4 @@ phases:
       - make PUBLISHED_VERSION=$VERSION test_java
       - cd ../AwsCryptographicMaterialProviders/
       # Deploy to AWS CodeArtifact
-      - make mvn_staging_deploy
+      - make PUBLISHED_VERSION=$VERSION mvn_staging_deploy

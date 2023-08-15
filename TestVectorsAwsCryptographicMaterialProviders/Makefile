@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 CORES=2
+# Default to SNAPSHOT
 PUBLISHED_VERSION="1.0-SNAPSHOT"
 
 include ../SharedMakefileV2.mk
