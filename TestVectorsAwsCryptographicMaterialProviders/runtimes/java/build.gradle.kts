@@ -1,9 +1,9 @@
+// Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 import java.net.URI
 import javax.annotation.Nullable
 
-tasks.wrapper {
-    gradleVersion = "7.6"
-}
+val publishedVersion: String by project
 
 plugins {
     `java-library`
@@ -58,7 +58,8 @@ repositories {
 dependencies {
     implementation("org.dafny:DafnyRuntime:4.1.0")
     implementation("software.amazon.smithy.dafny:conversion:0.1")
-    implementation("software.amazon.cryptography:aws-cryptographic-material-providers:1.0.1")
+    implementation("software.amazon.cryptography:aws-cryptographic-material-providers:${
+        if (project.hasProperty("publishedVersion")) publishedVersion else "1.0-SNAPSHOT"}")
     implementation(platform("software.amazon.awssdk:bom:2.19.1"))
     implementation("software.amazon.awssdk:dynamodb")
     implementation("software.amazon.awssdk:dynamodb-enhanced")
@@ -67,11 +68,6 @@ dependencies {
 }
 
 publishing {
-    publications.create<MavenPublication>("mavenLocal") {
-        groupId = group as String?
-        artifactId = description
-        from(components["java"])
-    }
     publications.create<MavenPublication>("maven") {
         groupId = group as String?
         artifactId = description
@@ -93,4 +89,8 @@ tasks.register<JavaExec>("runTests") {
 tasks.register<Copy>("copyKeysJSON") {
     from(layout.projectDirectory.file("../../dafny/TestVectorsAwsCryptographicMaterialProviders/test/keys.json"))
     into(layout.projectDirectory.dir("dafny/TestVectorsAwsCryptographicMaterialProviders/test"))
+}
+
+tasks.wrapper {
+    gradleVersion = "7.6"
 }
