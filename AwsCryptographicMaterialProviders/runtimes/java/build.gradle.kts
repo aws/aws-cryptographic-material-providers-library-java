@@ -5,12 +5,16 @@ import java.net.URI
 val publishedVersion: String by project
 val verboseTesting: Boolean by project
 
+val accpLocalJar: String by project
+
 plugins {
     `java-library`
     `maven-publish`
     `signing`
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
+    // OS Detector for Optional ACCP
+    id("com.google.osdetector") version "1.7.0"
 }
 
 group = "software.amazon.cryptography"
@@ -55,6 +59,23 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.testng/testng
     testImplementation("org.testng:testng:7.5")
+
+    // ACCP ONLY supports Linux, otherwise you have to build it from source and provide it
+    // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
+    if (project.hasProperty("accpLocalJar")) {
+        // "amazonCorrettoCryptoProviderImplementation"(
+        logger.warn("Using ACCP Local Jar.")
+        implementation(files(accpLocalJar))
+    } else if (osdetector.os.contains("linux")) {
+        logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
+        // "amazonCorrettoCryptoProviderImplementation"(
+        implementation("software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
+    } else {
+        logger.warn("NOT using ACCP.")
+        // logger.warn("Using un-supported ACCP.")
+        // implementation(
+        //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+    }
 }
 
 publishing {
