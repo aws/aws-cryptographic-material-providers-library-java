@@ -6,6 +6,7 @@ val publishedVersion: String by project
 val verboseTesting: Boolean by project
 
 val accpLocalJar: String by project
+val publishedVersion: String by project
 
 plugins {
     `java-library`
@@ -93,6 +94,20 @@ publishing {
         buildPom(this)
     }
 
+    // publications.create<MavenPublication>("maven") {
+    //     groupId = "software.amazon.cryptography"
+    //     artifactId = "aws-cryptographic-material-providers"
+    //     artifact(tasks["shadowJar"])
+    //     artifact(tasks["javadocJar"])
+    //     artifact(tasks["sourcesJar"])
+
+    //     // Since we ship the MPL bundled with our generated dependencies they should not be included in the generated pom.xml
+    //     // however; we also use additional dependencies runtime dependencies that are needed in order to properly run the mpl.
+    //     // When you bundle a shadow jar you don't need to include any dependencies in the pom.xml since everything is on the jar, but since
+    //     // we are selective so we have to "manually" write our own pom file.
+    //     buildPom(this)
+    // }
+
     repositories {
         mavenLocal()
         if (version != "1.0-SNAPSHOT") {
@@ -177,13 +192,13 @@ if (version != "1.0-SNAPSHOT") {
     signing {
         useGpgCmd()
 
-        // Dynamically set these properties
-        project.ext.set("signing.gnupg.executable", "gpg")
-        project.ext.set("signing.gnupg.useLegacyGpg", "true")
-        project.ext.set("signing.gnupg.homeDir", System.getenv("HOME") + "/.gnupg/")
-        project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/.gnupg/gpg.conf")
-        project.ext.set("signing.gnupg.keyName", System.getenv("GPG_KEY"))
-        project.ext.set("signing.gnupg.passphrase", System.getenv("GPG_PASS"))
+    // Dynamically set these properties
+    project.ext.set("signing.gnupg.executable", "gpg")
+    project.ext.set("signing.gnupg.useLegacyGpg" , "true")
+    project.ext.set("signing.gnupg.homeDir", System.getenv("HOME") + "/.gnupg/")
+    project.ext.set("signing.gnupg.optionsFile", System.getenv("HOME") + "/.gnupg/gpg.conf")
+    project.ext.set("signing.gnupg.keyName", System.getenv("GPG_KEY"))
+    project.ext.set("signing.gnupg.passphrase", System.getenv("GPG_PASS"))
 
         // Signing is required if building a release version and if we're going to publish it.
         // Otherwise if doing a maven publication we will sign
