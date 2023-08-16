@@ -31,7 +31,22 @@ service AwsCryptographicPrimitives {
   errors: [AwsCryptographicPrimitivesError]
 }
 
-structure CryptoConfig {}
+@enum([
+  {
+    name: "REQUIRE_FIPS_HKDF",
+    value: "REQUIRE_FIPS_HKDF",
+  },
+  {
+    name: "NONE",
+    value: "NONE",
+  },
+])
+string HKDFPolicy
+
+
+structure CryptoConfig {
+  hkdfPolicy: HKDFPolicy
+}
 
 ///////////////////
 // Errors

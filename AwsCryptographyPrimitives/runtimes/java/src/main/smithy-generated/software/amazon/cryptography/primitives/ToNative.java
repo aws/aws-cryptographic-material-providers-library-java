@@ -37,6 +37,7 @@ import software.amazon.cryptography.primitives.model.GenerateRSAKeyPairOutput;
 import software.amazon.cryptography.primitives.model.GenerateRandomBytesInput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthOutput;
+import software.amazon.cryptography.primitives.model.HKDFPolicy;
 import software.amazon.cryptography.primitives.model.HMacInput;
 import software.amazon.cryptography.primitives.model.HkdfExpandInput;
 import software.amazon.cryptography.primitives.model.HkdfExtractInput;
@@ -156,6 +157,9 @@ public class ToNative {
   public static CryptoConfig CryptoConfig(
       software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig dafnyValue) {
     CryptoConfig.Builder nativeBuilder = CryptoConfig.builder();
+    if (dafnyValue.dtor_hkdfPolicy().is_Some()) {
+      nativeBuilder.hkdfPolicy(ToNative.HKDFPolicy(dafnyValue.dtor_hkdfPolicy().dtor_value()));
+    }
     return nativeBuilder.build();
   }
 
@@ -397,6 +401,17 @@ public class ToNative {
       return ECDSASignatureAlgorithm.ECDSA_P256;
     }
     throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.ECDSASignatureAlgorithm matches the input : " + dafnyValue);
+  }
+
+  public static HKDFPolicy HKDFPolicy(
+      software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy dafnyValue) {
+    if (dafnyValue.is_REQUIRE__FIPS__HKDF()) {
+      return HKDFPolicy.REQUIRE_FIPS_HKDF;
+    }
+    if (dafnyValue.is_NONE()) {
+      return HKDFPolicy.NONE;
+    }
+    throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.HKDFPolicy matches the input : " + dafnyValue);
   }
 
   public static RSAPaddingMode RSAPaddingMode(

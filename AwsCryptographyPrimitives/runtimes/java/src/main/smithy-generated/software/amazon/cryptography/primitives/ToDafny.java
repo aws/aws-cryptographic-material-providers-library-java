@@ -33,6 +33,7 @@ import software.amazon.cryptography.primitives.internaldafny.types.GenerateRSAKe
 import software.amazon.cryptography.primitives.internaldafny.types.GenerateRandomBytesInput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthOutput;
+import software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy;
 import software.amazon.cryptography.primitives.internaldafny.types.HMacInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExpandInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExtractInput;
@@ -163,7 +164,11 @@ public class ToDafny {
 
   public static CryptoConfig CryptoConfig(
       software.amazon.cryptography.primitives.model.CryptoConfig nativeValue) {
-    return new CryptoConfig();
+    Option<HKDFPolicy> hkdfPolicy;
+    hkdfPolicy = Objects.nonNull(nativeValue.hkdfPolicy()) ?
+        Option.create_Some(ToDafny.HKDFPolicy(nativeValue.hkdfPolicy()))
+        : Option.create_None();
+    return new CryptoConfig(hkdfPolicy);
   }
 
   public static DigestInput DigestInput(
@@ -468,6 +473,21 @@ public class ToDafny {
       }
       default: {
         throw new RuntimeException("Cannot convert " + nativeValue + " to software.amazon.cryptography.primitives.internaldafny.types.ECDSASignatureAlgorithm.");
+      }
+    }
+  }
+
+  public static HKDFPolicy HKDFPolicy(
+      software.amazon.cryptography.primitives.model.HKDFPolicy nativeValue) {
+    switch (nativeValue) {
+      case REQUIRE_FIPS_HKDF: {
+        return HKDFPolicy.create_REQUIRE__FIPS__HKDF();
+      }
+      case NONE: {
+        return HKDFPolicy.create_NONE();
+      }
+      default: {
+        throw new RuntimeException("Cannot convert " + nativeValue + " to software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy.");
       }
     }
   }

@@ -8,7 +8,9 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
   import Operations = AwsCryptographyPrimitivesOperations
 
   function method DefaultCryptoConfig(): CryptoConfig {
-    CryptoConfig
+    CryptoConfig(
+      hkdfPolicy := None
+    )
   }
 
   method AtomicPrimitives(config: CryptoConfig)
