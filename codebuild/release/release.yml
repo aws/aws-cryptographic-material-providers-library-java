@@ -14,7 +14,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto8
         JAVA_NUMERIC_VERSION: 8
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
   
   - identifier: validate_staging_corretto8
@@ -25,7 +24,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto8
         JAVA_NUMERIC_VERSION: 8
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
 
   - identifier: validate_staging_corretto11
@@ -36,7 +34,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto11
         JAVA_NUMERIC_VERSION: 11
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
   
   - identifier: validate_staging_corretto17
@@ -47,7 +44,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto17
         JAVA_NUMERIC_VERSION: 17
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:7.0
     
   - identifier: upload_to_sonatype
@@ -60,7 +56,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto8
         JAVA_NUMERIC_VERSION: 8
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
  
   ## The following steps are expected to fail; since maven central takes time to
@@ -74,7 +69,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto8
         JAVA_NUMERIC_VERSION: 8
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
 
   - identifier: validate_release_corretto11
@@ -85,7 +79,6 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto11
         JAVA_NUMERIC_VERSION: 11
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:5.0
   
   - identifier: validate_release_corretto17
@@ -96,5 +89,4 @@ batch:
       variables:
         JAVA_ENV_VERSION: corretto17
         JAVA_NUMERIC_VERSION: 17
-        VERSION: "1.0.1"
       image: aws/codebuild/standard:7.0
