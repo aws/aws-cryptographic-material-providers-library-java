@@ -152,7 +152,7 @@ nexusPublishing {
     }
 }
 
-if (project.hasProperty("publishedVersion")) {
+if (version != "1.0-SNAPSHOT") {
     signing {
         useGpgCmd()
 
