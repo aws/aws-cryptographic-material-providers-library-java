@@ -49,6 +49,10 @@ SERVICE_DEPS_AwsCryptographyKeyStore := \
 format_net:
 	pushd runtimes/net && dotnet format && popd
 
+mvn_local_deploy:
+	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToMavenLocal \
+	-PpublishedVersion=$(PUBLISHED_VERSION)
+
 maven_ca_deploy:
 	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository \
 	-PpublishedVersion=$(PUBLISHED_VERSION)
