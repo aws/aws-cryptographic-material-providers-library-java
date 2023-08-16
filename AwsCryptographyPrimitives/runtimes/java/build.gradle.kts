@@ -25,6 +25,7 @@ java {
     }
     sourceSets["test"].java {
         srcDir("src/test/dafny-generated")
+        srcDir("src/test/accp")
     }
     sourceSets.create("accp").java {
         srcDir("src/main/java")
@@ -32,21 +33,10 @@ java {
         srcDir("src/main/smithy-generated")
         srcDir("src/main/accp")
     }
-    sourceSets.create("testAccp").java{
-        srcDir("src/main/java")
-        srcDir("src/main/dafny-generated")
-        srcDir("src/main/smithy-generated")
-        srcDir("src/main/accp")
-        srcDir("src/test/accp")
-    }
     // Optional ACCP dependency for at least HKDF
     registerFeature("accp") {
         // We may create a new source set with ACCP code...
         usingSourceSet(sourceSets["accp"])
-    }
-    registerFeature("testAccp") {
-        // We may create a new source set with ACCP code...
-        usingSourceSet(sourceSets["testAccp"])
     }
 }
 
@@ -64,31 +54,28 @@ dependencies {
     "accpImplementation"("software.amazon.smithy.dafny:conversion:0.1")
     "accpImplementation"("software.amazon.cryptography:StandardLibrary:1.0-SNAPSHOT")
     "accpImplementation"("org.bouncycastle:bcprov-jdk18on:1.75")
-    "testAccpImplementation"("org.dafny:DafnyRuntime:4.1.0")
-    "testAccpImplementation"("software.amazon.smithy.dafny:conversion:0.1")
-    "testAccpImplementation"("software.amazon.cryptography:StandardLibrary:1.0-SNAPSHOT")
-    "testAccpImplementation"("org.bouncycastle:bcprov-jdk18on:1.75")
     // ACCP ONLY supports Linux, otherwise you have to build it from source and provide it
     // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
     if (project.hasProperty("accpLocalJar")) {
         logger.warn("Using ACCP Local Jar.")
         "accpImplementation"(files(accpLocalJar))
-        "testAccpImplementation"(files(accpLocalJar))
+        testImplementation(files(accpLocalJar))
     } else if (osdetector.os.contains("linux")) {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         "accpImplementation"(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
-        "testAccpImplementation"(
+        testImplementation(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
         logger.warn("NOT using ACCP.")
         // logger.warn("Using un-supported ACCP.")
-        // "amazonCorrettoCryptoProviderImplementation"(
+        // "accpImplementation"(
+        //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+        // testImplementation(
         //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
     // https://mvnrepository.com/artifact/org.testng/testng
     testImplementation("org.testng:testng:7.5")
-    "testAccpImplementation"("org.testng:testng:7.5")
 }
 
 publishing {
@@ -103,10 +90,6 @@ publishing {
 tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
-//tasks.withType<JavaCompile>()
-//    .getByName("compileTestAccpImplementation")
-//    { doFirst { classpath.forEach{ println(it) }}}
-
 
 tasks {
     register("runTests", JavaExec::class.java) {
@@ -124,13 +107,15 @@ fun overrideClassifier(): String {
 }
 
 tasks.test {
-    useTestNG()
+    useTestNG() {
+
+    }
     // This will show System.out.println statements
     testLogging.showStandardStreams = true
 
     testLogging {
         lifecycle {
-            events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
+            events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.SKIPPED)
             exceptionFormat = TestExceptionFormat.FULL
             showExceptions = true
             showCauses = true
