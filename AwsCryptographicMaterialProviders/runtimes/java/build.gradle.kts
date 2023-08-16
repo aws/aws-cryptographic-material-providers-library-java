@@ -74,7 +74,7 @@ publishing {
 
     repositories {
         mavenLocal()
-        if (project.hasProperty("publishedVersion")) {
+        if (version != "1.0-SNAPSHOT") {
             maven {
                 name = "PublishToCodeArtifactStaging"
                 url = URI.create("https://crypto-tools-internal-587316601012.d.codeartifact.us-east-1.amazonaws.com/maven/java-mpl-staging/")
