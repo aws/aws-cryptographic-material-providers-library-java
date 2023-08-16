@@ -7,6 +7,8 @@ env:
   variables:
     BRANCH: "main"
     VERSION: "1.0.1"
+    JAVA_ENV_VERSION: corretto8
+    JAVA_NUMERIC_VERSION: 8
   parameter-store:
     ACCOUNT: /CodeBuild/AccountId
   secrets-manager:
@@ -18,7 +20,7 @@ env:
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: $JAVA_ENV_VERSION
     commands:
       - cd ..
       # Get Dafny

@@ -9,6 +9,8 @@ env:
     DOMAIN: crypto-tools-internal
     REPOSITORY: java-mpl-staging
     VERSION: "1.0.1"
+    JAVA_ENV_VERSION: corretto8
+    JAVA_NUMERIC_VERSION: 8
   parameter-store:
     ACCOUNT: /CodeBuild/AccountId
   secrets-manager:
