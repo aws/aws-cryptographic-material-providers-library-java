@@ -17,16 +17,23 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
     returns (res: Result<AtomicPrimitivesClient, Error>)
   {
     var finalConfig: Operations.Config;
-    // TODO: Replace this if statement with the extern logic
-    // and Operations Config refactor described below
-    // and in Operations
-    if (config.hkdfPolicy.None?) {
+    var accpInstalled := CheckForAccp(config);
+    if (
+      && config.hkdfPolicy.Some?
+      && config.hkdfPolicy.Extract() == REQUIRE_FIPS_HKDF
+      && accpInstalled == false
+    ) {
+      return Failure(
+        AwsCryptographicPrimitivesError(message := "ACCP is required but not avaible."));
+    } else if (
+      accpInstalled == true
+    ) {
       finalConfig := Operations.Config(
-        hkdfPolicy := HKDFPolicy.NONE
+        hkdfProvider := Operations.HKDFProvider.HKDF_ACCP
       );
     } else {
       finalConfig := Operations.Config(
-        hkdfPolicy := config.hkdfPolicy.Extract()
+        hkdfProvider := Operations.HKDFProvider.HKDF_DFY
       );
     }
     // TODO: author an extern that runs here and checks if ACCP-FIPS is registered.
@@ -36,6 +43,15 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
     // Otherwise, we fail.
     var client := new AtomicPrimitivesClient(finalConfig);
     return Success(client);
+  }
+
+  method CheckForAccp(config: CryptoConfig)
+    returns (res: bool)
+  {
+    // TODO: call an extern that checks for ACCP
+    // If config requires FIPS, and FIPS is not installed, return false.
+    // Then, return if ACCP is installed and version is >= 2.3
+    return false;
   }
 
   class AtomicPrimitivesClient... {
