@@ -10,6 +10,7 @@ include "AESEncryption.dfy"
 include "Digest.dfy"
 include "RSAEncryption.dfy"
 include "Signature.dfy"
+include "ACCP.dfy"
 
 module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimitivesOperations {
   import Random
@@ -20,7 +21,8 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   import Signature
   import KdfCtr
   import RSAEncryption
-
+  import ACCP
+  
   // Indicates which HKDF implementation to use
   datatype HKDFProvider =
     | HKDF_ACCP // HKDF from ACCP
@@ -35,6 +37,12 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   function ModifiesInternalConfig(config: InternalConfig) : set<object>
   {{}}
 
+  method CheckForAccp(hkdfPolicy: Types.HKDFPolicy)
+    returns (res: bool)
+  {
+    res := ACCP.ExternCheckForAccp(hkdfPolicy);
+  }
+  
   predicate GenerateRandomBytesEnsuresPublicly(input: GenerateRandomBytesInput, output: Result<seq<uint8>, Error>)
   {
     output.Success? ==> |output.value| == input.length as int

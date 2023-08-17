@@ -67,12 +67,14 @@ dependencies {
         testImplementation(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
-        logger.warn("NOT using ACCP.")
-        // logger.warn("Using un-supported ACCP.")
-        // "accpImplementation"(
-        //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
-        // testImplementation(
-        //    "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+//        logger.warn("NOT using ACCP.")
+        logger.warn("Using un-supported ACCP.")
+        "accpImplementation"(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+        testImplementation(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+        implementation(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
     // https://mvnrepository.com/artifact/org.testng/testng
     testImplementation("org.testng:testng:7.5")

@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
 
+import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesError;
 import software.amazon.cryptography.primitives.model.CryptoConfig;
 import software.amazon.cryptography.primitives.model.DigestAlgorithm;
 import software.amazon.cryptography.primitives.model.HKDFPolicy;
@@ -38,8 +39,8 @@ public class ClientTest {
     assertEquals(actual, OKM_A1);
   }
 
-  // This test should FAIL if not run on linux with ACCP FIPS installed
-  @Test
+  // This test should FAIL if not run with ACCP FIPS installed
+  @Test(expectedExceptions = AwsCryptographicPrimitivesError.class)
   public void TestHKDFPolicyRequireFIPS() {
     CryptoConfig config = CryptoConfig.builder()
         .hkdfPolicy(HKDFPolicy.REQUIRE_FIPS_HKDF).build();

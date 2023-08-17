@@ -51,7 +51,8 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
     // TODO: call an extern that checks for ACCP
     // If config requires FIPS, and FIPS is not installed, return false.
     // Then, return if ACCP is installed and version is >= 2.3
-    return false;
+    var policy: HKDFPolicy := config.hkdfPolicy.UnwrapOr(NONE);
+    res := Operations.CheckForAccp(policy);
   }
 
   class AtomicPrimitivesClient... {
