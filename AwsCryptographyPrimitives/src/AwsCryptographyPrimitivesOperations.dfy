@@ -22,7 +22,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   import RSAEncryption
 
   // TODO: Introduce HKDF Provider ENUM
-  datatype Config = Config
+  datatype Config = Config(
     // TODO: Replace with HKDF Provider (
     hkdfPolicy: HKDFPolicy
   )
