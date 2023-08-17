@@ -38,6 +38,7 @@ public class ClientTest {
     assertEquals(actual, OKM_A1);
   }
 
+  // This test should FAIL if not run on linux with ACCP FIPS installed
   @Test
   public void TestHKDFPolicyRequireFIPS() {
     CryptoConfig config = CryptoConfig.builder()
