@@ -21,7 +21,11 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   import KdfCtr
   import RSAEncryption
 
+  // TODO: Introduce HKDF Provider ENUM
   datatype Config = Config
+    // TODO: Replace with HKDF Provider (
+    hkdfPolicy: HKDFPolicy
+  )
   type InternalConfig = Config
   predicate ValidInternalConfig?(config: InternalConfig)
   {true}
@@ -62,9 +66,11 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   predicate HkdfExtractEnsuresPublicly(input: HkdfExtractInput, output: Result<seq<uint8>, Error>)
   {true}
 
+  // TODO: Author HkdfExtractAccp
   method HkdfExtract ( config: InternalConfig,  input: HkdfExtractInput )
     returns (output: Result<seq<uint8>, Error>)
   {
+    // TODO: If HKDF Provider is ACCP, use HkdfExtractAccpP
     output := WrappedHKDF.Extract(input);
   }
 
@@ -75,9 +81,11 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
       && |output.value| == input.expectedLength as nat
   }
 
+  // TODO: Author HkdfExpandAccp
   method HkdfExpand ( config: InternalConfig,  input: HkdfExpandInput )
     returns (output: Result<seq<uint8>, Error>)
   {
+    // TODO: If HKDF Provider is ACCP, use HkdfExpandAccp
     output := WrappedHKDF.Expand(input);
   }
 
@@ -88,9 +96,11 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
       && |output.value| == input.expectedLength as nat
   }
 
+  // TODO: Author HkdfAccp
   method Hkdf ( config: InternalConfig,  input: HkdfInput )
     returns (output: Result<seq<uint8>, Error>)
   {
+    // TODO: If HKDF Provider is ACCP, use HkdfAccp
     output := WrappedHKDF.Hkdf(input);
   }
 

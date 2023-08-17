@@ -16,7 +16,25 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
   method AtomicPrimitives(config: CryptoConfig)
     returns (res: Result<AtomicPrimitivesClient, Error>)
   {
-    var client := new AtomicPrimitivesClient(Operations.Config);
+    var finalConfig: Operations.Config;
+    // TODO: Replace this if statement with the extern logic
+    // and Operations Config refactor described below
+    // and in Operations
+    if (config.hkdfPolicy.None?) {
+      finalConfig := Operations.Config(
+        hkdfPolicy := HKDFPolicy.NONE
+      );
+    } else {
+      finalConfig := Operations.Config(
+        hkdfPolicy := config.hkdfPolicy.Extract()
+      );
+    }
+    // TODO: author an extern that runs here and checks if ACCP-FIPS is registered.
+    // If it is, then the AtomicPrimitivesClient ALWAYS uses it.
+    // If it is not, and the policy is NONE or Not set,
+    // we carry on.
+    // Otherwise, we fail.
+    var client := new AtomicPrimitivesClient(finalConfig);
     return Success(client);
   }
 
