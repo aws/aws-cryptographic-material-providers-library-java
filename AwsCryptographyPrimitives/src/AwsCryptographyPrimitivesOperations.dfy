@@ -25,7 +25,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   datatype HKDFProvider =
     | HKDF_ACCP // HKDF from ACCP
     | HKDF_DFY  // HKDF implemented in this Dafny library
-  
+
   datatype Config = Config(
     hkdfProvider: HKDFProvider
   )
@@ -79,7 +79,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
       output := WrappedHKDF.Extract(input);
     }
   }
-  
+
   predicate HkdfExpandEnsuresPublicly(input: HkdfExpandInput, output: Result<seq<uint8>, Error>)
   {
     output.Success?

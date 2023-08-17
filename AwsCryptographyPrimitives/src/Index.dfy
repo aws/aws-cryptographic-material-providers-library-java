@@ -19,15 +19,15 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny" } Aws.Cr
     var finalConfig: Operations.Config;
     var accpInstalled := CheckForAccp(config);
     if (
-      && config.hkdfPolicy.Some?
-      && config.hkdfPolicy.Extract() == REQUIRE_FIPS_HKDF
-      && accpInstalled == false
-    ) {
+        && config.hkdfPolicy.Some?
+        && config.hkdfPolicy.Extract() == REQUIRE_FIPS_HKDF
+        && accpInstalled == false
+      ) {
       return Failure(
-        AwsCryptographicPrimitivesError(message := "ACCP is required but not avaible."));
+          AwsCryptographicPrimitivesError(message := "ACCP is required but not avaible."));
     } else if (
-      accpInstalled == true
-    ) {
+        accpInstalled == true
+      ) {
       finalConfig := Operations.Config(
         hkdfProvider := Operations.HKDFProvider.HKDF_ACCP
       );
