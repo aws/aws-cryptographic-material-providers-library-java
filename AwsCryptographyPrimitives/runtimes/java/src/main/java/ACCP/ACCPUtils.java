@@ -1,7 +1,5 @@
 package ACCP;
 
-import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
-
 import software.amazon.cryptography.primitives.internaldafny.types.Error;
 import software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy;
 import software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider;
@@ -17,10 +15,17 @@ public class ACCPUtils {
    * Success if it is.
    */
   public static Result<HKDFProvider, Error> ExternCheckForAccp(HKDFPolicy policy) {
-    boolean isAccpInstalled = AmazonCorrettoCryptoProvider.INSTANCE != null &&
-        AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3;
-    boolean isAccpFipsInstalled = isAccpInstalled
-        && AmazonCorrettoCryptoProvider.INSTANCE.isFips();
+    boolean isAccpInstalled = false;
+    boolean isAccpFipsInstalled = false;
+    // All references to AmazonCorrettoCryptoProvider MUST BE inside this try statement.
+    // Otherwise, ACCP becomes a non-optional dependency.
+    try {
+      isAccpInstalled = null !=
+          com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE
+          && com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3;
+      isAccpFipsInstalled = isAccpInstalled
+          && com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE.isFips();
+    } catch (java.lang.NoClassDefFoundError ignore) {}
 
     if (policy.is_REQUIRE__FIPS__HKDF()) {
       return isAccpFipsInstalled ?
