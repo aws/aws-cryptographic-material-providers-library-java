@@ -22,7 +22,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   import KdfCtr
   import RSAEncryption
   import ACCP
-  
+
   datatype Config = Config(
     hkdfProvider: Types.HKDFProvider
   )
@@ -37,7 +37,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   {
     output := ACCP.ExternCheckForAccp(hkdfPolicy);
   }
-  
+
   predicate GenerateRandomBytesEnsuresPublicly(input: GenerateRandomBytesInput, output: Result<seq<uint8>, Error>)
   {
     output.Success? ==> |output.value| == input.length as int
@@ -76,8 +76,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
     returns (output: Result<seq<uint8>, Error>)
   {
     if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
-      // TODO: Replace WrappedHKDF with WrappedHKDFAccp
-      output := WrappedHKDF.Extract(input);
+      output := ACCP.Extract(input);
     } else {
       output := WrappedHKDF.Extract(input);
     }
@@ -94,8 +93,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
     returns (output: Result<seq<uint8>, Error>)
   {
     if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
-      // TODO: Replace WrappedHKDF with WrappedHKDFAccp
-      output := WrappedHKDF.Expand(input);
+      output := ACCP.Expand(input);
     } else {
       output := WrappedHKDF.Expand(input);
     }
@@ -112,8 +110,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
     returns (output: Result<seq<uint8>, Error>)
   {
     if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
-      // TODO: Replace WrappedHKDF with WrappedHKDFAccp
-      output := WrappedHKDF.Hkdf(input);
+      output := ACCP.Hkdf(input);
     } else {
       output := WrappedHKDF.Hkdf(input);
     }
@@ -249,7 +246,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
     returns (output: Result<GetHKDFProviderOutput, Error>)
   {
     output := Success(Types.GetHKDFProviderOutput(
-      provider := config.hkdfProvider)
+                        provider := config.hkdfProvider)
     );
   }
 }
