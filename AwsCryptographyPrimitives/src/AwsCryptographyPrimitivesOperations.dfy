@@ -32,10 +32,10 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   function ModifiesInternalConfig(config: InternalConfig) : set<object>
   {{}}
 
-  method CheckForAccp(hkdfPolicy: Types.HKDFPolicy)
+  method CheckForAccp()
     returns (output: Result<HKDFProvider, Error>)
   {
-    output := ACCP.ExternCheckForAccp(hkdfPolicy);
+    output := ACCP.ExternCheckForAccp();
   }
 
   predicate GenerateRandomBytesEnsuresPublicly(input: GenerateRandomBytesInput, output: Result<seq<uint8>, Error>)
@@ -75,7 +75,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method HkdfExtract ( config: InternalConfig,  input: HkdfExtractInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
+    if (config.hkdfProvider == ACCP) {
       output := ACCP.Extract(input);
     } else {
       output := WrappedHKDF.Extract(input);
@@ -92,7 +92,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method HkdfExpand ( config: InternalConfig,  input: HkdfExpandInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
+    if (config.hkdfProvider == ACCP) {
       output := ACCP.Expand(input);
     } else {
       output := WrappedHKDF.Expand(input);
@@ -109,7 +109,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method Hkdf ( config: InternalConfig,  input: HkdfInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
+    if (config.hkdfProvider == ACCP) {
       output := ACCP.Hkdf(input);
     } else {
       output := WrappedHKDF.Hkdf(input);

@@ -366,8 +366,8 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny.types" } 
 
   }
   datatype CryptoConfig = | CryptoConfig (
-    nameonly hkdfPolicy: Option<HKDFPolicy>
-  )
+
+                          )
   datatype DigestAlgorithm =
     | SHA_512
     | SHA_384
@@ -438,12 +438,8 @@ module {:extern "software.amazon.cryptography.primitives.internaldafny.types" } 
     nameonly info: seq<uint8> ,
     nameonly expectedLength: PositiveInteger
   )
-  datatype HKDFPolicy =
-    | REQUIRE_FIPS_HKDF
-    | NONE
   datatype HKDFProvider =
-    | ACCP_FIPS
-    | ACCP_NOT_FIPS
+    | ACCP
     | MPL
   datatype HMacInput = | HMacInput (
     nameonly digestAlgorithm: DigestAlgorithm ,

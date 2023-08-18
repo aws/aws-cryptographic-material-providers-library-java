@@ -6,13 +6,11 @@ using System;
  using Amazon.Runtime; public class HKDFProvider : ConstantClass {
 
  
- public static readonly HKDFProvider ACCP_FIPS = new HKDFProvider ("ACCP_FIPS");
- 
- public static readonly HKDFProvider ACCP_NOT_FIPS = new HKDFProvider ("ACCP_NOT_FIPS");
+ public static readonly HKDFProvider ACCP = new HKDFProvider ("ACCP");
  
  public static readonly HKDFProvider MPL = new HKDFProvider ("MPL");
  public static readonly  HKDFProvider [] Values =  {
- ACCP_FIPS , ACCP_NOT_FIPS , MPL
+ ACCP , MPL
 } ;
  public HKDFProvider (string value) : base(value) {}
 }

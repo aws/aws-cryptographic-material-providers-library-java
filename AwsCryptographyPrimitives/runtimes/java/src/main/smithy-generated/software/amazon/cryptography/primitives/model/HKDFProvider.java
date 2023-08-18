@@ -4,9 +4,7 @@
 package software.amazon.cryptography.primitives.model;
 
 public enum HKDFProvider {
-  ACCP_FIPS("ACCP_FIPS"),
-
-  ACCP_NOT_FIPS("ACCP_NOT_FIPS"),
+  ACCP("ACCP"),
 
   MPL("MPL");
 

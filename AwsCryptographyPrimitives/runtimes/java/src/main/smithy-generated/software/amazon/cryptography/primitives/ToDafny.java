@@ -35,7 +35,6 @@ import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProvid
 import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthOutput;
-import software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy;
 import software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider;
 import software.amazon.cryptography.primitives.internaldafny.types.HMacInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExpandInput;
@@ -167,11 +166,7 @@ public class ToDafny {
 
   public static CryptoConfig CryptoConfig(
       software.amazon.cryptography.primitives.model.CryptoConfig nativeValue) {
-    Option<HKDFPolicy> hkdfPolicy;
-    hkdfPolicy = Objects.nonNull(nativeValue.hkdfPolicy()) ?
-        Option.create_Some(ToDafny.HKDFPolicy(nativeValue.hkdfPolicy()))
-        : Option.create_None();
-    return new CryptoConfig(hkdfPolicy);
+    return new CryptoConfig();
   }
 
   public static DigestInput DigestInput(
@@ -492,29 +487,11 @@ public class ToDafny {
     }
   }
 
-  public static HKDFPolicy HKDFPolicy(
-      software.amazon.cryptography.primitives.model.HKDFPolicy nativeValue) {
-    switch (nativeValue) {
-      case REQUIRE_FIPS_HKDF: {
-        return HKDFPolicy.create_REQUIRE__FIPS__HKDF();
-      }
-      case NONE: {
-        return HKDFPolicy.create_NONE();
-      }
-      default: {
-        throw new RuntimeException("Cannot convert " + nativeValue + " to software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy.");
-      }
-    }
-  }
-
   public static HKDFProvider HKDFProvider(
       software.amazon.cryptography.primitives.model.HKDFProvider nativeValue) {
     switch (nativeValue) {
-      case ACCP_FIPS: {
-        return HKDFProvider.create_ACCP__FIPS();
-      }
-      case ACCP_NOT_FIPS: {
-        return HKDFProvider.create_ACCP__NOT__FIPS();
+      case ACCP: {
+        return HKDFProvider.create_ACCP();
       }
       case MPL: {
         return HKDFProvider.create_MPL();

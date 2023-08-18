@@ -19,7 +19,7 @@ ACCP
     // otherwise, return if ACCP is installed, version is >= 2.3, && FIPS is enabled.
   method
     {:extern "ACCP.ACCPUtils", "ExternCheckForAccp"}
-  ExternCheckForAccp(hkdfPolicy: Types.HKDFPolicy)
+  ExternCheckForAccp()
     returns (output: Result<Types.HKDFProvider, Types.Error>)
 
   method Extract(input: Types.HkdfExtractInput)

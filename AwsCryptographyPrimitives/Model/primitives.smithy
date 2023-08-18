@@ -32,30 +32,14 @@ service AwsCryptographicPrimitives {
   errors: [AwsCryptographicPrimitivesError]
 }
 
-@enum([
-  {
-    name: "REQUIRE_FIPS_HKDF",
-    value: "REQUIRE_FIPS_HKDF",
-  },
-  {
-    name: "NONE",
-    value: "NONE",
-  },
-])
-string HKDFPolicy
 
 structure CryptoConfig {
-  hkdfPolicy: HKDFPolicy
 }
 
 @enum([
   {
-    name: "ACCP_FIPS",
-    value: "ACCP_FIPS",
-  },
-  {
-    name: "ACCP_NOT_FIPS",
-    value: "ACCP_NOT_FIPS",
+    name: "ACCP",
+    value: "ACCP",
   },
   {
     name: "MPL",

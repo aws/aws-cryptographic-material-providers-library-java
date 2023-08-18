@@ -44,13 +44,18 @@ dependencies {
     if (project.hasProperty("accpLocalJar")) {
         logger.warn("Using ACCP Local Jar.")
         compileOnly(files(accpLocalJar)) // Our Code ALWAYS needs ACCP to Compile.
+        testCompileOnly(files(accpLocalJar))
     } else if (osdetector.os.contains("linux")) {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
+        testCompileOnly(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
         logger.warn("Using un-supported ACCP. Overriding detected os `${osdetector.os}` to be `linux`.")
         compileOnly(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
+        testCompileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
     // https://mvnrepository.com/artifact/org.testng/testng
@@ -85,8 +90,13 @@ fun overrideClassifier(): String {
 }
 
 tasks.test {
+    val testAccp: Boolean = osdetector.os.contains("linux");
     useTestNG() {
-
+        if (testAccp) {
+            includeGroups("linux")
+        } else {
+            excludeGroups("linux")
+        }
     }
     // This will show System.out.println statements
     testLogging.showStandardStreams = true

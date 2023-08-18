@@ -5,30 +5,26 @@ package ACCP;
 // It SHOULD BE safe to reference ACCP in this class,
 // as it will only be loaded if ACCPUtils determined ACCP
 // is available.
-import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
+
 import com.amazon.corretto.crypto.provider.HkdfSpec;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
 import javax.crypto.SecretKeyFactory;
 
-import software.amazon.cryptography.primitives.ToNative;
-import software.amazon.cryptography.primitives.internaldafny.types.DigestAlgorithm;
+import Wrappers_Compile.Result;
 import software.amazon.cryptography.primitives.internaldafny.types.Error;
-import software.amazon.cryptography.primitives.internaldafny.types.HkdfInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExpandInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExtractInput;
+import software.amazon.cryptography.primitives.internaldafny.types.HkdfInput;
 import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesError;
-
 import software.amazon.smithy.dafny.conversion.ToDafny;
 
-import Wrappers_Compile.Result;
-
-import static com.amazon.corretto.crypto.provider.HkdfSpec.hkdfSpec;
+import static ACCP.ACCPUtils.getSecretKeyFactory;
 import static com.amazon.corretto.crypto.provider.HkdfSpec.hkdfExpandSpec;
 import static com.amazon.corretto.crypto.provider.HkdfSpec.hkdfExtractSpec;
+import static com.amazon.corretto.crypto.provider.HkdfSpec.hkdfSpec;
 import static software.amazon.cryptography.primitives.ToDafny.Error;
 
 public class ACCP_HKDF {
@@ -40,7 +36,11 @@ public class ACCP_HKDF {
   public static Result<dafny.DafnySequence<? extends java.lang.Byte>, Error> ExternExtract(
       HkdfExtractInput input
   ) {
-    Result<SecretKeyFactory, Error> maybeKeyFactory = getSecretKeyFactory(input.dtor_digestAlgorithm());
+    //noinspection DuplicatedCode
+    Result<SecretKeyFactory, Error> maybeKeyFactory =
+        //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
+        // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
+        getSecretKeyFactory(input.dtor_digestAlgorithm());
     final SecretKeyFactory secretKeyFactory;
     if (maybeKeyFactory.is_Success()) {
       secretKeyFactory = maybeKeyFactory.dtor_value();
@@ -69,7 +69,10 @@ public class ACCP_HKDF {
   public static Result<dafny.DafnySequence<? extends java.lang.Byte>, Error> ExternExpand(
       HkdfExpandInput input
   ) {
-    Result<SecretKeyFactory, Error> maybeKeyFactory = getSecretKeyFactory(input.dtor_digestAlgorithm());
+    Result<SecretKeyFactory, Error> maybeKeyFactory =
+        //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
+        // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
+        getSecretKeyFactory(input.dtor_digestAlgorithm());
     final SecretKeyFactory secretKeyFactory;
     if (maybeKeyFactory.is_Success()) {
       secretKeyFactory = maybeKeyFactory.dtor_value();
@@ -95,7 +98,11 @@ public class ACCP_HKDF {
   public static Result<dafny.DafnySequence<? extends java.lang.Byte>, Error> ExternHkdf(
       HkdfInput input
   ) {
-    Result<SecretKeyFactory, Error> maybeKeyFactory = getSecretKeyFactory(input.dtor_digestAlgorithm());
+    //noinspection DuplicatedCode
+    Result<SecretKeyFactory, Error> maybeKeyFactory =
+        //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
+        // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
+        getSecretKeyFactory(input.dtor_digestAlgorithm());
     final SecretKeyFactory secretKeyFactory;
     if (maybeKeyFactory.is_Success()) {
       secretKeyFactory = maybeKeyFactory.dtor_value();
@@ -109,33 +116,13 @@ public class ACCP_HKDF {
     final int nativeKeyLength = input.dtor_expectedLength();
     try {
       final HkdfSpec hkdfSpec = hkdfSpec(nativeIkm, nativeSalt, nativeInfo, nativeKeyLength, null);
-      final byte[] pseudorandomKey = secretKeyFactory.generateSecret(hkdfSpec).getEncoded();
-      return Result.create_Success(ToDafny.Simple.ByteSequence(pseudorandomKey));
+      final byte[] pseudoRandomKey = secretKeyFactory.generateSecret(hkdfSpec).getEncoded();
+      return Result.create_Success(ToDafny.Simple.ByteSequence(pseudoRandomKey));
     } catch (InvalidKeySpecException ex) {
       return Result.create_Failure(Error(
           AwsCryptographicPrimitivesError
               .builder()
               .message("ACCP's HKDF throw an exception")
-              .cause(ex).build()));
-    }
-  }
-
-  private static Result<SecretKeyFactory, Error> getSecretKeyFactory(DigestAlgorithm digestAlgorithm) {
-    //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
-    // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
-    final String nativeDigest = "HkdfWithHmac" + ToNative.DigestAlgorithm(digestAlgorithm)
-        .toString().replace("_", "");
-    try {
-      final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(
-          nativeDigest, AmazonCorrettoCryptoProvider.INSTANCE);
-      return Result.create_Success(secretKeyFactory);
-    } catch (NoSuchAlgorithmException ex) {
-      return Result.create_Failure(Error(
-          AwsCryptographicPrimitivesError
-              .builder()
-              .message(String.format(
-                  "ACCP does not support requested HKDF Algorithm: %s",
-                  nativeDigest))
               .cause(ex).build()));
     }
   }

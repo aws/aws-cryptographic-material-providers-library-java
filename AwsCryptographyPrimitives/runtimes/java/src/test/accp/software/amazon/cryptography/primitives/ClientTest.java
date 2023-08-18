@@ -9,7 +9,9 @@ import java.nio.ByteBuffer;
 import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesError;
 import software.amazon.cryptography.primitives.model.CryptoConfig;
 import software.amazon.cryptography.primitives.model.DigestAlgorithm;
-import software.amazon.cryptography.primitives.model.HKDFPolicy;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderOutput;
+import software.amazon.cryptography.primitives.model.HKDFProvider;
 import software.amazon.cryptography.primitives.model.HkdfInput;
 
 import static org.testng.Assert.assertEquals;
@@ -32,22 +34,24 @@ public class ClientTest {
 
   @Test
   public void TestHKDFPolicyNone() {
-    CryptoConfig config = CryptoConfig.builder()
-        .hkdfPolicy(HKDFPolicy.NONE).build();
+    CryptoConfig config = CryptoConfig.builder().build();
     AtomicPrimitives client = AtomicPrimitives.builder().CryptoConfig(config).build();
+    GetHKDFProviderOutput hkdfProviderOutput = client.GetHKDFProvider(GetHKDFProviderInput.builder().build());
+    assertEquals(hkdfProviderOutput.provider(), HKDFProvider.MPL);
     ByteBuffer actual = client.Hkdf(HKDF_INPUT_A1);
     assertEquals(actual, OKM_A1);
   }
 
-  // This test should FAIL if not run with ACCP FIPS installed
-  @Test(expectedExceptions = AwsCryptographicPrimitivesError.class)
-  public void TestHKDFPolicyRequireFIPS() {
-    CryptoConfig config = CryptoConfig.builder()
-        .hkdfPolicy(HKDFPolicy.REQUIRE_FIPS_HKDF).build();
+  @Test(groups = {"linux"})
+  public void TestInstallACCP() {
+    try {
+      com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
+    } catch (java.lang.NoClassDefFoundError ignore) {}
+    CryptoConfig config = CryptoConfig.builder().build();
     AtomicPrimitives client = AtomicPrimitives.builder().CryptoConfig(config).build();
+    GetHKDFProviderOutput hkdfProviderOutput = client.GetHKDFProvider(GetHKDFProviderInput.builder().build());
+    assertEquals(hkdfProviderOutput.provider(), HKDFProvider.ACCP);
     ByteBuffer actual = client.Hkdf(HKDF_INPUT_A1);
     assertEquals(actual, OKM_A1);
   }
-
-  // com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
 }

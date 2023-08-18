@@ -67,11 +67,11 @@ using System.Linq; using System; namespace AWS.Cryptography.Primitives {
  ) ;
 }
  internal static AWS.Cryptography.Primitives.CryptoConfig FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig (software.amazon.cryptography.primitives.internaldafny.types._ICryptoConfig value) {
- software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig concrete = (software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig)value; AWS.Cryptography.Primitives.CryptoConfig converted = new AWS.Cryptography.Primitives.CryptoConfig(); if (concrete._hkdfPolicy.is_Some) converted.HkdfPolicy = (AWS.Cryptography.Primitives.HKDFPolicy) FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig__M10_hkdfPolicy(concrete._hkdfPolicy); return converted;
+ software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig concrete = (software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig)value; AWS.Cryptography.Primitives.CryptoConfig converted = new AWS.Cryptography.Primitives.CryptoConfig();  return converted;
 }
  internal static software.amazon.cryptography.primitives.internaldafny.types._ICryptoConfig ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig (AWS.Cryptography.Primitives.CryptoConfig value) {
- AWS.Cryptography.Primitives.HKDFPolicy var_hkdfPolicy = value.IsSetHkdfPolicy() ? value.HkdfPolicy : (AWS.Cryptography.Primitives.HKDFPolicy) null;
- return new software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig ( ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig__M10_hkdfPolicy(var_hkdfPolicy) ) ;
+
+ return new software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig (  ) ;
 }
  internal static AWS.Cryptography.Primitives.DigestAlgorithm FromDafny_N3_aws__N12_cryptography__N10_primitives__S15_DigestAlgorithm (software.amazon.cryptography.primitives.internaldafny.types._IDigestAlgorithm value) {
  if (value.is_SHA__512) return AWS.Cryptography.Primitives.DigestAlgorithm.SHA_512;
@@ -260,25 +260,13 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.ECDSASig
  internal static Dafny.ISequence<byte> ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HkdfOutput (System.IO.MemoryStream value) {
  return ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HkdfOutput__M3_okm(value);
 }
- internal static AWS.Cryptography.Primitives.HKDFPolicy FromDafny_N3_aws__N12_cryptography__N10_primitives__S10_HKDFPolicy (software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy value) {
- if (value.is_REQUIRE__FIPS__HKDF) return AWS.Cryptography.Primitives.HKDFPolicy.REQUIRE_FIPS_HKDF;
- if (value.is_NONE) return AWS.Cryptography.Primitives.HKDFPolicy.NONE;
-throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFPolicy value");
-}
- internal static software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HKDFPolicy (AWS.Cryptography.Primitives.HKDFPolicy value) {
- if (AWS.Cryptography.Primitives.HKDFPolicy.REQUIRE_FIPS_HKDF.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy.create_REQUIRE__FIPS__HKDF();
- if (AWS.Cryptography.Primitives.HKDFPolicy.NONE.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy.create_NONE();
-throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFPolicy value");
-}
  internal static AWS.Cryptography.Primitives.HKDFProvider FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider (software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider value) {
- if (value.is_ACCP__FIPS) return AWS.Cryptography.Primitives.HKDFProvider.ACCP_FIPS;
- if (value.is_ACCP__NOT__FIPS) return AWS.Cryptography.Primitives.HKDFProvider.ACCP_NOT_FIPS;
+ if (value.is_ACCP) return AWS.Cryptography.Primitives.HKDFProvider.ACCP;
  if (value.is_MPL) return AWS.Cryptography.Primitives.HKDFProvider.MPL;
 throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFProvider value");
 }
  internal static software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider (AWS.Cryptography.Primitives.HKDFProvider value) {
- if (AWS.Cryptography.Primitives.HKDFProvider.ACCP_FIPS.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_ACCP__FIPS();
- if (AWS.Cryptography.Primitives.HKDFProvider.ACCP_NOT_FIPS.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_ACCP__NOT__FIPS();
+ if (AWS.Cryptography.Primitives.HKDFProvider.ACCP.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_ACCP();
  if (AWS.Cryptography.Primitives.HKDFProvider.MPL.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_MPL();
 throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFProvider value");
 }
@@ -474,12 +462,6 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.RSAPaddi
 }
  internal static Dafny.ISequence<char> ToDafny_N3_aws__N12_cryptography__N10_primitives__S31_AwsCryptographicPrimitivesError__M7_message (string value) {
  return ToDafny_N6_smithy__N3_api__S6_String(value);
-}
- internal static AWS.Cryptography.Primitives.HKDFPolicy FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig__M10_hkdfPolicy (Wrappers_Compile._IOption<software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy> value) {
- return value.is_None ? (AWS.Cryptography.Primitives.HKDFPolicy) null : FromDafny_N3_aws__N12_cryptography__N10_primitives__S10_HKDFPolicy(value.Extract());
-}
- internal static Wrappers_Compile._IOption<software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy> ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_CryptoConfig__M10_hkdfPolicy (AWS.Cryptography.Primitives.HKDFPolicy value) {
- return value == null ? Wrappers_Compile.Option<software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy>.create_None() : Wrappers_Compile.Option<software.amazon.cryptography.primitives.internaldafny.types._IHKDFPolicy>.create_Some(ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HKDFPolicy((AWS.Cryptography.Primitives.HKDFPolicy) value));
 }
  internal static AWS.Cryptography.Primitives.DigestAlgorithm FromDafny_N3_aws__N12_cryptography__N10_primitives__S11_DigestInput__M15_digestAlgorithm (software.amazon.cryptography.primitives.internaldafny.types._IDigestAlgorithm value) {
  return FromDafny_N3_aws__N12_cryptography__N10_primitives__S15_DigestAlgorithm(value);

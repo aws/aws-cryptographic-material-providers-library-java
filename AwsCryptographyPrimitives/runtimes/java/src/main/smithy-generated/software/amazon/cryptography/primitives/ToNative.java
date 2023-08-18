@@ -39,7 +39,6 @@ import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;
 import software.amazon.cryptography.primitives.model.GetHKDFProviderOutput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthOutput;
-import software.amazon.cryptography.primitives.model.HKDFPolicy;
 import software.amazon.cryptography.primitives.model.HKDFProvider;
 import software.amazon.cryptography.primitives.model.HMacInput;
 import software.amazon.cryptography.primitives.model.HkdfExpandInput;
@@ -160,9 +159,6 @@ public class ToNative {
   public static CryptoConfig CryptoConfig(
       software.amazon.cryptography.primitives.internaldafny.types.CryptoConfig dafnyValue) {
     CryptoConfig.Builder nativeBuilder = CryptoConfig.builder();
-    if (dafnyValue.dtor_hkdfPolicy().is_Some()) {
-      nativeBuilder.hkdfPolicy(ToNative.HKDFPolicy(dafnyValue.dtor_hkdfPolicy().dtor_value()));
-    }
     return nativeBuilder.build();
   }
 
@@ -419,24 +415,10 @@ public class ToNative {
     throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.ECDSASignatureAlgorithm matches the input : " + dafnyValue);
   }
 
-  public static HKDFPolicy HKDFPolicy(
-      software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy dafnyValue) {
-    if (dafnyValue.is_REQUIRE__FIPS__HKDF()) {
-      return HKDFPolicy.REQUIRE_FIPS_HKDF;
-    }
-    if (dafnyValue.is_NONE()) {
-      return HKDFPolicy.NONE;
-    }
-    throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.HKDFPolicy matches the input : " + dafnyValue);
-  }
-
   public static HKDFProvider HKDFProvider(
       software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider dafnyValue) {
-    if (dafnyValue.is_ACCP__FIPS()) {
-      return HKDFProvider.ACCP_FIPS;
-    }
-    if (dafnyValue.is_ACCP__NOT__FIPS()) {
-      return HKDFProvider.ACCP_NOT_FIPS;
+    if (dafnyValue.is_ACCP()) {
+      return HKDFProvider.ACCP;
     }
     if (dafnyValue.is_MPL()) {
       return HKDFProvider.MPL;
