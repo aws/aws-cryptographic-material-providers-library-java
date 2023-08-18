@@ -1,7 +1,7 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 // Do not modify this file. This file is machine generated, and any changes to it will be overwritten.
-include "../../../../../../Volumes/workplace/aws-cryptographic-material-providers-library-java/StandardLibrary/src/Index.dfy"
+include "../../StandardLibrary/src/Index.dfy"
 module {:extern "software.amazon.cryptography.primitives.internaldafny.types" } AwsCryptographyPrimitivesTypes
 {
   import opened Wrappers
