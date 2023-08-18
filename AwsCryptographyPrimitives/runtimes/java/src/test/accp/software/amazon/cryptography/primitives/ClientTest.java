@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
 
-import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesError;
 import software.amazon.cryptography.primitives.model.CryptoConfig;
 import software.amazon.cryptography.primitives.model.DigestAlgorithm;
 import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;

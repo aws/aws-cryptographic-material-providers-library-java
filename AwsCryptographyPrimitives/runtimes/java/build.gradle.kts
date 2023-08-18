@@ -49,7 +49,7 @@ dependencies {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
-        testCompileOnly(
+        testImplementation(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
         logger.warn("Using un-supported ACCP. Overriding detected os `${osdetector.os}` to be `linux`.")
