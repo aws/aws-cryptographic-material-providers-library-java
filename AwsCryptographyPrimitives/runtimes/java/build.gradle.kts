@@ -91,7 +91,7 @@ fun overrideClassifier(): String {
 
 tasks.test {
     val testAccp: Boolean = osdetector.os.contains("linux");
-    useTestNG() {
+    useTestNG {
         if (testAccp) {
             includeGroups("linux")
         } else {

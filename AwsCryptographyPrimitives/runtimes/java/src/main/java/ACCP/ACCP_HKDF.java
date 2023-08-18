@@ -5,7 +5,6 @@ package ACCP;
 // It SHOULD BE safe to reference ACCP in this class,
 // as it will only be loaded if ACCPUtils determined ACCP
 // is available.
-
 import com.amazon.corretto.crypto.provider.HkdfSpec;
 
 import java.security.spec.InvalidKeySpecException;
