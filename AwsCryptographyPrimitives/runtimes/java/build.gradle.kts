@@ -27,18 +27,6 @@ java {
         srcDir("src/test/dafny-generated")
         srcDir("src/test/accp")
     }
-//    sourceSets.create("accp").java {
-//        srcDir("src/main/java")
-//        srcDir("src/main/dafny-generated")
-//        srcDir("src/main/smithy-generated")
-//        srcDir("src/main/accp")
-//    }
-    // Optional ACCP dependency for at least HKDF
-    registerFeature("accp") {
-        // We may create a new source set with ACCP code...
-        //  usingSourceSet(sourceSets["accp"])
-        usingSourceSet(sourceSets["main"])
-    }
 }
 
 repositories {
@@ -51,26 +39,17 @@ dependencies {
     implementation("software.amazon.smithy.dafny:conversion:0.1")
     implementation("software.amazon.cryptography:StandardLibrary:1.0-SNAPSHOT")
     implementation("org.bouncycastle:bcprov-jdk18on:1.75")
-    "accpImplementation"("org.dafny:DafnyRuntime:4.1.0")
-    "accpImplementation"("software.amazon.smithy.dafny:conversion:0.1")
-    "accpImplementation"("software.amazon.cryptography:StandardLibrary:1.0-SNAPSHOT")
-    "accpImplementation"("org.bouncycastle:bcprov-jdk18on:1.75")
     // ACCP ONLY supports Linux, otherwise you have to build it from source and provide it
     // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
     if (project.hasProperty("accpLocalJar")) {
         logger.warn("Using ACCP Local Jar.")
-        "accpImplementation"(files(accpLocalJar)) // Only need ACCP at runtime if using ACCP
         compileOnly(files(accpLocalJar)) // Our Code ALWAYS needs ACCP to Compile.
     } else if (osdetector.os.contains("linux")) {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
-        "accpImplementation"(
-            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
         compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
         logger.warn("Using un-supported ACCP. Overriding detected os `${osdetector.os}` to be `linux`.")
-        "accpImplementation"(
-            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
         compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
