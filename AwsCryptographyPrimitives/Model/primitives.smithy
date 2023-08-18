@@ -27,6 +27,7 @@ service AwsCryptographicPrimitives {
     GenerateECDSASignatureKey,
     ECDSASign,
     ECDSAVerify,
+    GetHKDFProvider
   ],
   errors: [AwsCryptographicPrimitivesError]
 }
@@ -43,9 +44,37 @@ service AwsCryptographicPrimitives {
 ])
 string HKDFPolicy
 
-
 structure CryptoConfig {
   hkdfPolicy: HKDFPolicy
+}
+
+@enum([
+  {
+    name: "ACCP_FIPS",
+    value: "ACCP_FIPS",
+  },
+  {
+    name: "ACCP_NOT_FIPS",
+    value: "ACCP_NOT_FIPS",
+  },
+  {
+    name: "MPL",
+    value: "MPL",
+  },
+])
+string HKDFProvider
+
+operation GetHKDFProvider {
+  input: GetHKDFProviderInput,
+  output: GetHKDFProviderOutput,
+  errors: []
+}
+
+structure GetHKDFProviderInput {}
+
+structure GetHKDFProviderOutput {
+  @required
+  provider: HKDFProvider
 }
 
 ///////////////////

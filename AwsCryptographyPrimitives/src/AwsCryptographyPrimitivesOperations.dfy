@@ -23,13 +23,8 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   import RSAEncryption
   import ACCP
   
-  // Indicates which HKDF implementation to use
-  datatype HKDFProvider =
-    | HKDF_ACCP // HKDF from ACCP
-    | HKDF_DFY  // HKDF implemented in this Dafny library
-
   datatype Config = Config(
-    hkdfProvider: HKDFProvider
+    hkdfProvider: Types.HKDFProvider
   )
   type InternalConfig = Config
   predicate ValidInternalConfig?(config: InternalConfig)
@@ -38,9 +33,9 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   {{}}
 
   method CheckForAccp(hkdfPolicy: Types.HKDFPolicy)
-    returns (res: bool)
+    returns (output: Result<HKDFProvider, Error>)
   {
-    res := ACCP.ExternCheckForAccp(hkdfPolicy);
+    output := ACCP.ExternCheckForAccp(hkdfPolicy);
   }
   
   predicate GenerateRandomBytesEnsuresPublicly(input: GenerateRandomBytesInput, output: Result<seq<uint8>, Error>)
@@ -80,7 +75,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method HkdfExtract ( config: InternalConfig,  input: HkdfExtractInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == HKDF_ACCP) {
+    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
       // TODO: Replace WrappedHKDF with WrappedHKDFAccp
       output := WrappedHKDF.Extract(input);
     } else {
@@ -98,7 +93,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method HkdfExpand ( config: InternalConfig,  input: HkdfExpandInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == HKDF_ACCP) {
+    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
       // TODO: Replace WrappedHKDF with WrappedHKDFAccp
       output := WrappedHKDF.Expand(input);
     } else {
@@ -116,7 +111,7 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
   method Hkdf ( config: InternalConfig,  input: HkdfInput )
     returns (output: Result<seq<uint8>, Error>)
   {
-    if (config.hkdfProvider == HKDF_ACCP) {
+    if (config.hkdfProvider == ACCP_FIPS || config.hkdfProvider == ACCP_NOT_FIPS) {
       // TODO: Replace WrappedHKDF with WrappedHKDFAccp
       output := WrappedHKDF.Hkdf(input);
     } else {
@@ -244,6 +239,17 @@ module AwsCryptographyPrimitivesOperations refines AbstractAwsCryptographyPrimit
       input.verificationKey,
       input.message,
       input.signature
+    );
+  }
+
+  predicate GetHKDFProviderEnsuresPublicly(input: GetHKDFProviderInput , output: Result<GetHKDFProviderOutput, Error>)
+  {true}
+
+  method GetHKDFProvider ( config: InternalConfig , input: GetHKDFProviderInput )
+    returns (output: Result<GetHKDFProviderOutput, Error>)
+  {
+    output := Success(Types.GetHKDFProviderOutput(
+      provider := config.hkdfProvider)
     );
   }
 }

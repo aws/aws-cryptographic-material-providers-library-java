@@ -1,32 +1,41 @@
 package ACCP;
 
-import software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy;
+import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
 
-@SuppressWarnings("UnresolvedClassReferenceRepair")
+import software.amazon.cryptography.primitives.internaldafny.types.Error;
+import software.amazon.cryptography.primitives.internaldafny.types.HKDFPolicy;
+import software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider;
+
+import Wrappers_Compile.Result;
+import software.amazon.smithy.dafny.conversion.ToDafny;
+
 public class ACCPUtils {
   /**
-   * @param hkdfPolicy Determine if FIPS is required
-   * @return If hdfkPolicy is NONE, return if ACCP is installed and version is >= 2.3.
-   * Otherwise, return if ACCP is installed, version is >= 2.3, && FIPS is enabled.
+   * @param policy Determine if FIPS is required
+   * @return If Policy is NONE, return the determined HKDF Provider.
+   * If Policy is Require FIPS, return Failure if ACCP FIPS is not installed,
+   * Success if it is.
    */
-public static boolean ExternCheckForAccp(HKDFPolicy hkdfPolicy) {
-    if (
-        //noinspection UnresolvedClassReferenceRepair
-        com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE == null
-    ) {
-      return false;
+  public static Result<HKDFProvider, Error> ExternCheckForAccp(HKDFPolicy policy) {
+    boolean isAccpInstalled = AmazonCorrettoCryptoProvider.INSTANCE != null &&
+        AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3;
+    boolean isAccpFipsInstalled = isAccpInstalled
+        && AmazonCorrettoCryptoProvider.INSTANCE.isFips();
+
+    if (policy.is_REQUIRE__FIPS__HKDF()) {
+      return isAccpFipsInstalled ?
+          Result.create_Success(HKDFProvider.create_ACCP__FIPS()) :
+          Result.create_Failure(Error.create_AwsCryptographicPrimitivesError(
+              ToDafny.Simple.CharacterSequence(
+                  "HKDFPolicy Requires ACCP FIPS but ACCP FIPS is not available.")));
     }
-    if (
-        //noinspection UnresolvedClassReferenceRepair
-        com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3
-    ) {
-      return false;
+
+    if (isAccpFipsInstalled) {
+      return Result.create_Success(HKDFProvider.create_ACCP__FIPS());
     }
-    if (hkdfPolicy.is_REQUIRE__FIPS__HKDF()) {
-      return
-          //noinspection UnresolvedClassReferenceRepair
-          com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.INSTANCE.isFips();
+    if (isAccpInstalled) {
+      return Result.create_Success(HKDFProvider.create_ACCP__NOT__FIPS());
     }
-    return true;
+    return Result.create_Success(HKDFProvider.create_MPL());
   }
 }

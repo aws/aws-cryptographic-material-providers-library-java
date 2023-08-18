@@ -48,4 +48,6 @@ public class ClientTest {
     ByteBuffer actual = client.Hkdf(HKDF_INPUT_A1);
     assertEquals(actual, OKM_A1);
   }
+
+  // com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
 }

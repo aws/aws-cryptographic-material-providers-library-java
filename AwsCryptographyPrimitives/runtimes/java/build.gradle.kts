@@ -68,8 +68,7 @@ dependencies {
         compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
-//        logger.warn("NOT using ACCP.")
-        logger.warn("Using un-supported ACCP.")
+        logger.warn("Using un-supported ACCP. Overriding detected os `${osdetector.os}` to be `linux`.")
         "accpImplementation"(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
         compileOnly(
@@ -100,8 +99,7 @@ tasks {
 }
 
 fun overrideClassifier(): String {
-    if (osdetector.os.contains("osx")) {
-       logger.warn("Overriding detected os `osx` to be `linux`.")
+    if (!osdetector.os.contains("linux")) {
        return "linux-" + osdetector.arch
     }
     return osdetector.classifier

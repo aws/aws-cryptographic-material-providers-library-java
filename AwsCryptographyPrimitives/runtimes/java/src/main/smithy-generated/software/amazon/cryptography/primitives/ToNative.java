@@ -35,9 +35,12 @@ import software.amazon.cryptography.primitives.model.GenerateECDSASignatureKeyOu
 import software.amazon.cryptography.primitives.model.GenerateRSAKeyPairInput;
 import software.amazon.cryptography.primitives.model.GenerateRSAKeyPairOutput;
 import software.amazon.cryptography.primitives.model.GenerateRandomBytesInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderOutput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthOutput;
 import software.amazon.cryptography.primitives.model.HKDFPolicy;
+import software.amazon.cryptography.primitives.model.HKDFProvider;
 import software.amazon.cryptography.primitives.model.HMacInput;
 import software.amazon.cryptography.primitives.model.HkdfExpandInput;
 import software.amazon.cryptography.primitives.model.HkdfExtractInput;
@@ -244,6 +247,19 @@ public class ToNative {
     return nativeBuilder.build();
   }
 
+  public static GetHKDFProviderInput GetHKDFProviderInput(
+      software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput dafnyValue) {
+    GetHKDFProviderInput.Builder nativeBuilder = GetHKDFProviderInput.builder();
+    return nativeBuilder.build();
+  }
+
+  public static GetHKDFProviderOutput GetHKDFProviderOutput(
+      software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput dafnyValue) {
+    GetHKDFProviderOutput.Builder nativeBuilder = GetHKDFProviderOutput.builder();
+    nativeBuilder.provider(ToNative.HKDFProvider(dafnyValue.dtor_provider()));
+    return nativeBuilder.build();
+  }
+
   public static GetRSAKeyModulusLengthInput GetRSAKeyModulusLengthInput(
       software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput dafnyValue) {
     GetRSAKeyModulusLengthInput.Builder nativeBuilder = GetRSAKeyModulusLengthInput.builder();
@@ -412,6 +428,20 @@ public class ToNative {
       return HKDFPolicy.NONE;
     }
     throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.HKDFPolicy matches the input : " + dafnyValue);
+  }
+
+  public static HKDFProvider HKDFProvider(
+      software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider dafnyValue) {
+    if (dafnyValue.is_ACCP__FIPS()) {
+      return HKDFProvider.ACCP_FIPS;
+    }
+    if (dafnyValue.is_ACCP__NOT__FIPS()) {
+      return HKDFProvider.ACCP_NOT_FIPS;
+    }
+    if (dafnyValue.is_MPL()) {
+      return HKDFProvider.MPL;
+    }
+    throw new IllegalArgumentException("No entry of software.amazon.cryptography.primitives.model.HKDFProvider matches the input : " + dafnyValue);
   }
 
   public static RSAPaddingMode RSAPaddingMode(

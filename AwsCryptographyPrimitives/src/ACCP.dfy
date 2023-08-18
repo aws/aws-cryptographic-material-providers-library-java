@@ -18,5 +18,5 @@ module
   method
   {:extern "ACCP.ACCPUtils", "ExternCheckForAccp"}
   ExternCheckForAccp(hkdfPolicy: Types.HKDFPolicy)
-    returns (res: bool)
+    returns (output: Result<Types.HKDFProvider, Types.Error>)
 }

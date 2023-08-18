@@ -2,24 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 package ACCP_HKDF;
 
-import dafny.Array;
-import dafny.DafnySequence;
+import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
+import com.amazon.corretto.crypto.provider.HkdfSpec;
 
-// import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
-// import com.amazon.corretto.crypto.provider.HkdfSpec;
-// import com.amazon.corretto.crypto.provider.SelfTestStatus;
-
-import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Objects;
 
 import javax.crypto.SecretKeyFactory;
 
-import software.amazon.cryptography.primitives.internaldafny.types.DigestAlgorithm;
 import software.amazon.cryptography.primitives.ToNative;
-
-import Wrappers_Compile.Result;
+import software.amazon.cryptography.primitives.internaldafny.types.DigestAlgorithm;
 import software.amazon.cryptography.primitives.model.AwsCryptographicPrimitivesError;
 import software.amazon.smithy.dafny.conversion.ToDafny;
 
@@ -52,42 +44,33 @@ public class ACCP_HKDF {
         final dafny.DafnySequence<? extends java.lang.Byte> info,
         final java.math.BigInteger keyLength
     ) {
-        // com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
-        // Objects.requireNonNull(AmazonCorrettoCryptoProvider.INSTANCE, "AmazonCorrettoCryptoProvider is not available");
-        // assert Objects.isNull(AmazonCorrettoCryptoProvider.INSTANCE.getLoadingError());
-        // assert AmazonCorrettoCryptoProvider.INSTANCE.runSelfTests().equals(SelfTestStatus.PASSED);
-        // if (AmazonCorrettoCryptoProvider.INSTANCE.getVersion() < 2.3) {
-        //     throw new RuntimeException(String.format("ACCP is less than 2.3: %s",
-        //                                              AmazonCorrettoCryptoProvider.INSTANCE.getVersion()));
-        // }
         //= aws-encryption-sdk-specification/framework/transitive-requirements.md#hkdf-encryption-key
         // # - The hash function MUST be specified by the [algorithm suite key derivation settings](#algorithm-suites-encryption-key-derivation-settings).
-        final String nativeDigest = "HkdfWithHmacSHA256"; //"HkdfWithHmac" + ToNative.DigestAlgorithm(digest).toString().replace("_", "");
+        final String nativeDigest = "HkdfWithHmac" + ToNative.DigestAlgorithm(digest).toString().replace("_", "");
         final byte[] nativeSalt = salt.is_None() ? EMPTY_ARRAY :
             (byte[]) salt.dtor_value().toRawArray();
         final byte[] nativeIkm = (byte[]) ikm.toRawArray();
         final byte[] nativeInfo = (byte[]) info.toRawArray();
         try {
-            final int nativeKeyLength = keyLength.intValueExact();
-            // final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(nativeDigest, AmazonCorrettoCryptoProvider.INSTANCE);
-            // final HkdfSpec hkdfSpec = HkdfSpec.hkdfSpec(nativeIkm, nativeSalt, nativeInfo, nativeKeyLength, null);
-            // final byte[] pseudorandomKey = secretKeyFactory.generateSecret(hkdfSpec).getEncoded();
-            return ToDafny.Simple.ByteSequence(ByteBuffer.allocateDirect(0));
+          final int nativeKeyLength = keyLength.intValueExact();
+          final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(nativeDigest, AmazonCorrettoCryptoProvider.INSTANCE);
+          final HkdfSpec hkdfSpec = HkdfSpec.hkdfSpec(nativeIkm, nativeSalt, nativeInfo, nativeKeyLength, null);
+          final byte[] pseudorandomKey = secretKeyFactory.generateSecret(hkdfSpec).getEncoded();
+          return ToDafny.Simple.ByteSequence(pseudorandomKey);
         } catch (ArithmeticException ex) {
           throw AwsCryptographicPrimitivesError
               .builder().message(String.format(
                   "Requested KeyLength is too large: %s",
                   keyLength))
               .cause(ex).build();
+        } catch (NoSuchAlgorithmException ex) {
+            throw AwsCryptographicPrimitivesError
+                .builder().message(String.format(
+                    "ACCP does not support requested HKDF Algorithm: %s",
+                    nativeDigest))
+                .cause(ex).build();
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
         }
-        // } catch (NoSuchAlgorithmException ex) {
-        //     throw AwsCryptographicPrimitivesError
-        //         .builder().message(String.format(
-        //             "ACCP does not support requested HKDF Algorithm: %s",
-        //             nativeDigest))
-        //         .cause(ex).build();
-        // } catch (InvalidKeySpecException e) {
-        //     throw new RuntimeException(e);
-        // }
     }
 }
