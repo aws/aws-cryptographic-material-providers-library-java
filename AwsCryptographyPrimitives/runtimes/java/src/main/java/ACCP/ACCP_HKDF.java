@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 package ACCP;
 
+// It SHOULD BE safe to reference ACCP in this class,
+// as it will only be loaded if ACCPUtils determined ACCP
+// is available.
 import com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider;
 import com.amazon.corretto.crypto.provider.HkdfSpec;
 
@@ -21,6 +24,8 @@ import software.amazon.smithy.dafny.conversion.ToDafny;
 
 import Wrappers_Compile.Result;
 
+import static software.amazon.cryptography.primitives.ToDafny.Error;
+
 public class ACCP_HKDF {
   private static final byte[] EMPTY_ARRAY = new byte[0];
 
@@ -30,7 +35,11 @@ public class ACCP_HKDF {
     //final HMAC.HMac hmac,
     //         final dafny.DafnySequence<? extends java.lang.Byte> salt,
     //         final dafny.DafnySequence<? extends java.lang.Byte> ikm
-    throw new RuntimeException("TODO");
+    return Result.create_Failure(Error(
+        AwsCryptographicPrimitivesError
+            .builder()
+            .message("TODO")
+            .build()));
   }
 
   public static Result<dafny.DafnySequence<? extends java.lang.Byte>, Error> ExternExpand(
@@ -41,7 +50,11 @@ public class ACCP_HKDF {
     //         final dafny.DafnySequence<? extends java.lang.Byte> info,
     //         final java.math.BigInteger expectedLength,
     //         final DigestAlgorithm digest
-    throw new RuntimeException("TODO");
+    return Result.create_Failure(Error(
+        AwsCryptographicPrimitivesError
+            .builder()
+            .message("TODO")
+            .build()));
   }
 
   public static Result<dafny.DafnySequence<? extends java.lang.Byte>, Error> ExternHkdf(
@@ -57,18 +70,26 @@ public class ACCP_HKDF {
     final byte[] nativeInfo = (byte[]) input.dtor_info().toRawArray();
     try {
       final int nativeKeyLength = input.dtor_expectedLength();
-      final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(nativeDigest, AmazonCorrettoCryptoProvider.INSTANCE);
+      final SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(
+          nativeDigest, AmazonCorrettoCryptoProvider.INSTANCE);
       final HkdfSpec hkdfSpec = HkdfSpec.hkdfSpec(nativeIkm, nativeSalt, nativeInfo, nativeKeyLength, null);
       final byte[] pseudorandomKey = secretKeyFactory.generateSecret(hkdfSpec).getEncoded();
       return Result.create_Success(ToDafny.Simple.ByteSequence(pseudorandomKey));
     } catch (NoSuchAlgorithmException ex) {
-      throw AwsCryptographicPrimitivesError
-          .builder().message(String.format(
-              "ACCP does not support requested HKDF Algorithm: %s",
-              nativeDigest))
-          .cause(ex).build();
-    } catch (InvalidKeySpecException e) {
-      throw new RuntimeException(e);
+      return Result.create_Failure(Error(
+          AwsCryptographicPrimitivesError
+            .builder()
+              .message(String.format(
+                  "ACCP does not support requested HKDF Algorithm: %s",
+                  nativeDigest))
+              .cause(ex).build()));
+    } catch (InvalidKeySpecException ex) {
+      //noinspection SpellCheckingInspection
+      return Result.create_Failure(Error(
+          AwsCryptographicPrimitivesError
+            .builder()
+              .message("ACCP's HKDF throw an exception")
+              .cause(ex).build()));
     }
-    }
+  }
 }
