@@ -27,16 +27,17 @@ java {
         srcDir("src/test/dafny-generated")
         srcDir("src/test/accp")
     }
-    sourceSets.create("accp").java {
-        srcDir("src/main/java")
-        srcDir("src/main/dafny-generated")
-        srcDir("src/main/smithy-generated")
-        srcDir("src/main/accp")
-    }
+//    sourceSets.create("accp").java {
+//        srcDir("src/main/java")
+//        srcDir("src/main/dafny-generated")
+//        srcDir("src/main/smithy-generated")
+//        srcDir("src/main/accp")
+//    }
     // Optional ACCP dependency for at least HKDF
     registerFeature("accp") {
         // We may create a new source set with ACCP code...
-        usingSourceSet(sourceSets["accp"])
+        //  usingSourceSet(sourceSets["accp"])
+        usingSourceSet(sourceSets["main"])
     }
 }
 
@@ -58,22 +59,20 @@ dependencies {
     // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
     if (project.hasProperty("accpLocalJar")) {
         logger.warn("Using ACCP Local Jar.")
-        "accpImplementation"(files(accpLocalJar))
-        testImplementation(files(accpLocalJar))
+        "accpImplementation"(files(accpLocalJar)) // Only need ACCP at runtime if using ACCP
+        compileOnly(files(accpLocalJar)) // Our Code ALWAYS needs ACCP to Compile.
     } else if (osdetector.os.contains("linux")) {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         "accpImplementation"(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
-        testImplementation(
+        compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     } else {
 //        logger.warn("NOT using ACCP.")
         logger.warn("Using un-supported ACCP.")
         "accpImplementation"(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
-        testImplementation(
-            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
-        implementation(
+        compileOnly(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${overrideClassifier()}")
     }
     // https://mvnrepository.com/artifact/org.testng/testng
