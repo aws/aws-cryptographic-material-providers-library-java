@@ -69,6 +69,7 @@ module {:extern "software.amazon.cryptography.materialproviders.internaldafny.ty
       ValidAlgorithmSuiteInfo := [];
       ValidateCommitmentPolicyOnEncrypt := [];
       ValidateCommitmentPolicyOnDecrypt := [];
+      GetHKDFProvider := [];
     }
     ghost var CreateAwsKmsKeyring: seq<DafnyCallEvent<CreateAwsKmsKeyringInput, Result<IKeyring, Error>>>
     ghost var CreateAwsKmsDiscoveryKeyring: seq<DafnyCallEvent<CreateAwsKmsDiscoveryKeyringInput, Result<IKeyring, Error>>>
@@ -97,6 +98,7 @@ module {:extern "software.amazon.cryptography.materialproviders.internaldafny.ty
     ghost var ValidAlgorithmSuiteInfo: seq<DafnyCallEvent<AlgorithmSuiteInfo, Result<(), Error>>>
     ghost var ValidateCommitmentPolicyOnEncrypt: seq<DafnyCallEvent<ValidateCommitmentPolicyOnEncryptInput, Result<(), Error>>>
     ghost var ValidateCommitmentPolicyOnDecrypt: seq<DafnyCallEvent<ValidateCommitmentPolicyOnDecryptInput, Result<(), Error>>>
+    ghost var GetHKDFProvider: seq<DafnyCallEvent<AwsCryptographyPrimitivesTypes.GetHKDFProviderInput, Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>>>
   }
   trait {:termination false} IAwsCryptographicMaterialProvidersClient
   {
@@ -598,6 +600,21 @@ module {:extern "software.amazon.cryptography.materialproviders.internaldafny.ty
     function method ValidateCommitmentPolicyOnDecrypt ( input: ValidateCommitmentPolicyOnDecryptInput )
       : (output: Result<(), Error>)
     // Functions that are transparent do not need ensures
+
+    predicate GetHKDFProviderEnsuresPublicly(input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput , output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+    // The public method to be called by library consumers
+    method GetHKDFProvider ( input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput )
+      returns (output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+      requires
+        && ValidState()
+      modifies Modifies - {History} ,
+               History`GetHKDFProvider
+      // Dafny will skip type parameters when generating a default decreases clause.
+      decreases Modifies - {History}
+      ensures
+        && ValidState()
+      ensures GetHKDFProviderEnsuresPublicly(input, output)
+      ensures History.GetHKDFProvider == old(History.GetHKDFProvider) + [DafnyCallEvent(input, output)]
 
   }
   class IBranchKeyIdSupplierCallHistory {
@@ -2139,6 +2156,26 @@ abstract module AbstractAwsCryptographyMaterialProvidersService
       Operations.ValidateCommitmentPolicyOnDecrypt(config, input)
     }
 
+    predicate GetHKDFProviderEnsuresPublicly(input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput , output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+    {Operations.GetHKDFProviderEnsuresPublicly(input, output)}
+    // The public method to be called by library consumers
+    method GetHKDFProvider ( input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput )
+      returns (output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+      requires
+        && ValidState()
+      modifies Modifies - {History} ,
+               History`GetHKDFProvider
+      // Dafny will skip type parameters when generating a default decreases clause.
+      decreases Modifies - {History}
+      ensures
+        && ValidState()
+      ensures GetHKDFProviderEnsuresPublicly(input, output)
+      ensures History.GetHKDFProvider == old(History.GetHKDFProvider) + [DafnyCallEvent(input, output)]
+    {
+      output := Operations.GetHKDFProvider(config, input);
+      History.GetHKDFProvider := History.GetHKDFProvider + [DafnyCallEvent(input, output)];
+    }
+
   }
 }
 abstract module AbstractAwsCryptographyMaterialProvidersOperations {
@@ -2635,4 +2672,20 @@ abstract module AbstractAwsCryptographyMaterialProvidersOperations {
   function method ValidateCommitmentPolicyOnDecrypt ( config: InternalConfig , input: ValidateCommitmentPolicyOnDecryptInput )
     : (output: Result<(), Error>)
   // Functions that are transparent do not need ensures
+
+
+  predicate GetHKDFProviderEnsuresPublicly(input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput , output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+  // The private method to be refined by the library developer
+
+
+  method GetHKDFProvider ( config: InternalConfig , input: AwsCryptographyPrimitivesTypes.GetHKDFProviderInput )
+    returns (output: Result<AwsCryptographyPrimitivesTypes.GetHKDFProviderOutput, Error>)
+    requires
+      && ValidInternalConfig?(config)
+    modifies ModifiesInternalConfig(config)
+    // Dafny will skip type parameters when generating a default decreases clause.
+    decreases ModifiesInternalConfig(config)
+    ensures
+      && ValidInternalConfig?(config)
+    ensures GetHKDFProviderEnsuresPublicly(input, output)
 }

@@ -41,6 +41,8 @@ import software.amazon.cryptography.materialproviders.model.ValidDecryptionMater
 import software.amazon.cryptography.materialproviders.model.ValidEncryptionMaterialsTransitionInput;
 import software.amazon.cryptography.materialproviders.model.ValidateCommitmentPolicyOnDecryptInput;
 import software.amazon.cryptography.materialproviders.model.ValidateCommitmentPolicyOnEncryptInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderOutput;
 
 public class MaterialProviders {
   private final IAwsCryptographicMaterialProvidersClient _impl;
@@ -333,6 +335,15 @@ public class MaterialProviders {
       throw ToNative.Error(result.dtor_error());
     }
     return ToNative.AlgorithmSuiteInfo(result.dtor_value());
+  }
+
+  public GetHKDFProviderOutput GetHKDFProvider(GetHKDFProviderInput input) {
+    software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput dafnyValue = software.amazon.cryptography.primitives.ToDafny.GetHKDFProviderInput(input);
+    Result<software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput, Error> result = this._impl.GetHKDFProvider(dafnyValue);
+    if (result.is_Failure()) {
+      throw ToNative.Error(result.dtor_error());
+    }
+    return software.amazon.cryptography.primitives.ToNative.GetHKDFProviderOutput(result.dtor_value());
   }
 
   public DecryptionMaterials InitializeDecryptionMaterials(
