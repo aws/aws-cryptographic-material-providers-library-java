@@ -46,6 +46,8 @@ import software.amazon.cryptography.materialproviders.internaldafny.types.ValidD
 import software.amazon.cryptography.materialproviders.internaldafny.types.ValidEncryptionMaterialsTransitionInput;
 import software.amazon.cryptography.materialproviders.internaldafny.types.ValidateCommitmentPolicyOnDecryptInput;
 import software.amazon.cryptography.materialproviders.internaldafny.types.ValidateCommitmentPolicyOnEncryptInput;
+import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput;
 
 public class TestMaterialProviders implements IAwsCryptographicMaterialProvidersClient {
   private final MaterialProviders _impl;
@@ -284,6 +286,17 @@ public class TestMaterialProviders implements IAwsCryptographicMaterialProviders
     try {
       software.amazon.cryptography.materialproviders.model.AlgorithmSuiteInfo nativeOutput = this._impl.GetAlgorithmSuiteInfo(nativeInput);
       AlgorithmSuiteInfo dafnyOutput = ToDafny.AlgorithmSuiteInfo(nativeOutput);
+      return Result.create_Success(dafnyOutput);
+    } catch (RuntimeException ex) {
+      return Result.create_Failure(ToDafny.Error(ex));
+    }
+  }
+
+  public Result<GetHKDFProviderOutput, Error> GetHKDFProvider(GetHKDFProviderInput dafnyInput) {
+    software.amazon.cryptography.primitives.model.GetHKDFProviderInput nativeInput = software.amazon.cryptography.primitives.ToNative.GetHKDFProviderInput(dafnyInput);
+    try {
+      software.amazon.cryptography.primitives.model.GetHKDFProviderOutput nativeOutput = this._impl.GetHKDFProvider(nativeInput);
+      GetHKDFProviderOutput dafnyOutput = software.amazon.cryptography.primitives.ToDafny.GetHKDFProviderOutput(nativeOutput);
       return Result.create_Success(dafnyOutput);
     } catch (RuntimeException ex) {
       return Result.create_Failure(ToDafny.Error(ex));
