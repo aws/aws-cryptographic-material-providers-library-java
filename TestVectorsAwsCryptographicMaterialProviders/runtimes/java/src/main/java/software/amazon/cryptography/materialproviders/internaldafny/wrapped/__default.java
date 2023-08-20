@@ -16,10 +16,10 @@ import software.amazon.cryptography.materialproviders.wrapped.TestMaterialProvid
 
 public class __default extends _ExternBase___default {
   private static final Logger LOGGER = Logger.getLogger(__default.class.getName());
-  try {
-    com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
-  } catch (java.lang.NoClassDefFoundError ignore) {}
   public static Result<IAwsCryptographicMaterialProvidersClient, Error> WrappedMaterialProviders(MaterialProvidersConfig config) {
+    try {
+      com.amazon.corretto.crypto.provider.AmazonCorrettoCryptoProvider.install();
+    } catch (java.lang.NoClassDefFoundError ignore) {}
     software.amazon.cryptography.materialproviders.model.MaterialProvidersConfig wrappedConfig = ToNative.MaterialProvidersConfig(config);
     software.amazon.cryptography.materialproviders.MaterialProviders impl = MaterialProviders.builder().MaterialProvidersConfig(wrappedConfig).build();
     HKDFProvider hkdfProvider = impl.GetHKDFProvider(GetHKDFProviderInput.builder().build()).provider();
