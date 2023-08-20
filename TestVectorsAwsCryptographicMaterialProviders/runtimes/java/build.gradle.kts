@@ -52,6 +52,8 @@ dependencies {
         logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
         implementation(
             "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
+        testImplementation(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
     }
 }
 
