@@ -1,13 +1,14 @@
 // Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import java.net.URI
-import javax.annotation.Nullable
 
+val accpLocalJar: String by project
 val publishedVersion: String by project
 
 plugins {
     `java-library`
     `maven-publish`
+    // OS Detector for Optional ACCP
+    id("com.google.osdetector") version "1.7.0"
 }
 
 group = "software.amazon.cryptography"
@@ -41,6 +42,17 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb-enhanced")
     implementation("software.amazon.awssdk:kms")
     implementation("software.amazon.awssdk:core:2.19.1")
+
+    // ACCP ONLY supports Linux, otherwise you have to build it from source and provide it
+    // https://github.com/corretto/amazon-corretto-crypto-provider/tree/main#compatibility--requirements
+    if (project.hasProperty("accpLocalJar")) {
+        logger.warn("Using ACCP Local Jar.")
+        implementation(files(accpLocalJar)) // Our Code ALWAYS needs ACCP to Compile.
+    } else if (osdetector.os.contains("linux")) {
+        logger.warn("Using ACCP Linux from Maven with Suffix {}.", osdetector.classifier)
+        implementation(
+            "software.amazon.cryptools:AmazonCorrettoCryptoProvider:2.3.0:${osdetector.classifier}")
+    }
 }
 
 publishing {
