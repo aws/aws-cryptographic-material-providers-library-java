@@ -359,18 +359,18 @@ mvn_local_deploy_dependencies:
 
 # The Java MUST all exist already through the transpile step.
 mvn_local_deploy:
-	./runtimes/java/gradlew -p runtimes/java publishMavenLocalPublicationToMavenLocal 
+	runtimes/java/gradlew -p runtimes/java publishMavenLocalPublicationToMavenLocal 
 
 # The Java MUST all exsist if we want to publish to CodeArtifact
 mvn_ca_deploy:
-	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository
+	runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository
 
 mvn_staging_deploy:
-	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository
+	runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository
 
 test_java:
     # run Dafny generated tests
-	./runtimes/java/gradlew -p runtimes/java runTests
+	runtimes/java/gradlew -p runtimes/java runTests
 
 ########################## local testing targets
 
