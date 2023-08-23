@@ -54,7 +54,7 @@ COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE := $(shell dafny /help | grep -q /compileS
 ifeq ($(COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE), 0)
 	COMPILE_SUFFIX_OPTION := -compileSuffix:1
 else
-	COMPILE_SUFFIX_OPTION :=
+	COMPILE_SUFFIX_OPTION := -compileSuffix:1
 endif
 
 
