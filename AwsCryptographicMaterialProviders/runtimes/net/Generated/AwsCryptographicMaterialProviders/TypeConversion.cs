@@ -2631,8 +2631,10 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.ECDSASig
   return AWS.Cryptography.KeyStore.TypeConversion.FromDafny_CommonError(
     dafnyVal._AwsCryptographyKeyStore
   );
- case software.amazon.cryptography.materialproviders.internaldafny.types.Error_ComAmazonawsKms dafnyVal:
-  return Com.Amazonaws.KMS.TypeConversion.FromDafny_CommonError(
+ case software.amazon.cryptography.materialproviders.internaldafny.types.Error_ComAmazonawsKms dafnyVal: 
+   // BEGIN MANUAL EDIT
+  return Com.Amazonaws.Kms.TypeConversion.FromDafny_CommonError( 
+    // END MANUAL EDIT
     dafnyVal._ComAmazonawsKms
   );
  case software.amazon.cryptography.materialproviders.internaldafny.types.Error_AwsCryptographyPrimitives dafnyVal:
