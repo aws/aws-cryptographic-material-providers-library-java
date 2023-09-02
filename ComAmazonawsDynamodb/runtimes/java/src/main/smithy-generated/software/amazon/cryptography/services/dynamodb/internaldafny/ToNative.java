@@ -111,7 +111,7 @@ import software.amazon.awssdk.services.dynamodb.model.DisableKinesisStreamingDes
 import software.amazon.awssdk.services.dynamodb.model.DuplicateItemException;
 // BEGIN MANUAL EDIT
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
-// END MANUAL EDI
+// END MANUAL EDIT
 import software.amazon.awssdk.services.dynamodb.model.EnableKinesisStreamingDestinationRequest;
 import software.amazon.awssdk.services.dynamodb.model.EnableKinesisStreamingDestinationResponse;
 import software.amazon.awssdk.services.dynamodb.model.Endpoint;

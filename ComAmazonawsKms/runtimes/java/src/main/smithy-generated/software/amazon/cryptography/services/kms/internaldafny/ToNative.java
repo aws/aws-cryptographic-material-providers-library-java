@@ -2094,7 +2094,6 @@ public class ToNative {
     }
     return builder.build();
   }
-  
   // BEGIN MANUAL EDIT
   public static RuntimeException Error(software.amazon.cryptography.services.kms.internaldafny.types.Error dafnyValue) {
     if (dafnyValue.is_AlreadyExistsException()) {
@@ -2202,7 +2201,7 @@ public class ToNative {
     // TODO This should indicate a codegen bug
     return new IllegalStateException("Unknown error recieved from KMS.");
   }
-  // END MANUAL EDIT
+// END MANUAL EDIT
 
   public static KmsClient TrentService(IKMSClient dafnyValue) {
     return ((Shim) dafnyValue).impl();
