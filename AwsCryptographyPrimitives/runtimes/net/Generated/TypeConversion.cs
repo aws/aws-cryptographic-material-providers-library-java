@@ -184,6 +184,20 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.ECDSASig
 
  return new software.amazon.cryptography.primitives.internaldafny.types.GenerateRSAKeyPairOutput ( ToDafny_N3_aws__N12_cryptography__N10_primitives__S24_GenerateRSAKeyPairOutput__M9_publicKey(value.PublicKey) , ToDafny_N3_aws__N12_cryptography__N10_primitives__S24_GenerateRSAKeyPairOutput__M10_privateKey(value.PrivateKey) ) ;
 }
+ internal static AWS.Cryptography.Primitives.GetHKDFProviderInput FromDafny_N3_aws__N12_cryptography__N10_primitives__S20_GetHKDFProviderInput (software.amazon.cryptography.primitives.internaldafny.types._IGetHKDFProviderInput value) {
+ software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput concrete = (software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput)value; AWS.Cryptography.Primitives.GetHKDFProviderInput converted = new AWS.Cryptography.Primitives.GetHKDFProviderInput();  return converted;
+}
+ internal static software.amazon.cryptography.primitives.internaldafny.types._IGetHKDFProviderInput ToDafny_N3_aws__N12_cryptography__N10_primitives__S20_GetHKDFProviderInput (AWS.Cryptography.Primitives.GetHKDFProviderInput value) {
+
+ return new software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput (  ) ;
+}
+ internal static AWS.Cryptography.Primitives.GetHKDFProviderOutput FromDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput (software.amazon.cryptography.primitives.internaldafny.types._IGetHKDFProviderOutput value) {
+ software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput concrete = (software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput)value; AWS.Cryptography.Primitives.GetHKDFProviderOutput converted = new AWS.Cryptography.Primitives.GetHKDFProviderOutput();  converted.Provider = (AWS.Cryptography.Primitives.HKDFProvider) FromDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput__M8_provider(concrete._provider); return converted;
+}
+ internal static software.amazon.cryptography.primitives.internaldafny.types._IGetHKDFProviderOutput ToDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput (AWS.Cryptography.Primitives.GetHKDFProviderOutput value) {
+
+ return new software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput ( ToDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput__M8_provider(value.Provider) ) ;
+}
  internal static AWS.Cryptography.Primitives.GetRSAKeyModulusLengthInput FromDafny_N3_aws__N12_cryptography__N10_primitives__S27_GetRSAKeyModulusLengthInput (software.amazon.cryptography.primitives.internaldafny.types._IGetRSAKeyModulusLengthInput value) {
  software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput concrete = (software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput)value; AWS.Cryptography.Primitives.GetRSAKeyModulusLengthInput converted = new AWS.Cryptography.Primitives.GetRSAKeyModulusLengthInput();  converted.PublicKey = (System.IO.MemoryStream) FromDafny_N3_aws__N12_cryptography__N10_primitives__S27_GetRSAKeyModulusLengthInput__M9_publicKey(concrete._publicKey); return converted;
 }
@@ -245,6 +259,16 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.ECDSASig
 }
  internal static Dafny.ISequence<byte> ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HkdfOutput (System.IO.MemoryStream value) {
  return ToDafny_N3_aws__N12_cryptography__N10_primitives__S10_HkdfOutput__M3_okm(value);
+}
+ internal static AWS.Cryptography.Primitives.HKDFProvider FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider (software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider value) {
+ if (value.is_ACCP) return AWS.Cryptography.Primitives.HKDFProvider.ACCP;
+ if (value.is_MPL) return AWS.Cryptography.Primitives.HKDFProvider.MPL;
+throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFProvider value");
+}
+ internal static software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider (AWS.Cryptography.Primitives.HKDFProvider value) {
+ if (AWS.Cryptography.Primitives.HKDFProvider.ACCP.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_ACCP();
+ if (AWS.Cryptography.Primitives.HKDFProvider.MPL.Equals(value)) return software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.create_MPL();
+throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.HKDFProvider value");
 }
  internal static AWS.Cryptography.Primitives.HMacInput FromDafny_N3_aws__N12_cryptography__N10_primitives__S9_HMacInput (software.amazon.cryptography.primitives.internaldafny.types._IHMacInput value) {
  software.amazon.cryptography.primitives.internaldafny.types.HMacInput concrete = (software.amazon.cryptography.primitives.internaldafny.types.HMacInput)value; AWS.Cryptography.Primitives.HMacInput converted = new AWS.Cryptography.Primitives.HMacInput();  converted.DigestAlgorithm = (AWS.Cryptography.Primitives.DigestAlgorithm) FromDafny_N3_aws__N12_cryptography__N10_primitives__S9_HMacInput__M15_digestAlgorithm(concrete._digestAlgorithm);
@@ -564,6 +588,12 @@ throw new System.ArgumentException("Invalid AWS.Cryptography.Primitives.RSAPaddi
 }
  internal static software.amazon.cryptography.primitives.internaldafny.types._IRSAPrivateKey ToDafny_N3_aws__N12_cryptography__N10_primitives__S24_GenerateRSAKeyPairOutput__M10_privateKey (AWS.Cryptography.Primitives.RSAPrivateKey value) {
  return ToDafny_N3_aws__N12_cryptography__N10_primitives__S13_RSAPrivateKey(value);
+}
+ internal static AWS.Cryptography.Primitives.HKDFProvider FromDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput__M8_provider (software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider value) {
+ return FromDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider(value);
+}
+ internal static software.amazon.cryptography.primitives.internaldafny.types._IHKDFProvider ToDafny_N3_aws__N12_cryptography__N10_primitives__S21_GetHKDFProviderOutput__M8_provider (AWS.Cryptography.Primitives.HKDFProvider value) {
+ return ToDafny_N3_aws__N12_cryptography__N10_primitives__S12_HKDFProvider(value);
 }
  internal static System.IO.MemoryStream FromDafny_N3_aws__N12_cryptography__N10_primitives__S27_GetRSAKeyModulusLengthInput__M9_publicKey (Dafny.ISequence<byte> value) {
  return FromDafny_N6_smithy__N3_api__S4_Blob(value);

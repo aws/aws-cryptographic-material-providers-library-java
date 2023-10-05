@@ -27,6 +27,8 @@ import software.amazon.cryptography.primitives.model.GenerateECDSASignatureKeyOu
 import software.amazon.cryptography.primitives.model.GenerateRSAKeyPairInput;
 import software.amazon.cryptography.primitives.model.GenerateRSAKeyPairOutput;
 import software.amazon.cryptography.primitives.model.GenerateRandomBytesInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.model.GetHKDFProviderOutput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthOutput;
 import software.amazon.cryptography.primitives.model.HMacInput;
@@ -138,6 +140,15 @@ public class AtomicPrimitives {
       throw ToNative.Error(result.dtor_error());
     }
     return ToNative.GenerateRSAKeyPairOutput(result.dtor_value());
+  }
+
+  public GetHKDFProviderOutput GetHKDFProvider(GetHKDFProviderInput input) {
+    software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput dafnyValue = ToDafny.GetHKDFProviderInput(input);
+    Result<software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput, Error> result = this._impl.GetHKDFProvider(dafnyValue);
+    if (result.is_Failure()) {
+      throw ToNative.Error(result.dtor_error());
+    }
+    return ToNative.GetHKDFProviderOutput(result.dtor_value());
   }
 
   public GetRSAKeyModulusLengthOutput GetRSAKeyModulusLength(GetRSAKeyModulusLengthInput input) {

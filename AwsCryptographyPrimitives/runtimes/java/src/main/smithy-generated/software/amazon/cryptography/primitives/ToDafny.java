@@ -31,8 +31,11 @@ import software.amazon.cryptography.primitives.internaldafny.types.GenerateECDSA
 import software.amazon.cryptography.primitives.internaldafny.types.GenerateRSAKeyPairInput;
 import software.amazon.cryptography.primitives.internaldafny.types.GenerateRSAKeyPairOutput;
 import software.amazon.cryptography.primitives.internaldafny.types.GenerateRandomBytesInput;
+import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderInput;
+import software.amazon.cryptography.primitives.internaldafny.types.GetHKDFProviderOutput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthInput;
 import software.amazon.cryptography.primitives.internaldafny.types.GetRSAKeyModulusLengthOutput;
+import software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider;
 import software.amazon.cryptography.primitives.internaldafny.types.HMacInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExpandInput;
 import software.amazon.cryptography.primitives.internaldafny.types.HkdfExtractInput;
@@ -264,6 +267,18 @@ public class ToDafny {
     return new GenerateRSAKeyPairOutput(publicKey, privateKey);
   }
 
+  public static GetHKDFProviderInput GetHKDFProviderInput(
+      software.amazon.cryptography.primitives.model.GetHKDFProviderInput nativeValue) {
+    return new GetHKDFProviderInput();
+  }
+
+  public static GetHKDFProviderOutput GetHKDFProviderOutput(
+      software.amazon.cryptography.primitives.model.GetHKDFProviderOutput nativeValue) {
+    HKDFProvider provider;
+    provider = ToDafny.HKDFProvider(nativeValue.provider());
+    return new GetHKDFProviderOutput(provider);
+  }
+
   public static GetRSAKeyModulusLengthInput GetRSAKeyModulusLengthInput(
       software.amazon.cryptography.primitives.model.GetRSAKeyModulusLengthInput nativeValue) {
     DafnySequence<? extends Byte> publicKey;
@@ -468,6 +483,21 @@ public class ToDafny {
       }
       default: {
         throw new RuntimeException("Cannot convert " + nativeValue + " to software.amazon.cryptography.primitives.internaldafny.types.ECDSASignatureAlgorithm.");
+      }
+    }
+  }
+
+  public static HKDFProvider HKDFProvider(
+      software.amazon.cryptography.primitives.model.HKDFProvider nativeValue) {
+    switch (nativeValue) {
+      case ACCP: {
+        return HKDFProvider.create_ACCP();
+      }
+      case MPL: {
+        return HKDFProvider.create_MPL();
+      }
+      default: {
+        throw new RuntimeException("Cannot convert " + nativeValue + " to software.amazon.cryptography.primitives.internaldafny.types.HKDFProvider.");
       }
     }
   }
