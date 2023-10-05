@@ -50,13 +50,16 @@ SMITHY_MODEL_ROOT := $(LIBRARY_ROOT)/Model
 # Our target language code still assumes it does,
 # so IF the /compileSuffix option is available in our verion of Dafny
 # we need to provide it.
-COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE := $(shell dafny /help | grep -q /compileSuffix; echo $$?)
-ifeq ($(COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE), 0)
-	COMPILE_SUFFIX_OPTION := -compileSuffix:1
-else
-	COMPILE_SUFFIX_OPTION :=
-endif
-
+# on 4.2.0 running on windows this shell command fails; we should fix this so the right
+# thing happens on the right environment
+# COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE := $(shell dafny /help | grep -q /compileSuffix; echo $$?)
+# ifeq ($(COMPILE_SUFFIX_OPTION_CHECK_EXIT_CODE), 0)
+# 	COMPILE_SUFFIX_OPTION := -compileSuffix:1
+# else
+# 	COMPILE_SUFFIX_OPTION := -compileSuffix:1
+# endif
+# for now we know this will work across the three environmnets we test in (windows, macos, ubuntu)
+COMPILE_SUFFIX_OPTION := -compileSuffix:1
 
 ########################## Dafny targets
 
@@ -325,7 +328,7 @@ setup_net:
 ########################## Java targets
 
 build_java: transpile_java mvn_local_deploy_dependencies
-	gradle -p runtimes/java build
+	./runtimes/java/gradlew -p runtimes/java build
 
 transpile_java: | transpile_implementation_java transpile_test_java transpile_dependencies_java
 
@@ -359,18 +362,18 @@ mvn_local_deploy_dependencies:
 
 # The Java MUST all exist already through the transpile step.
 mvn_local_deploy:
-	gradle -p runtimes/java publishMavenLocalPublicationToMavenLocal 
+	./runtimes/java/gradlew -p runtimes/java publishMavenLocalPublicationToMavenLocal 
 
 # The Java MUST all exsist if we want to publish to CodeArtifact
 mvn_ca_deploy:
-	gradle -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository
+	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactCIRepository
 
 mvn_staging_deploy:
-	gradle -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository
+	./runtimes/java/gradlew -p runtimes/java publishMavenPublicationToPublishToCodeArtifactStagingRepository
 
 test_java:
     # run Dafny generated tests
-	gradle -p runtimes/java runTests
+	./runtimes/java/gradlew -p runtimes/java runTests
 
 ########################## local testing targets
 
