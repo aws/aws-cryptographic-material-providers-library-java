@@ -1,5 +1,5 @@
-import java.net.URI
-import javax.annotation.Nullable
+// Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 plugins {
     `java-library`
@@ -9,20 +9,6 @@ plugins {
 group = "software.amazon.cryptography"
 version = "1.0-SNAPSHOT"
 description = "ComAmazonawsDynamodb"
-
-var caUrl: URI? = null
-@Nullable
-val caUrlStr: String? = System.getenv("CODEARTIFACT_URL_JAVA_CONVERSION")
-if (!caUrlStr.isNullOrBlank()) {
-    caUrl = URI.create(caUrlStr)
-}
-
-var caPassword: String? = null
-@Nullable
-val caPasswordString: String? = System.getenv("CODEARTIFACT_AUTH_TOKEN")
-if (!caPasswordString.isNullOrBlank()) {
-    caPassword = caPasswordString
-}
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
@@ -39,16 +25,6 @@ java {
 repositories {
     mavenCentral()
     mavenLocal()
-        if (caUrl != null && caPassword != null) {
-        maven {
-            name = "CodeArtifact"
-            url = caUrl!!
-            credentials {
-                username = "aws"
-                password = caPassword!!
-            }
-        }
-    }
 }
 
 dependencies {
@@ -60,11 +36,6 @@ dependencies {
 }
 
 publishing {
-    publications.create<MavenPublication>("mavenLocal") {
-        groupId = "software.amazon.cryptography"
-        artifactId = "ComAmazonawsDynamodb"
-        from(components["java"])
-    }
     publications.create<MavenPublication>("maven") {
         groupId = "software.amazon.cryptography"
         artifactId = "ComAmazonawsDynamodb"
