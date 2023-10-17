@@ -473,8 +473,8 @@ return Dafny.Sequence<byte>.FromArray(utf8.GetBytes(value));
  switch(value)
  {
  case software.amazon.cryptography.keystore.internaldafny.types.Error_ComAmazonawsKms dafnyVal:
-    // BEGIN MANUAL EDIT
-   return Com.Amazonaws.Kms.TypeConversion.FromDafny_CommonError(
+   // BEGIN MANUAL EDIT
+  return Com.Amazonaws.Kms.TypeConversion.FromDafny_CommonError(
     // END MANUAL EDIT
     dafnyVal._ComAmazonawsKms
   );
@@ -498,9 +498,9 @@ return FromDafny_N3_aws__N12_cryptography__N8_keyStore__S17_KeyStoreException(da
 }
  public static software.amazon.cryptography.keystore.internaldafny.types._IError ToDafny_CommonError(System.Exception value) {
  switch (value.GetType().Namespace) {
-  // BEGIN MANUAL EDIT
- case "Com.Amazonaws.Kms":
- // END MANUAL EDIT
+   // BEGIN MANUAL EDIT
+ case "Com.Amazonaws.Kms": 
+   // END MANUAL EDIT
   return software.amazon.cryptography.keystore.internaldafny.types.Error.create_ComAmazonawsKms(
     // BEGIN MANUAL EDIT
     Com.Amazonaws.Kms.TypeConversion.ToDafny_CommonError(value)

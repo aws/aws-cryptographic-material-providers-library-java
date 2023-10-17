@@ -2094,7 +2094,6 @@ public class ToNative {
     }
     return builder.build();
   }
-
   // BEGIN MANUAL EDIT
   public static RuntimeException Error(software.amazon.cryptography.services.kms.internaldafny.types.Error dafnyValue) {
     if (dafnyValue.is_AlreadyExistsException()) {
