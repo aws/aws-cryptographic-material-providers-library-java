@@ -63,7 +63,6 @@ dependencies {
     implementation("software.amazon.awssdk:dynamodb")
     implementation("software.amazon.awssdk:dynamodb-enhanced")
     implementation("software.amazon.awssdk:kms")
-    implementation("software.amazon.awssdk:core:2.19.1")
 }
 
 publishing {
