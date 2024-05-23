@@ -1,5 +1,7 @@
 # AWS Cryptographic Material Providers Library
 
+**Important** Development of this project has moved from a per language repository to a monorepo here: https://github.com/aws/aws-cryptographic-material-providers-library
+
 The AWS Cryptographic Material Providers Library abstracts lower level cryptographic materials management of encryption and decryption materials.
 It uses cryptographic best practices to protect the data keys that protect your data.
 The data key is protected with a key encryption key called a *wrapping key*.
