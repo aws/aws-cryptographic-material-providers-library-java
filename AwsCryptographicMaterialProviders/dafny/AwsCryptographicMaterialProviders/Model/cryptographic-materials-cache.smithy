@@ -182,12 +182,26 @@ structure MultiThreadedCache {
 @javadoc("A cache that is safe for use in a multi threaded environment,
 and tries to prevent redundant or overly parallel backend calls.")
 structure StormTrackingCache {
+  //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#initialization
+  //= type=implication
+  //# On initialization of the storm tracking CMC,
+  //# the caller MUST provide exactly what is required by a
+  //# [Local CMC](local-cryptographic-materials-cache.md).
   @required
   @javadoc("Maximum number of entries cached.")
   entryCapacity: CountingNumber,
 
   @javadoc("Number of entries to prune at a time.")
   entryPruningTailSize: CountingNumber,
+
+  //= aws-encryption-sdk-specification/framework/storm-tracking-cryptographic-materials-cache.md#initialization
+  //= type=implication
+  //# Initialization MUST also provide
+  //# - [Grace Period](#grace-period)
+  //# - [Grace Interval](#grace-interval)
+  //# - [FanOut](#fanout)
+  //# - [Inflight TTL](#inflight-ttl).
+  //# - [sleepMilli](#sleepmilli).
 
   @required
   @javadoc("How many seconds before expiration should an attempt be made to refresh the materials.
